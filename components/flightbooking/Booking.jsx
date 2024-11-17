@@ -59,7 +59,7 @@ const Booking = () => {
   }
 
   // Extract flight segments safely
-  const flightSegments = selectedFlight?.flights[0]?.flightSegments || [];
+  const flightSegments = selectedFlight?.flight?.[0]?.flightSegments || [];
   const flightdata = selectedFlight;
   return (
     <div className="p-6">
