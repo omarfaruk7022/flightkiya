@@ -12,6 +12,7 @@ import { fetchData } from "@/utils/fetcher";
 import flightStore from "@/store";
 import { useQuery } from "@tanstack/react-query";
 import { revalidateFlight } from "@/utils/revalidateFlight";
+import { Oval } from "react-loader-spinner";
 
 export default function FlightCard() {
   const [openDetailsIndex, setOpenDetailsIndex] = useState(null);
@@ -46,7 +47,7 @@ export default function FlightCard() {
       }
       return revalidateFlight(flight_id);
     },
-    enabled: false, // Disable automatic fetching
+    enabled: false,
   });
 
   const handleRevalidateFlight = (flight_id) => {
@@ -60,7 +61,6 @@ export default function FlightCard() {
       setSelectedFlight(flightData?.data);
     }
   }, [flightData]);
-  console.log(flightResults);
 
   return (
     <section className="flex gap-[60px] w-full py-8">
@@ -141,11 +141,11 @@ export default function FlightCard() {
                     <div className="flex flex-col justify-between items-end">
                       <div className="text-right space-y-1 sm:space-y-2">
                         {fare.BaseFare && (
-                          <p className="text-xs sm:text-sm text-gray-500 line-through">
+                          <p className="text-xs sm:text-sm text-red-500 line-through">
                             ${fare.BaseFare}
                           </p>
                         )}
-                        <p className="text-yellow-600 text-xl sm:text-2xl font-bold">
+                        <p className="text-black text-xl sm:text-2xl font-bold">
                           ${fare.TotalFare || "N/A"}
                         </p>
                       </div>
@@ -153,10 +153,26 @@ export default function FlightCard() {
                         onClick={() =>
                           handleRevalidateFlight(flight?.flight_id)
                         }
-                        className="bg-purple-600 text-white py-1 px-4 sm:py-2 sm:px-6 rounded-lg flex items-center justify-center space-x-2 mt-3 sm:mt-0"
+                        disabled={isLoading}
+                        className={`bg-purple-600 text-white py-1  w-[120px] sm:py-2 sm:px-6 rounded-lg flex items-center justify-center space-x-2 mt-0 md:mt-3 mb-5`}
                       >
-                        <span>Select</span>
-                        <Image src={right} alt="Right Arrow" />
+                        {isLoading ? (
+                          <Oval
+                            visible={true}
+                            height="20"
+                            width="20"
+                            secondaryColor="#fff"
+                            color="#fff"
+                            ariaLabel="oval-loading"
+                            wrapperStyle={{}}
+                            wrapperClass=""
+                          />
+                        ) : (
+                          <>
+                            <span>Select</span>
+                            <Image src={right} alt="Right Arrow" />
+                          </>
+                        )}
                       </button>
                     </div>
                   </div>
