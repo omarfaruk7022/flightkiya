@@ -2,8 +2,8 @@
 import Navbar from "@/components/common/navbar/Navbar";
 import FlightCard from "@/components/flightResult/flightCard/FlightCard";
 import FlightFilter from "@/components/flightResult/flightFilter/FlightFilter";
-import SearchResultSkeleton from "@/components/skeletons/searchResultSkeleton";
-import flightStore from "@/store";
+import SearchResultSkeleton from "@/components/skeletons/SearchResultSkeleton";
+
 import { fetchData } from "@/utils/fetcher";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
