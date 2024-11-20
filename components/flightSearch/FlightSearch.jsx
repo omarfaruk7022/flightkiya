@@ -165,43 +165,7 @@ const FlightSearch = () => {
     );
   }
 
-  const payload = {
-    OriginDestinationInformations: originDestinations, // Array of origin-destination objects
-    TravelPreferences: {
-      AirTripType: tripType, // "OneWay", "Return", or "OpenJaw"
-    },
-    PricingSourceType: "Public", // You can use "Private" or "All" based on requirements
-    PassengerTypeQuantities: [
-      {
-        Code: passengerType, // Passenger type: "ADT", "CHD", or "INF"
-        Quantity: passengerQuantity, // Number of passengers of this type
-      },
-    ],
-    RequestOptions: "Fifty", // Limit or specify request options
-  };
-  console.log(payload);
-
-  const {
-    data: allFlights,
-    error: allFlightsError,
-    isLoading: allFlightsLoading,
-    refetch: refetchAllFlights, // Manual refetching when needed
-  } = useQuery({
-    queryKey: ["flights", payload], // Unique query key
-    queryFn: () => fetchData("b2c/search", "POST", payload),
-    enabled: false,
-  });
-
-  useEffect(() => {
-    if (allFlights?.success == true) {
-      const { results } = allFlights;
-      setFlightResults(results);
-      router.push("/flights");
-    } else {
-      setError("No flights found.");
-      setLoading(false);
-    }
-  }, [allFlights]);
+ 
 
   const fetchFlightData = async () => {
     setLoading(true);
@@ -225,7 +189,19 @@ const FlightSearch = () => {
       setLoading(false);
       return;
     }
-    refetchAllFlights();
+
+    // Serialize payload to query string
+    const queryString = new URLSearchParams({
+      originDestinations: JSON.stringify(originDestinations),
+      tripType,
+      passengerType,
+      passengerQuantity,
+      pricingSourceType: "Public",
+      requestOptions: "Fifty",
+    }).toString();
+
+    // Redirect to the search-results page with payload in the URL
+    router.push(`/flights?${queryString}`);
   };
 
   const handleChildrenIncrement = () => {
