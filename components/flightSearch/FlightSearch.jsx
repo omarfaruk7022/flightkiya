@@ -17,6 +17,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchData } from "@/utils/fetcher";
 import flightStore from "@/store";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 const airportsData = require("../../airports.json");
 const customStyles = {
@@ -104,9 +105,11 @@ const FlightSearch = () => {
   const [thirdDepartureDate, setThirdDepartureDate] = useState("");
   const [thirdOriginCode, setThirdOriginCode] = useState("");
   const [thirdDestinationCode, setThirdDestinationCode] = useState("");
-  const { setFlightResults } = flightStore();
+  const { setPassengerInformation, setSelectedFlight, setFlightResults } =
+    flightStore();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [travelersData, setTravelersData] = useState();
   let originDestinations = [];
   // Handle OneWay trip type
 
@@ -165,17 +168,52 @@ const FlightSearch = () => {
     );
   }
 
- 
+  const generateTravelerData = () => {
+    const passengerTypes = [];
+
+    // Add Adults to the passengerTypes array
+    if (adults > 0) {
+      passengerTypes.push({
+        Code: "ADT",
+        Quantity: adults,
+      });
+    }
+
+    // Add Children to the passengerTypes array
+    if (children > 0) {
+      passengerTypes.push({
+        Code: "CHD",
+        Quantity: children,
+        // ChildAges: childAges, // Include child ages
+      });
+    }
+
+    // Add Infants to the passengerTypes array
+    if (infants > 0) {
+      passengerTypes.push({
+        Code: "INF",
+        Quantity: infants,
+      });
+    }
+
+    return passengerTypes;
+  };
+
+  const handleDoneClick = () => {
+    const travelerData = generateTravelerData();
+    setTravelersData(travelerData);
+    setTravelerInputShow(!travelerInputShow); // Close the modal
+  };
 
   const fetchFlightData = async () => {
     setLoading(true);
     setError("");
 
-    // Validate required fields
     if (
       !departureDate ||
       !searchQueryDestination ||
       !searchQueryArrival ||
+      travelerInputShow ||
       (tripType === "Return" && !returnDate) ||
       (tripType === "OpenJaw" &&
         (!secondDepartureDate ||
@@ -185,48 +223,47 @@ const FlightSearch = () => {
           !thirdOriginCode ||
           !thirdDestinationCode))
     ) {
+      toast.error("Invalid ");
       setError("Please fill in all required fields.");
       setLoading(false);
       return;
     }
 
-    // Serialize payload to query string
     const queryString = new URLSearchParams({
       originDestinations: JSON.stringify(originDestinations),
       tripType,
-      passengerType,
-      passengerQuantity,
+      travelersData: JSON.stringify(travelersData),
       pricingSourceType: "Public",
       requestOptions: "Fifty",
     }).toString();
-
-    // Redirect to the search-results page with payload in the URL
+    setFlightResults([]);
+    setSelectedFlight({});
+    setPassengerInformation(travelersData);
     router.push(`/flights?${queryString}`);
   };
 
   const handleChildrenIncrement = () => {
     setChildren(children + 1);
-    setChildAges([...childAges, 2]); // Add a default age (e.g., 2 years) for the new child
+    setChildAges([...childAges, 2]);
   };
 
   const handleChildrenDecrement = () => {
     if (children > 0) {
       setChildren(children - 1);
-      setChildAges(childAges.slice(0, -1)); // Remove the last child age
+      setChildAges(childAges.slice(0, -1));
     }
   };
   const [travelerInputShow, setTravelerInputShow] = useState(false);
 
-  const [cities, setCities] = useState([{ id: 1 }]); // Initial state with one city row
+  const [cities, setCities] = useState([{ id: 1 }]);
 
-  // Function to handle adding a new city row
   const handleAddCity = () => {
-    setCities([...cities, { id: cities.length + 1 }]); // Add a new city with a unique id
+    setCities([...cities, { id: cities.length + 1 }]);
   };
 
   const handleDeleteCity = () => {
     if (cities.length > 1) {
-      setCities(cities.slice(0, -1)); // Remove the last city row
+      setCities(cities.slice(0, -1));
     }
   };
 
@@ -525,7 +562,7 @@ const FlightSearch = () => {
                   <div className="relative">
                     <div
                       className="border-2 border-[#BEA8A8] pt-2 ps-5 rounded-[13px] w-[234px] h-[79px]"
-                      onClick={() => setTravelerInputShow(!travelerInputShow)}
+                      onClick={() => handleDoneClick()}
                     >
                       <label className="w-full cursor-pointer">
                         <div className="block">
@@ -732,7 +769,7 @@ const FlightSearch = () => {
                             {/* Done Button */}
                             <button
                               className="w-full bg-[var(--primary-btn)] text-white font-semibold py-2 rounded"
-                              onClick={() => setTravelerInputShow(false)}
+                              onClick={() => handleDoneClick()}
                             >
                               Done
                             </button>
