@@ -734,7 +734,7 @@ const FlightSearch = () => {
                       )}
                     </div>
                     <div className="relative w-full ">
-                      <div className="border-t border-b border-r border-l-0 border-[#BEA8A8] pt-2 ps-5 rounded-r-md  h-[69px]">
+                      <div className="border-2  border-l-0 border-[#BEA8A8] pt-2 ps-5 rounded-r-md  h-[69px]">
                         <label
                           className="w-full cursor-pointer"
                           onClick={() => setIsOpenArrival(!isOpenArrival)}
