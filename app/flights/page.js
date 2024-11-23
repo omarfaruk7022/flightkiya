@@ -82,9 +82,9 @@ export default function page({ searchParams }) {
         <SearchResultSkeleton />
       ) : (
         <div className="bg-[#F0F4F4] px-5 md:px-48 min-h-screen">
+          <FlightFilter />
           {allFlights?.success ? (
             <>
-              <FlightFilter />
               <div className="grid  grid-cols-1 md:grid-cols-9 gap-5">
                 <div className="col-span-7 flex flex-col gap-5">
                   {flightResults?.length > 0
