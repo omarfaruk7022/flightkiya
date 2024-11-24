@@ -18,7 +18,7 @@ export default function FlightCard({ flight, index }) {
   const [openDetailsIndex, setOpenDetailsIndex] = useState(null);
   const [openRefundableIndex, setOpenRefundableIndex] = useState(null);
   const [flightId, setFlightId] = useState(null);
-  const { setSelectedFlight,timer } = flightStore();
+  const { setSelectedFlight, timer } = flightStore();
 
   // if (!flights?.length) {
   //   return <p className="text-center mt-10">No flight data found.</p>;
@@ -74,7 +74,7 @@ export default function FlightCard({ flight, index }) {
           {/* Flight Details */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {/* Airline Logo and Name */}
-            
+
             <div className="flex items-center gap-4">
               <Image
                 src={imageurl}
@@ -156,7 +156,7 @@ export default function FlightCard({ flight, index }) {
                   />
                 ) : (
                   <>
-                    <span>Select</span>
+                    Select
                     <Image src={right} alt="Right Arrow" />
                   </>
                 )}

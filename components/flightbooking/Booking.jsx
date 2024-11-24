@@ -4,13 +4,34 @@ import biman from "../../public/images/biman-bd.png";
 import Image from "next/image";
 import { TbClockFilled } from "react-icons/tb";
 import Link from "next/link";
-// components/Modal.js
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { MdReviews } from "react-icons/md";
 import flightStore from "@/store";
+import Select from "react-select";
 
+const customSelectStyles = {
+  control: (base) => ({
+    ...base,
+    height: "48px", // Match the height of the input fields
+    borderColor: "#d1d5db", // Match the border color
+    borderRadius: "0.375rem", // Match the border radius (6px)
+    padding: "2px", // Adjust padding for alignment
+    boxShadow: "none", // Remove shadow on focus
+    "&:hover": {
+      borderColor: "#a0aec0", // Light gray on hover
+    },
+  }),
+  valueContainer: (base) => ({
+    ...base,
+    padding: "0 12px", // Match input padding
+  }),
+  placeholder: (base) => ({
+    ...base,
+    color: "#a0aec0", // Placeholder color
+  }),
+};
 const Booking = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -20,7 +41,7 @@ const Booking = () => {
   const [activeTab, setActiveTab] = useState("baggage"); // Default to "baggage"
   const [title, setTitle] = useState("MR"); // State for title selection (MR, MS, MRS)
 
-  const { selectedFlight } = flightStore();
+  const { selectedFlight, passengerInformation } = flightStore();
   const getCabinClass = (code) => {
     const cabinClassMap = {
       Y: "Economy",
@@ -53,7 +74,6 @@ const Booking = () => {
     )}`;
   };
 
-  // Ensure selectedFlight state is available before rendering the flight details
   if (!selectedFlight) {
     return <div>Loading flight data...</div>;
   }
@@ -61,6 +81,65 @@ const Booking = () => {
   // Extract flight segments safely
   const flightSegments = selectedFlight?.flights?.[0]?.flightSegments || [];
   const flightdata = selectedFlight;
+
+  const [passengerDetails, setPassengerDetails] = useState([]);
+  useEffect(() => {
+    if (passengerInformation?.length > 0) {
+      const details = passengerInformation.flatMap((item) =>
+        Array.from({ length: item.Quantity }, (_, index) => ({
+          Code: item.Code,
+          Title: "MR", // Default title
+          FirstName: "",
+          LastName: "",
+          Nationality: { value: "Bangladesh", label: "Bangladesh" },
+          FrequentFlyer: "",
+          PassengerNumber: index + 1,
+        }))
+      );
+      setPassengerDetails(details);
+    }
+  }, [passengerInformation]);
+  const handleTitleChange = (index, newTitle) => {
+    setPassengerDetails((prev) =>
+      prev.map((passenger, i) =>
+        i === index ? { ...passenger, Title: newTitle } : passenger
+      )
+    );
+  };
+
+  const handleNationalityChange = (index, selectedOption) => {
+    setPassengerDetails((prev) =>
+      prev.map((passenger, i) =>
+        i === index ? { ...passenger, Nationality: selectedOption } : passenger
+      )
+    );
+  };
+
+  const handleInputChange = (index, field, value) => {
+    setPassengerDetails((prev) =>
+      prev.map((passenger, i) =>
+        i === index ? { ...passenger, [field]: value } : passenger
+      )
+    );
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Passenger Details:", passengerDetails);
+    // Add your form submission logic here
+  };
+  const passengerLabels = {
+    ADT: "Adult",
+    CHD: "Child",
+    INF: "Infant", // Add more as needed
+  };
+
+  const nationalityOptions = [
+    { value: "Bangladesh", label: "Bangladesh" },
+    { value: "United States", label: "United States" },
+    { value: "United Kingdom", label: "United Kingdom" },
+    // Add more countries as needed
+  ];
 
   return (
     <div className="p-6">
@@ -77,12 +156,7 @@ const Booking = () => {
             {flightSegments?.map((segment, index) => (
               <>
                 <div className="bg-white h-[250px] w-[900px] rounded-lg shadow-lg p-9 mb-4">
-                  <h2 className="text-[24px] font-bold text-blue-900">{`${
-                    flightSegments[0]?.DepartureAirportLocationCode
-                  }-${
-                    flightSegments[flightSegments.length - 1]
-                      ?.ArrivalAirportLocationCode
-                  }`}</h2>
+                  <h2 className="text-[24px] font-bold text-blue-900">{`${segment?.DepartureAirportLocationCode}-${segment?.ArrivalAirportLocationCode}`}</h2>
                   <div className="flex justify-between items-center mt-2">
                     <div className=" w-full">
                       <div className=" w-full flex items-center justify-between">
@@ -185,12 +259,7 @@ const Booking = () => {
                           </p>
                         </div>
                         <div className=" flex justify-between mr-8 items-center">
-                          <p className="text-[16px]  mb-2">{`${
-                            flightSegments[0]?.DepartureAirportLocationCode
-                          }-${
-                            flightSegments[flightSegments.length - 1]
-                              ?.ArrivalAirportLocationCode
-                          }`}</p>
+                          <p className="text-[16px]  mb-2">{`${segment?.DepartureAirportLocationCode}-${segment?.ArrivalAirportLocationCode}`}</p>
                           <p className="text-[16px]  mb-2">7 kg</p>
                           <p className="text-[16px]  mb-2">20 kg</p>
                         </div>
@@ -210,10 +279,16 @@ const Booking = () => {
                         <div className=" flex ml-5 items-center justify-between">
                           <p className="text-[16px]  mb-2">
                             {" "}
-                            {segment.PassengerTypeQuantity?.Code === "ADT"
-                              ? "Adult"
-                              : "Other"}{" "}
-                            x {segment.PassengerTypeQuantity?.Quantity || 0}
+                            {passengerInformation?.map((passenger) => (
+                              <p>
+                                {passenger?.Code === "ADT"
+                                  ? "Adult"
+                                  : passenger.Code === "CHD"
+                                  ? "Child"
+                                  : "Inf"}{" "}
+                                x {passenger.Quantity}
+                              </p>
+                            ))}
                           </p>
                           <p className="text-[16px] pl-7  mb-2">
                             {flightdata?.TotalFare?.Amount}{" "}
@@ -229,7 +304,8 @@ const Booking = () => {
                     {activeTab === "policy" && (
                       <div>
                         <div className="bg-blue-100 p-3 text-[20px] rounded text-center text-blue-900 font-semibold">
-                          DAC-JFK
+                          {segment?.DepartureAirportLocationCode} -{" "}
+                          {segment?.ArrivalAirportLocationCode}
                         </div>
                         <div className="text-sm mt-4 space-y-4">
                           <p className=" text-[16px]">
@@ -282,15 +358,18 @@ const Booking = () => {
               </h3>
               <div className="border-b border-gray-300 my-2"></div>
               {/* <div className="flex justify-between text-sm mb-2">
-                <p>{segment.PassengerTypeQuantity?.Quantity || 2} Passenger</p>
                 <p>
-                  {segment.PassengerTypeQuantity?.Code === "ADT"
+                  {selectedFlight?.PassengerTypeQuantity?.Quantity || 0}{" "}
+                  Passenger
+                </p>
+                <p>
+                  {selectedFlight.PassengerTypeQuantity?.Code === "ADT"
                     ? "Adult"
-                    : segment.PassengerTypeQuantity?.Code === "CHD"
+                    : selectedFlight.PassengerTypeQuantity?.Code === "CHD"
                     ? "Child"
-                    : segment.PassengerTypeQuantity?.Code === "INF"
+                    : selectedFlight.PassengerTypeQuantity?.Code === "INF"
                     ? "Infant without a seat"
-                    : segment.PassengerTypeQuantity?.Code === "INS"
+                    : selectedFlight.PassengerTypeQuantity?.Code === "INS"
                     ? "Infant with a seat"
                     : "Adult"}
                 </p>
@@ -304,47 +383,95 @@ const Booking = () => {
                 <p className="text-sm text-gray-600 mb-4">
                   As mentioned on your passport or government-approved IDs
                 </p>
-                <div className="flex gap-4">
-                  {["MR", "MS", "MRS"].map((option) => (
-                    <button
-                      key={option}
-                      onClick={() => setTitle(option)}
-                      className={`px-4 py-2 border rounded ${
-                        title === option
-                          ? "bg-blue-600 text-white"
-                          : "text-blue-600 border-blue-600"
-                      }`}
+
+                <form onSubmit={handleSubmit}>
+                  {passengerDetails.map((passenger, index) => (
+                    <div
+                      key={`${passenger.Code}-${index}`}
+                      className="passenger-form"
                     >
-                      {option}
-                    </button>
+                      <h3>
+                        {passengerLabels[passenger.Code] || passenger.Code}{" "}
+                        Passenger {passenger.PassengerNumber}
+                      </h3>
+                      <div className="flex gap-4 mb-5 mt-2">
+                        {["MR", "MS", "MRS"].map((option) => (
+                          <button
+                            key={option}
+                            type="button"
+                            onClick={() => handleTitleChange(index, option)}
+                            className={`px-4 py-2 border rounded ${
+                              passenger.Title === option
+                                ? "bg-blue-600 text-white"
+                                : "text-blue-600 border-blue-600"
+                            }`}
+                          >
+                            {option}
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        <input
+                          type="text"
+                          name="firstName"
+                          placeholder="Given Name / First Name"
+                          value={passenger.FirstName}
+                          onChange={(e) =>
+                            handleInputChange(
+                              index,
+                              "FirstName",
+                              e.target.value
+                            )
+                          }
+                          className="border border-gray-300 p-3 rounded"
+                        />
+                        <input
+                          type="text"
+                          name="lastName"
+                          placeholder="Last Name"
+                          value={passenger.LastName}
+                          onChange={(e) =>
+                            handleInputChange(index, "LastName", e.target.value)
+                          }
+                          className="border border-gray-300 p-3 rounded"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        <Select
+                          options={nationalityOptions}
+                          value={passenger.Nationality}
+                          onChange={(selectedOption) =>
+                            handleNationalityChange(index, selectedOption)
+                          }
+                          placeholder="Select Nationality"
+                          className="rounded"
+                          styles={customSelectStyles}
+                        />
+                        <input
+                          type="text"
+                          name="frequentFlyer"
+                          placeholder="Frequent Flyer Number (Optional)"
+                          value={passenger.FrequentFlyer}
+                          onChange={(e) =>
+                            handleInputChange(
+                              index,
+                              "FrequentFlyer",
+                              e.target.value
+                            )
+                          }
+                          className="border border-gray-300 p-3 rounded"
+                        />
+                      </div>
+                    </div>
                   ))}
-                </div>
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <input
-                    type="text"
-                    placeholder="Given Name / First Name"
-                    className="border border-gray-300 p-3 rounded"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Last Name"
-                    className="border border-gray-300 p-3 rounded"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <input
-                    type="text"
-                    placeholder="Nationality"
-                    value="Bangladesh"
-                    readOnly
-                    className="border border-gray-300 p-3 rounded"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Frequent Flyer Number (Optional)"
-                    className="border border-gray-300 p-3 rounded"
-                  />
-                </div>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-blue-600 text-white rounded"
+                  >
+                    Save
+                  </button>
+                </form>
               </div>
             </div>
             {/* Contact Details Section */}
@@ -517,14 +644,18 @@ const Booking = () => {
                   <div className="flex justify-between">
                     <span>Tax</span>
                     <span className="font-medium">
-                      {/* {flightdata.Taxes.Amount} {flightdata.Taxes.CurrencyCode} */}
+                      {flightdata.TotalTax.Amount}{" "}
+                      {flightdata.TotalTax.CurrencyCode}
                     </span>
                   </div>
                   <hr className="my-2" />
                   <div className="flex justify-between">
                     <span>Sub-Total</span>
                     <span className="font-medium">
-                      {flightdata?.TotalFare?.Amount}{" "}
+                      {(
+                        Number(flightdata?.TotalFare?.Amount) +
+                        Number(flightdata?.TotalTax?.Amount)
+                      ).toFixed(2)}{" "}
                       {flightdata?.TotalFare?.CurrencyCode}
                     </span>
                   </div>
@@ -543,8 +674,12 @@ const Booking = () => {
                   <div className="flex justify-between">
                     <span>Convenience Charge</span>
                     <span className="font-medium">
-                      + {flightdata?.TotalFare?.CurrencyCode}{" "}
-                      {flightdata?.TotalFare?.Amount}{" "}
+                      +{" "}
+                      {(
+                        Number(flightdata?.TotalFare?.Amount) +
+                        Number(flightdata?.TotalTax?.Amount)
+                      ).toFixed(2)}{" "}
+                      {flightdata?.TotalFare?.CurrencyCode}
                     </span>
                   </div>
                 </div>
@@ -552,16 +687,20 @@ const Booking = () => {
 
               <div className="bg-blue-50 p-4 rounded-lg text-blue-800">
                 <div className="flex justify-between">
-                  <span className="text-lg font-semibold">
-                    You Pay (for 1 Traveler)
-                  </span>
+                  <span className="text-lg font-semibold">You Pay</span>
                   <span className="text-xl font-bold">
-                    {flightdata?.TotalFare?.Amount}{" "}
+                    {(
+                      Number(flightdata?.TotalFare?.Amount) +
+                      Number(flightdata?.TotalTax?.Amount)
+                    ).toFixed(2)}{" "}
                     {flightdata?.TotalFare?.CurrencyCode}
                   </span>
                 </div>
                 <div className="text-green-600 text-sm text-right">
-                  {flightdata?.TotalFare?.Amount}{" "}
+                  {(
+                    Number(flightdata?.TotalFare?.Amount) +
+                    Number(flightdata?.TotalTax?.Amount)
+                  ).toFixed(2)}{" "}
                   {flightdata?.TotalFare?.CurrencyCode}
                 </div>
               </div>

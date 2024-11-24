@@ -121,7 +121,7 @@ const FlightSearch = () => {
   const [isOpenArrival, setIsOpenArrival] = useState(false);
   const handleIncrement = (setter, value) => setter(value + 1);
   const handleDecrement = (setter, value) => value > 0 && setter(value - 1);
-  const [tripType, setTripType] = useState("Return"); // Default trip type is OneWay
+  const [tripType, setTripType] = useState("OneWay"); // Default trip type is OneWay
   const [passengerType, setPassengerType] = useState("ADT");
   const [passengerQuantity, setPassengerQuantity] = useState(1);
 
