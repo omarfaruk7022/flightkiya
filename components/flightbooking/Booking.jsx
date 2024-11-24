@@ -637,15 +637,15 @@ const Booking = () => {
                   <div className="flex justify-between">
                     <span>Adult (1 traveler)</span>
                     <span className="font-medium">
-                      {flightdata?.TotalFare?.Amount}{" "}
+                      {flightdata ? flightdata?.TotalFare?.Amount : ""}{" "}
                       {flightdata?.TotalFare?.CurrencyCode}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span>Tax</span>
                     <span className="font-medium">
-                      {flightdata.TotalTax.Amount}{" "}
-                      {flightdata.TotalTax.CurrencyCode}
+                      {flightdata?.TotalTax?.Amount}{" "}
+                      {flightdata?.TotalTax?.CurrencyCode}
                     </span>
                   </div>
                   <hr className="my-2" />
