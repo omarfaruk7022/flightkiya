@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 import { fetchData } from "@/utils/fetcher";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { Oval } from "react-loader-spinner";
 
 const customSelectStyles = {
   control: (base) => ({
@@ -816,7 +817,20 @@ const Booking = () => {
                     onClick={handleBooking}
                     className="bg-blue-600 text-white w-[300px] py-4 px-4 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none"
                   >
-                    Confirm Booking
+                    {bookingDataLoading ? (
+                      <Oval
+                        visible={true}
+                        height="25"
+                        width="25"
+                        secondaryColor="#fff"
+                        color="#fff"
+                        ariaLabel="oval-loading"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                      />
+                    ) : (
+                      <span> Confirm Booking</span>
+                    )}
                   </button>
                 </div>
               </div>
