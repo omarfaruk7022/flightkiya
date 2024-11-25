@@ -10,6 +10,13 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { MdReviews } from "react-icons/md";
 import flightStore from "@/store";
 import Select from "react-select";
+import "react-datepicker/dist/react-datepicker.css";
+import ReactDatePicker from "react-datepicker";
+import { format } from "date-fns";
+import { toast } from "react-toastify";
+import { fetchData } from "@/utils/fetcher";
+import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 const customSelectStyles = {
   control: (base) => ({
@@ -34,14 +41,25 @@ const customSelectStyles = {
 };
 const Booking = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const router = useRouter();
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
   const [details, setDetails] = useState(null);
   const [activeTab, setActiveTab] = useState("baggage"); // Default to "baggage"
   const [title, setTitle] = useState("MR"); // State for title selection (MR, MS, MRS)
+  const [contactEmail, setContactEmail] = useState();
+  const [contactNumber, setContactNumber] = useState();
+  const [countryCode, setCountryCode] = useState("880");
+  const [errors, setErrors] = useState();
 
-  const { selectedFlight, passengerInformation } = flightStore();
+  const {
+    selectedFlight,
+    passengerInformation,
+    setTravelersInfo,
+    travelersInfo,
+    setToken,
+    setBookingId,
+  } = flightStore();
   const getCabinClass = (code) => {
     const cabinClassMap = {
       Y: "Economy",
@@ -88,11 +106,15 @@ const Booking = () => {
       const details = passengerInformation.flatMap((item) =>
         Array.from({ length: item.Quantity }, (_, index) => ({
           Code: item.Code,
-          Title: "MR", // Default title
+          Title: "MR",
           FirstName: "",
           LastName: "",
-          Nationality: { value: "Bangladesh", label: "Bangladesh" },
+          PassengerNationality: { value: "BD", label: "Bangladesh" },
           FrequentFlyer: "",
+          Gender: "",
+          DateOfBirth: "",
+          PassportNumber: "",
+          ExpiryDate: "",
           PassengerNumber: index + 1,
         }))
       );
@@ -125,8 +147,70 @@ const Booking = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Passenger Details:", passengerDetails);
-    // Add your form submission logic here
+
+    const validationErrors = validatePassengerDetails(passengerDetails);
+
+    if (validationErrors.length > 0) {
+      setErrors(validationErrors);
+      console.log("Validation Errors:", validationErrors);
+      return;
+    }
+
+    setTravelersInfo(passengerDetails);
+    toast.success("Passenger details updated");
+    setErrors([]);
+  };
+
+  const validatePassengerDetails = (details) => {
+    const errors = [];
+
+    details.forEach((passenger, index) => {
+      if (!passenger.FirstName.trim()) {
+        errors.push(`Passenger ${index + 1}: First Name is required.`);
+      }
+
+      if (!passenger.LastName.trim()) {
+        errors.push(`Passenger ${index + 1}: Last Name is required.`);
+      }
+
+      if (!passenger.DateOfBirth) {
+        errors.push(`Passenger ${index + 1}: Date of Birth is required.`);
+      } else {
+        const dob = new Date(passenger.DateOfBirth);
+        const today = new Date();
+        if (dob >= today) {
+          errors.push(
+            `Passenger ${index + 1}: Date of Birth must be in the past.`
+          );
+        }
+      }
+
+      if (!passenger.PassportNumber.trim()) {
+        errors.push(`Passenger ${index + 1}: Passport Number is required.`);
+      }
+
+      if (!passenger.ExpiryDate) {
+        errors.push(
+          `Passenger ${index + 1}: Passport Expiry Date is required.`
+        );
+      } else {
+        const expiry = new Date(passenger.ExpiryDate);
+        const today = new Date();
+        if (expiry <= today) {
+          errors.push(
+            `Passenger ${
+              index + 1
+            }: Passport Expiry Date must be in the future.`
+          );
+        }
+      }
+
+      if (!passenger.Gender) {
+        errors.push(`Passenger ${index + 1}: Gender is required.`);
+      }
+    });
+
+    return errors;
   };
   const passengerLabels = {
     ADT: "Adult",
@@ -135,11 +219,69 @@ const Booking = () => {
   };
 
   const nationalityOptions = [
-    { value: "Bangladesh", label: "Bangladesh" },
-    { value: "United States", label: "United States" },
-    { value: "United Kingdom", label: "United Kingdom" },
+    { value: "BD", label: "Bangladesh" },
+    { value: "US", label: "United States" },
+    { value: "UK", label: "United Kingdom" },
     // Add more countries as needed
   ];
+
+  const handleContinue = () => {
+    if (travelersInfo?.length > 0) {
+      if (contactEmail && contactNumber && countryCode) {
+        openModal();
+      } else {
+        toast.error("Please fill in your contact details");
+      }
+    } else {
+      toast.error("Please add passenger details");
+    }
+  };
+
+  const payload = {
+    AirTravelers: travelersInfo.map((passenger) => ({
+      PassengerType: passenger.Code,
+      Gender: passenger.Gender.value.charAt(0).toUpperCase(), // 'F', 'M', etc.
+      PassengerName: {
+        PassengerTitle: passenger.Title,
+        PassengerFirstName: passenger.FirstName,
+        PassengerLastName: passenger.LastName,
+      },
+      DateOfBirth: new Date(passenger.DateOfBirth).toISOString(), // Ensure ISO format
+      Passport: {
+        PassportNumber: passenger.PassportNumber,
+        ExpiryDate: new Date(passenger.ExpiryDate).toISOString(), // Ensure ISO format
+        Country: passenger.Nationality.value,
+      },
+      PassengerNationality: passenger.PassengerNationality.value,
+      NationalID: passenger.PassengerNationality.value,
+    })),
+    CountryCode: countryCode,
+    AreaCode: "125",
+    PhoneNumber: contactNumber,
+    Email: contactEmail,
+    PostCode: "154",
+  };
+  const {
+    data: bookingData,
+    error: bookingDataError,
+    isLoading: bookingDataLoading = true,
+    refetch: bookingDataRefetch,
+  } = useQuery({
+    queryKey: ["booking", payload],
+    queryFn: () => fetchData("b2c/booking", "POST", payload),
+    enabled: false,
+  });
+  const handleBooking = () => {
+    bookingDataRefetch();
+  };
+
+  useEffect(() => {
+    if (bookingData?.data && bookingData?.success === true) {
+      setToken(bookingData?.data?.token);
+      setBookingId(bookingData?.data?.booking_id);
+      router.push("/payment");
+    }
+  }, [bookingData]);
 
   return (
     <div className="p-6">
@@ -385,6 +527,16 @@ const Booking = () => {
                 </p>
 
                 <form onSubmit={handleSubmit}>
+                  {errors?.length > 0 && (
+                    <div className="bg-red-100 text-red-800 p-4 rounded mb-4">
+                      <ul>
+                        {errors?.map((error, index) => (
+                          <li key={index}>{error}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
                   {passengerDetails.map((passenger, index) => (
                     <div
                       key={`${passenger.Code}-${index}`}
@@ -444,23 +596,77 @@ const Booking = () => {
                           onChange={(selectedOption) =>
                             handleNationalityChange(index, selectedOption)
                           }
-                          placeholder="Select Nationality"
+                          placeholder="Nationality"
                           className="rounded"
                           styles={customSelectStyles}
                         />
+                        <Select
+                          options={[
+                            { value: "Male", label: "Male" },
+                            { value: "Female", label: "Female" },
+                            { value: "Other", label: "Other" },
+                          ]}
+                          value={passenger?.Gender}
+                          onChange={(selectedOption) =>
+                            handleInputChange(index, "Gender", selectedOption)
+                          }
+                          placeholder="Gender"
+                          className="rounded"
+                          styles={customSelectStyles}
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4 mb-4">
                         <input
                           type="text"
-                          name="frequentFlyer"
-                          placeholder="Frequent Flyer Number (Optional)"
-                          value={passenger.FrequentFlyer}
+                          name="passportNumber"
+                          placeholder="Passport Number"
+                          value={passenger.PassportNumber}
                           onChange={(e) =>
                             handleInputChange(
                               index,
-                              "FrequentFlyer",
+                              "PassportNumber",
                               e.target.value
                             )
                           }
                           className="border border-gray-300 p-3 rounded"
+                        />
+                        <div className="w-full">
+                          <ReactDatePicker
+                            selected={
+                              passenger.ExpiryDate
+                                ? new Date(passenger.ExpiryDate)
+                                : null
+                            }
+                            onChange={(date) =>
+                              handleInputChange(
+                                index,
+                                "ExpiryDate",
+                                date ? format(date, "yyyy-MM-dd") : ""
+                              )
+                            }
+                            dateFormat="yyyy-MM-dd"
+                            placeholderText="Passport Expiry Date"
+                            className="w-full border border-gray-300 p-3 rounded"
+                          />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        <ReactDatePicker
+                          selected={
+                            passenger.DateOfBirth
+                              ? new Date(passenger.DateOfBirth)
+                              : null
+                          }
+                          onChange={(date) =>
+                            handleInputChange(
+                              index,
+                              "DateOfBirth",
+                              date ? format(date, "yyyy-MM-dd") : ""
+                            )
+                          }
+                          dateFormat="yyyy-MM-dd"
+                          placeholderText=" Date of birth"
+                          className="w-full border border-gray-300 focus:outline-none p-3 rounded"
                         />
                       </div>
                     </div>
@@ -485,22 +691,30 @@ const Booking = () => {
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <input
                   type="email"
+                  id="contact-email"
+                  onChange={(e) => setContactEmail(e.target.value)}
+                  name="contact-email"
                   placeholder="Email"
                   className="border border-gray-300 p-3 rounded"
                 />
                 <div className="flex items-center gap-2">
-                  <select className="border border-gray-300 p-3 rounded">
-                    <option>+880</option>
+                  <select
+                    className="border border-gray-300 px-3 py-4 rounded"
+                    onChange={(e) => setCountryCode(e.target.value)}
+                  >
+                    <option>+880</option> <option>+880</option>{" "}
+                    <option>+880</option> <option>+880</option>
                     {/* Add more country codes as needed */}
                   </select>
                   <input
                     type="text"
+                    onChange={(e) => setContactNumber(e.target.value)}
                     placeholder="1XXX XXXXX"
                     className="border border-gray-300 p-3 rounded flex-grow"
                   />
                 </div>
               </div>
-              <div className="flex items-center gap-2 mb-4">
+              {/* <div className="flex items-center gap-2 mb-4">
                 <input
                   type="checkbox"
                   id="save-traveler"
@@ -512,12 +726,13 @@ const Booking = () => {
                 >
                   Save this to my traveler list.
                 </label>
-              </div>
+              </div> */}
             </div>
 
             {/* Continue Button */}
             <button
-              onClick={openModal}
+              // onClick={openModal}
+              onClick={handleContinue}
               className="w-full mb-10 bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-lg font-semibold"
             >
               Continue
@@ -531,7 +746,7 @@ const Booking = () => {
                   </span>
                   <span> Review Details</span>
                 </h2>
-                <div className=" w-[790px] bg-red-100 p-2 rounded-lg flex flex-col">
+                <div className="min-w-full max-w-[790px] bg-red-100 p-2 rounded-lg flex flex-col">
                   <p className=" text-red-500 font-bold">Important</p>
                   <p>
                     {" "}
@@ -540,47 +755,69 @@ const Booking = () => {
                     providing incorrect information.
                   </p>
                 </div>
-                <div className="mt-4">
+                <div className="mt-4 ">
                   <h2>Traveler Details</h2>
-                  <div className=" w-[790px] mt-3 h-36 border-[2px] p-5 rounded-lg">
-                    <p className=" font-bold text-xl">Traveler 2</p>
-                    <div className=" mt-2 flex gap-56">
-                      <div className="flex flex-col gap-2">
-                        <span className=" text-gray-300">
-                          Given Name/First Name
-                        </span>
-                        <span className=" font-semibold text-blue-900">
-                          Mohammad
-                        </span>
+                  {travelersInfo?.map((passenger) => (
+                    <div className="min-w-full max-w-[790px] mt-3 h-42 border-[2px] p-5 rounded-lg overflow-y-scroll">
+                      <p className=" font-bold text-xl">
+                        {passenger?.Code} {passenger?.PassengerNumber}
+                      </p>
+                      <div className=" mt-2 grid grid-cols-1 md:grid-cols-2">
+                        <div className="flex flex-col gap-2">
+                          <span className=" text-gray-300">
+                            Given Name/First Name
+                          </span>
+                          <span className=" font-semibold text-blue-900">
+                            {passenger?.FirstName}
+                          </span>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <span className=" text-gray-300">
+                            Surname/Last Name
+                          </span>
+                          <span className=" font-semibold text-blue-900">
+                            {passenger?.LastName}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex flex-col gap-2">
-                        <span className=" text-gray-300">
-                          Surname/Last Name
-                        </span>
-                        <span className=" font-semibold text-blue-900">
-                          Ibrahim
-                        </span>
+                      <div className=" mt-2 grid grid-cols-1 md:grid-cols-2 ">
+                        <div className="flex flex-col gap-2">
+                          <span className=" text-gray-300">
+                            Passport Number
+                          </span>
+                          <span className=" font-semibold text-blue-900">
+                            {passenger?.PassportNumber}
+                          </span>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <span className=" text-gray-300">Expiry Date</span>
+                          <span className=" font-semibold text-blue-900">
+                            {passenger?.ExpiryDate}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ))}
                   <p className=" mt-7 ml-20 justify-center text-gray-400">
                     Your booking will be confirmed and held for 20 minutes to
                     complete payment
                   </p>
                 </div>
                 {/* You can add more details here if needed */}
-                <div className="flex justify-center space-x-3 mt-4">
+                <div className="flex justify-center  flex-wrap space-x-3 mt-4">
                   <button
                     onClick={closeModal}
                     className="bg-gray-200 text-gray-700 w-[300px] py-4 px-4 rounded-lg hover:bg-gray-300 transition-colors focus:outline-none"
                   >
                     Edit Details
                   </button>
-                  <Link href="/payment">
-                    <button className="bg-blue-600 text-white w-[300px] py-4 px-4 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none">
-                      Confirm Booking
-                    </button>
-                  </Link>
+
+                  <button
+                    onClick={handleBooking}
+                    className="bg-blue-600 text-white w-[300px] py-4 px-4 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none"
+                  >
+                    Confirm Booking
+                  </button>
                 </div>
               </div>
             </Modal>

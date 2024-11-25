@@ -132,8 +132,13 @@ const FlightSearch = () => {
   const [thirdDepartureDate, setThirdDepartureDate] = useState("");
   const [thirdOriginCode, setThirdOriginCode] = useState("");
   const [thirdDestinationCode, setThirdDestinationCode] = useState("");
-  const { setPassengerInformation, setSelectedFlight, setFlightResults } =
-    flightStore();
+  const {
+    setPassengerInformation,
+    setSelectedFlight,
+    setFlightResults,
+    setTravelersInfo,
+    setBookingId,
+  } = flightStore();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [originAirport, setOriginAirport] = useState({
@@ -280,6 +285,8 @@ const FlightSearch = () => {
     }).toString();
     setFlightResults([]);
     setSelectedFlight({});
+    setTravelersInfo([]);
+    setBookingId(null);
     setPassengerInformation(travelersData);
     router.push(`/flights?${queryString}`);
   };
@@ -336,212 +343,202 @@ const FlightSearch = () => {
         <div className="">
           <Navbar />
         </div>
-        
-          <div className="px-5 md:px-20 mt-20 ">
-            <div className="relative bg-white p-6  container shadow-xl h-fit md:h-[84px] rounded-[10px] w-full md:w-[551px] mx-auto bottom-[-25px]">
-              <div className="flex items-center justify-between px-2 md:px-14 flex-wrap">
-                <div
-                  className={`flex items-center gap-2 cursor-pointer ${
-                    categoryTab == "flight"
-                      ? "border-b-4 border-[var(--tertiary)] py-2 "
-                      : ""
-                  }`}
-                  onClick={() => setCategoryTab("flight")}
-                >
-                  <Image src={flight} alt="" className="w-[22px] h-[22px]" />
-                  <span className="text-[var(--secondary)] text-[16px] font-semibold">
-                    Flight
-                  </span>
-                </div>
-                <div
-                  className={`flex items-center gap-2 cursor-pointer ${
-                    categoryTab == "hotel"
-                      ? "border-b-4 border-[var(--tertiary)] py-2 "
-                      : ""
-                  }`}
-                  onClick={() => setCategoryTab("hotel")}
-                >
-                  <Image src={hotel} alt="" className="w-[22px] h-[22px]" />
-                  <span className="text-[var(--secondary)] text-[16px] font-semibold">
-                    Hotel
-                  </span>
-                </div>{" "}
-                <div
-                  className={`flex items-center gap-2 cursor-pointer ${
-                    categoryTab == "tour"
-                      ? "border-b-4 border-[var(--tertiary)] py-2 "
-                      : ""
-                  }`}
-                  onClick={() => setCategoryTab("tour")}
-                >
-                  <Image src={tour} alt="" className="w-[22px] h-[22px]" />
-                  <span className="text-[var(--secondary)] text-[16px] font-semibold">
-                    Tour
-                  </span>
-                </div>{" "}
-                <div
-                  className={`flex items-center gap-2 cursor-pointer ${
-                    categoryTab == "visa"
-                      ? "border-b-4 border-[var(--tertiary)] py-2"
-                      : ""
-                  }`}
-                  onClick={() => setCategoryTab("visa")}
-                >
-                  <Image src={visa} alt="" className="w-[22px] h-[22px]" />
-                  <span className="text-[var(--secondary)] text-[16px] font-semibold">
-                    Visa
-                  </span>
-                </div>
+
+        <div className="px-5 md:px-20 mt-20 ">
+          <div className="relative bg-white p-6  container shadow-xl h-fit md:h-[84px] rounded-[10px] w-full md:w-[551px] mx-auto bottom-[-25px]">
+            <div className="flex items-center justify-between px-2 md:px-14 flex-wrap">
+              <div
+                className={`flex items-center gap-2 cursor-pointer ${
+                  categoryTab == "flight"
+                    ? "border-b-4 border-[var(--tertiary)] py-2 "
+                    : ""
+                }`}
+                onClick={() => setCategoryTab("flight")}
+              >
+                <Image src={flight} alt="" className="w-[22px] h-[22px]" />
+                <span className="text-[var(--secondary)] text-[16px] font-semibold">
+                  Flight
+                </span>
+              </div>
+              <div
+                className={`flex items-center gap-2 cursor-pointer ${
+                  categoryTab == "hotel"
+                    ? "border-b-4 border-[var(--tertiary)] py-2 "
+                    : ""
+                }`}
+                onClick={() => setCategoryTab("hotel")}
+              >
+                <Image src={hotel} alt="" className="w-[22px] h-[22px]" />
+                <span className="text-[var(--secondary)] text-[16px] font-semibold">
+                  Hotel
+                </span>
+              </div>{" "}
+              <div
+                className={`flex items-center gap-2 cursor-pointer ${
+                  categoryTab == "tour"
+                    ? "border-b-4 border-[var(--tertiary)] py-2 "
+                    : ""
+                }`}
+                onClick={() => setCategoryTab("tour")}
+              >
+                <Image src={tour} alt="" className="w-[22px] h-[22px]" />
+                <span className="text-[var(--secondary)] text-[16px] font-semibold">
+                  Tour
+                </span>
+              </div>{" "}
+              <div
+                className={`flex items-center gap-2 cursor-pointer ${
+                  categoryTab == "visa"
+                    ? "border-b-4 border-[var(--tertiary)] py-2"
+                    : ""
+                }`}
+                onClick={() => setCategoryTab("visa")}
+              >
+                <Image src={visa} alt="" className="w-[22px] h-[22px]" />
+                <span className="text-[var(--secondary)] text-[16px] font-semibold">
+                  Visa
+                </span>
               </div>
             </div>
-            <div className="bg-white w-full shadow-lg   h-fit rounded-[10px]  pt-16 px-2 md:px-14 pb-10">
-              {/* Way tabs */}
-              <div className="flex items-center flex-wrap justify-center  gap-5">
-                <div className="  flex justify-center  gap-5 ">
-                  <div className="bg-[#d7cbe9] rounded-full flex items-center gap-4  p-3">
-                    <div className="flex items-center gap-1 cursor-pointer">
-                      <label className="flex items-center gap-1 cursor-pointer">
-                        <input
-                          defaultChecked
-                          type="radio"
-                          className="h-5 w-5 cursor-pointer"
-                          name="route"
-                          value="OneWay"
-                          onChange={(e) => setTripType(e.target.value)}
-                        />
-                        <span className="text-[var(--primary)] text-[15px] font-bold">
-                          One way
-                        </span>
-                      </label>
-                    </div>
-                    <div className="flex items-center gap-1 cursor-pointer">
-                      <label className="flex items-center gap-1 cursor-pointer">
-                        <input
-                          checked={tripType == "Return"}
-                          type="radio"
-                          className="h-5  w-5 cursor-pointer"
-                          name="route"
-                          value="Return"
-                          onChange={(e) => setTripType(e.target.value)}
-                        />
-                        <span className="text-[var(--primary)] text-[15px] font-bold">
-                          Round trip
-                        </span>
-                      </label>
-                    </div>
-                    <div className="flex items-center gap-1 cursor-pointer">
-                      <label className="flex items-center gap-1 cursor-pointer">
-                        <input
-                          checked={tripType == "OpenJaw"}
-                          type="radio"
-                          className="h-5  w-5 cursor-pointer"
-                          name="route"
-                          value="OpenJaw"
-                          disabled
-                          onChange={(e) => setTripType(e.target.value)}
-                        />
-                        
-                        <span
-                          className="text-[var(--primary)] text-[15px] font-bold "
-                          title="Upcoming..."
-                        >
-                          Multi city
-                        </span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="relative">
-                  <div
-                    className="bg-[#d7cbe9] rounded-full flex items-center gap-4  p-3"
-                    onClick={() => handleDoneClick()}
-                  >
-                    <label className="w-full cursor-pointer">
-                      <div className="flex items-center gap-2 ">
-                        {/* <span className="text-[var(--gray)] text-[10px] font-semibold block ">
-                        Traveler, class
-                      </span> */}
-                        <span className="text-[15px] font-semibold block  border-r-2 border-black pr-2">
-                          {adults + children + infants > 1 ? (
-                            <>
-                              {adults + children + infants + " " + "Travelers"}
-                            </>
-                          ) : (
-                            <>
-                              {adults + children + infants + " " + "Traveler"}
-                            </>
-                          )}
-                        </span>
-                        <span className="text-[15px] font-semibold">
-                          {flightClass}
-                        </span>
-                      </div>
+          </div>
+          <div className="bg-white w-full shadow-lg   h-fit rounded-[10px]  pt-16 px-2 md:px-14 pb-10">
+            {/* Way tabs */}
+            <div className="flex items-center flex-wrap justify-center  gap-5">
+              <div className="  flex justify-center  gap-5 ">
+                <div className="bg-[#d7cbe9] rounded-full flex items-center gap-4  p-3">
+                  <div className="flex items-center gap-1 cursor-pointer">
+                    <label className="flex items-center gap-1 cursor-pointer">
+                      <input
+                        defaultChecked
+                        type="radio"
+                        className="h-5 w-5 cursor-pointer"
+                        name="route"
+                        value="OneWay"
+                        onChange={(e) => setTripType(e.target.value)}
+                      />
+                      <span className="text-[var(--primary)] text-[15px] font-bold">
+                        One way
+                      </span>
                     </label>
                   </div>
-                  <div>
-                    {travelerInputShow && (
-                      <div
-                        className="absolute end-0 z-10 mt-2  rounded-md border border-gray-100 bg-white shadow-lg"
-                        role="menu"
+                  <div className="flex items-center gap-1 cursor-pointer">
+                    <label className="flex items-center gap-1 cursor-pointer">
+                      <input
+                        checked={tripType == "Return"}
+                        type="radio"
+                        className="h-5  w-5 cursor-pointer"
+                        name="route"
+                        value="Return"
+                        onChange={(e) => setTripType(e.target.value)}
+                      />
+                      <span className="text-[var(--primary)] text-[15px] font-bold">
+                        Round trip
+                      </span>
+                    </label>
+                  </div>
+                  <div className="flex items-center gap-1 cursor-pointer">
+                    <label className="flex items-center gap-1 cursor-pointer">
+                      <input
+                        checked={tripType == "OpenJaw"}
+                        type="radio"
+                        className="h-5  w-5 cursor-pointer"
+                        name="route"
+                        value="OpenJaw"
+                        disabled
+                        onChange={(e) => setTripType(e.target.value)}
+                      />
+
+                      <span
+                        className="text-[var(--primary)] text-[15px] font-bold "
+                        title="Upcoming..."
                       >
-                        <div className="w-full p-4 bg-white rounded-lg shadow-md">
-                          {/* Adults */}
-                          <div className="flex items-center justify-between mb-4">
-                            <div>
-                              <h3 className="font-semibold">Adults</h3>
-                              <p className="text-sm text-gray-500">
-                                12 years and above
-                              </p>
-                            </div>
-                            <div className="flex items-center">
-                              <button
-                                onClick={() =>
-                                  handleDecrement(setAdults, adults)
-                                }
-                                className="text-lg font-semibold px-2"
-                              >
-                                −
-                              </button>
-                              <span className="mx-2">{adults}</span>
-                              <button
-                                onClick={() =>
-                                  handleIncrement(setAdults, adults)
-                                }
-                                className="text-lg font-semibold px-2"
-                              >
-                                +
-                              </button>
-                            </div>
-                          </div>
+                        Multi city
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
 
-                          {/* Children */}
-                          <div className="flex items-center justify-between mb-4">
-                            <div>
-                              <h3 className="font-semibold">Children</h3>
-                              <p className="text-sm text-gray-500">
-                                2–11 years
-                              </p>
-                            </div>
-                            <div className="flex items-center">
-                              <button
-                                onClick={handleChildrenDecrement}
-                                className="text-lg font-semibold px-2"
-                              >
-                                −
-                              </button>
-                              <span className="mx-2">{children}</span>
-                              <button
-                                onClick={handleChildrenIncrement}
-                                className="text-lg font-semibold px-2"
-                              >
-                                +
-                              </button>
-                            </div>
+              <div className="relative">
+                <div
+                  className="bg-[#d7cbe9] rounded-full flex items-center gap-4  p-3"
+                  onClick={() => handleDoneClick()}
+                >
+                  <label className="w-full cursor-pointer">
+                    <div className="flex items-center gap-2 ">
+                      {/* <span className="text-[var(--gray)] text-[10px] font-semibold block ">
+                        Traveler, class
+                      </span> */}
+                      <span className="text-[15px] font-semibold block  border-r-2 border-black pr-2">
+                        {adults + children + infants > 1 ? (
+                          <>{adults + children + infants + " " + "Travelers"}</>
+                        ) : (
+                          <>{adults + children + infants + " " + "Traveler"}</>
+                        )}
+                      </span>
+                      <span className="text-[15px] font-semibold">
+                        {flightClass}
+                      </span>
+                    </div>
+                  </label>
+                </div>
+                <div>
+                  {travelerInputShow && (
+                    <div
+                      className="absolute end-0 z-10 mt-2  rounded-md border border-gray-100 bg-white shadow-lg"
+                      role="menu"
+                    >
+                      <div className="w-full p-4 bg-white rounded-lg shadow-md">
+                        {/* Adults */}
+                        <div className="flex items-center justify-between mb-4">
+                          <div>
+                            <h3 className="font-semibold">Adults</h3>
+                            <p className="text-sm text-gray-500">
+                              12 years and above
+                            </p>
                           </div>
+                          <div className="flex items-center">
+                            <button
+                              onClick={() => handleDecrement(setAdults, adults)}
+                              className="text-lg font-semibold px-2"
+                            >
+                              −
+                            </button>
+                            <span className="mx-2">{adults}</span>
+                            <button
+                              onClick={() => handleIncrement(setAdults, adults)}
+                              className="text-lg font-semibold px-2"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
 
-                          {/* Children Ages */}
-                          {/* {children > 0 && (
+                        {/* Children */}
+                        <div className="flex items-center justify-between mb-4">
+                          <div>
+                            <h3 className="font-semibold">Children</h3>
+                            <p className="text-sm text-gray-500">2–11 years</p>
+                          </div>
+                          <div className="flex items-center">
+                            <button
+                              onClick={handleChildrenDecrement}
+                              className="text-lg font-semibold px-2"
+                            >
+                              −
+                            </button>
+                            <span className="mx-2">{children}</span>
+                            <button
+                              onClick={handleChildrenIncrement}
+                              className="text-lg font-semibold px-2"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Children Ages */}
+                        {/* {children > 0 && (
                             <div className="mb-4">
                               <h4 className="font-semibold">Child Ages</h4>
                               <div className="flex space-x-2 mt-2">
@@ -567,308 +564,306 @@ const FlightSearch = () => {
                             </div>
                           )} */}
 
-                          {/* Infants */}
-                          <div className="flex items-center justify-between mb-4">
-                            <div>
-                              <h3 className="font-semibold">Infant</h3>
-                              <p className="text-sm text-gray-500">
-                                Below 2 years
-                              </p>
-                            </div>
-                            <div className="flex items-center">
-                              <button
-                                onClick={() =>
-                                  handleDecrement(setInfants, infants)
-                                }
-                                className="text-lg font-semibold px-2"
-                              >
-                                −
-                              </button>
-                              <span className="mx-2">{infants}</span>
-                              <button
-                                onClick={() =>
-                                  handleIncrement(setInfants, infants)
-                                }
-                                className="text-lg font-semibold px-2"
-                              >
-                                +
-                              </button>
-                            </div>
+                        {/* Infants */}
+                        <div className="flex items-center justify-between mb-4">
+                          <div>
+                            <h3 className="font-semibold">Infant</h3>
+                            <p className="text-sm text-gray-500">
+                              Below 2 years
+                            </p>
                           </div>
-
-                          {/* Class Selection */}
-                          <div className="mb-4">
-                            <h3 className="font-semibold mb-2">Class</h3>
-                            <div className="flex items-center space-x-4">
-                              <div>
-                                <label className="flex items-center">
-                                  <input
-                                    type="radio"
-                                    name="flightClass"
-                                    value="Economy"
-                                    checked={flightClass === "Economy"}
-                                    onChange={() => setFlightClass("Economy")}
-                                    className="mr-2"
-                                  />
-                                  Economy
-                                </label>
-                                <label className="flex items-center">
-                                  <input
-                                    type="radio"
-                                    name="flightClass"
-                                    value="Business"
-                                    checked={flightClass === "Business"}
-                                    onChange={() => setFlightClass("Business")}
-                                    className="mr-2"
-                                  />
-                                  Business
-                                </label>
-                              </div>
-                              <div>
-                                <label className="flex items-center">
-                                  <input
-                                    type="radio"
-                                    name="flightClass"
-                                    value="First"
-                                    checked={flightClass === "First"}
-                                    onChange={() => setFlightClass("First")}
-                                    className="mr-2"
-                                  />
-                                  First
-                                </label>
-                                <label className="flex items-center">
-                                  <input
-                                    type="radio"
-                                    name="flightClass"
-                                    value="Premium Economy"
-                                    checked={flightClass === "Premium Economy"}
-                                    onChange={() =>
-                                      setFlightClass("Premium Economy")
-                                    }
-                                    className="mr-2"
-                                  />
-                                  Premium
-                                </label>
-                              </div>
-                            </div>
+                          <div className="flex items-center">
+                            <button
+                              onClick={() =>
+                                handleDecrement(setInfants, infants)
+                              }
+                              className="text-lg font-semibold px-2"
+                            >
+                              −
+                            </button>
+                            <span className="mx-2">{infants}</span>
+                            <button
+                              onClick={() =>
+                                handleIncrement(setInfants, infants)
+                              }
+                              className="text-lg font-semibold px-2"
+                            >
+                              +
+                            </button>
                           </div>
-
-                          {/* Done Button */}
-                          <button
-                            className="w-full bg-[var(--primary-btn)] text-white font-semibold py-2 rounded"
-                            onClick={() => handleDoneClick()}
-                          >
-                            Done
-                          </button>
                         </div>
+
+                        {/* Class Selection */}
+                        <div className="mb-4">
+                          <h3 className="font-semibold mb-2">Class</h3>
+                          <div className="flex items-center space-x-4">
+                            <div>
+                              <label className="flex items-center">
+                                <input
+                                  type="radio"
+                                  name="flightClass"
+                                  value="Economy"
+                                  checked={flightClass === "Economy"}
+                                  onChange={() => setFlightClass("Economy")}
+                                  className="mr-2"
+                                />
+                                Economy
+                              </label>
+                              <label className="flex items-center">
+                                <input
+                                  type="radio"
+                                  name="flightClass"
+                                  value="Business"
+                                  checked={flightClass === "Business"}
+                                  onChange={() => setFlightClass("Business")}
+                                  className="mr-2"
+                                />
+                                Business
+                              </label>
+                            </div>
+                            <div>
+                              <label className="flex items-center">
+                                <input
+                                  type="radio"
+                                  name="flightClass"
+                                  value="First"
+                                  checked={flightClass === "First"}
+                                  onChange={() => setFlightClass("First")}
+                                  className="mr-2"
+                                />
+                                First
+                              </label>
+                              <label className="flex items-center">
+                                <input
+                                  type="radio"
+                                  name="flightClass"
+                                  value="Premium Economy"
+                                  checked={flightClass === "Premium Economy"}
+                                  onChange={() =>
+                                    setFlightClass("Premium Economy")
+                                  }
+                                  className="mr-2"
+                                />
+                                Premium
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Done Button */}
+                        <button
+                          className="w-full bg-[var(--primary-btn)] text-white font-semibold py-2 rounded"
+                          onClick={() => handleDoneClick()}
+                        >
+                          Done
+                        </button>
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               </div>
-              {/* inputs section */}
-              <div>
-                <div className="mt-5 grid grid-cols-1 md:grid-cols-7 items-center gap-2 w-full">
-                  <div className="flex items-center col-span-1  md:col-span-4 w-full">
-                    <div className="relative w-full">
-                      <div className="border-2 border-[#BEA8A8] pt-2 ps-5 w-full rounded-l-md  h-[69px]">
-                        <label
-                          className="w-full cursor-pointer"
-                          onClick={() =>
-                            setIsOpenDestination(!isOpenDestination)
+            </div>
+            {/* inputs section */}
+            <div>
+              <div className="mt-5 grid grid-cols-1 md:grid-cols-7 items-center gap-2 w-full">
+                <div className="flex items-center col-span-1  md:col-span-4 w-full">
+                  <div className="relative w-full">
+                    <div className="border-2 border-[#BEA8A8] pt-2 ps-5 w-full rounded-l-md  h-[69px]">
+                      <label
+                        className="w-full cursor-pointer"
+                        onClick={() => setIsOpenDestination(!isOpenDestination)}
+                      >
+                        <input
+                          value={searchQueryDestination}
+                          type="text"
+                          onChange={(e) =>
+                            setSearchQueryDestination(e.target.value)
                           }
-                        >
-                          <input
-                            value={searchQueryDestination}
-                            type="text"
-                            onChange={(e) =>
-                              setSearchQueryDestination(e.target.value)
-                            }
-                            placeholder="From ?"
-                            className="w-full focus:outline-none bg-transparent "
-                          />
-                          <div className="block">
-                            <span className="text-[8px] md:text-[15px] font-semibold ">
-                              {originAirport?.label} {originAirport?.value}
-                            </span>
-                          </div>
-                        </label>
-                      </div>
-                      {isOpenDestination ? (
-                        <div className="w-full mx-auto bg-white rounded-xl shadow-md   absolute top-20  max-h-[600px] z-10 overflow-y-auto">
-                          <div className="p-8 ">
-                            <ul className="space-y-4">
-                              {filteredAirportsDestination.map(
-                                (destination, index) => (
-                                  <li
-                                    key={index}
-                                    className="flex items-center space-x-4 cursor-pointer"
-                                    onClick={() => {
-                                      setSearchQueryDestination(
-                                        destination.value
-                                      );
-                                      setIsOpenDestination(false);
-                                      setOriginAirport({
-                                        label: destination.label,
-                                        value: destination.value,
-                                        code: destination.name,
-                                      });
-                                    }}
-                                  >
-                                    <div className="flex-grow">
-                                      <p className="font-semibold">
-                                        {destination.name}, {destination.value}
-                                      </p>
-                                      <p className="text-sm text-gray-500">
-                                        {destination.label}
-                                      </p>
-                                    </div>
-                                  </li>
-                                )
-                              )}
-                            </ul>
-                          </div>
+                          placeholder="From ?"
+                          className="w-full focus:outline-none bg-transparent "
+                        />
+                        <div className="block">
+                          <span className="text-[8px] md:text-[15px] font-semibold ">
+                            {originAirport?.label} {originAirport?.value}
+                          </span>
                         </div>
-                      ) : (
-                        ""
-                      )}
+                      </label>
                     </div>
-                    <div className="relative w-full ">
-                      <div className="border-2  border-l-0 border-[#BEA8A8] pt-2 ps-5 rounded-r-md  h-[69px]">
-                        <label
-                          className="w-full cursor-pointer"
-                          onClick={() => setIsOpenArrival(!isOpenArrival)}
-                        >
-                          <input
-                            value={searchQueryArrival}
-                            type="text"
-                            onChange={(e) =>
-                              setSearchQueryArrival(e.target.value)
-                            }
-                            placeholder="To ?"
-                            className="w-full focus:outline-none  bg-transparent"
-                          />
-                          <div className="block">
-                            <span className="text-[8px] md:text-[15px] font-semibold">
-                              {destinationAirport?.label}{" "}
-                              {destinationAirport?.value}
-                            </span>
-                          </div>
-                        </label>
-                      </div>
-                      {isOpenArrival ? (
-                        <div className=" mx-auto bg-white rounded-xl shadow-md  absolute top-20  max-h-[600px] z-10 overflow-y-auto">
-                          <div className="p-8 ">
-                            <ul className="space-y-4">
-                              {filteredAirportsArrival.map((arrival, index) => (
+                    {isOpenDestination ? (
+                      <div className="w-full mx-auto bg-white rounded-xl shadow-md   absolute top-20  max-h-[600px] z-10 overflow-y-auto">
+                        <div className="p-8 ">
+                          <ul className="space-y-4">
+                            {filteredAirportsDestination.map(
+                              (destination, index) => (
                                 <li
                                   key={index}
                                   className="flex items-center space-x-4 cursor-pointer"
                                   onClick={() => {
-                                    setSearchQueryArrival(arrival.value);
-                                    setIsOpenArrival(false);
-                                    setDestinationAirport({
-                                      code: arrival.name,
-                                      value: arrival.value,
-                                      label: arrival.label,
+                                    setSearchQueryDestination(
+                                      destination.value
+                                    );
+                                    setIsOpenDestination(false);
+                                    setOriginAirport({
+                                      label: destination.label,
+                                      value: destination.value,
+                                      code: destination.name,
                                     });
                                   }}
                                 >
                                   <div className="flex-grow">
                                     <p className="font-semibold">
-                                      {arrival.name}, {arrival.value}
+                                      {destination.name}, {destination.value}
                                     </p>
                                     <p className="text-sm text-gray-500">
-                                      {arrival.label}
+                                      {destination.label}
                                     </p>
                                   </div>
                                 </li>
-                              ))}
-                            </ul>
-                          </div>
+                              )
+                            )}
+                          </ul>
                         </div>
-                      ) : (
-                        ""
-                      )}
-                    </div>
-                  </div>
-                  <div
-                    className={`border-2 border-[#BEA8A8] pt-2 ps-5 rounded-md col-span-2 
-                      h-[69px] flex `}
-                  >
-                    <label className="w-full cursor-pointer">
-                      <div className="block">
-                        <span className="text-[var(--gray)] text-[15px] font-semibold block ">
-                          Journey Date
-                        </span>
                       </div>
-
-                      <DatePicker
-                        minDate={new Date()}
-                        selected={departureDate}
-                        className="custom-datepicker-input bg-transparent"
-                        calendarClassName="custom-datepicker-calendar"
-                        onChange={(date) => setDepartureDate(date)}
-                      />
-                    </label>
-                    {tripType == "Return" && (
-                      <label className="w-full cursor-pointer border-s-2 ps-2 ">
-                        <div className="block">
-                          <span className="text-[var(--gray)] text-[15px] font-semibold block ">
-                            Return Date
-                          </span>
-                        </div>
-
-                        {/* Conditionally render the DayPicker */}
-                        <DatePicker
-                          minDate={departureDate}
-                          selected={returnDate}
-                          className="custom-datepicker-input bg-transparent"
-                          calendarClassName="custom-datepicker-calendar"
-                          onChange={(date) => setReturnDate(date)}
-                        />
-                      </label>
+                    ) : (
+                      ""
                     )}
                   </div>
-
-                  <div className="col-span-1">
-                    {tripType !== "OpenJaw" ? (
-                      <div>
-                        <button
-                          onClick={fetchFlightData}
-                          className="bg-[var(--primary-btn)] text-white h-[69px] w-full rounded-xl"
-                        >
-                          {/* <Image
-                            src={search}
-                            alt="Search"
-                            className="mx-auto w-[50px] p-3"
-                          /> */}
-                          Search flights
-                        </button>
+                  <div className="relative w-full ">
+                    <div className="border-2  border-l-0 border-[#BEA8A8] pt-2 ps-5 rounded-r-md  h-[69px]">
+                      <label
+                        className="w-full cursor-pointer"
+                        onClick={() => setIsOpenArrival(!isOpenArrival)}
+                      >
+                        <input
+                          value={searchQueryArrival}
+                          type="text"
+                          onChange={(e) =>
+                            setSearchQueryArrival(e.target.value)
+                          }
+                          placeholder="To ?"
+                          className="w-full focus:outline-none  bg-transparent"
+                        />
+                        <div className="block">
+                          <span className="text-[8px] md:text-[15px] font-semibold">
+                            {destinationAirport?.label}{" "}
+                            {destinationAirport?.value}
+                          </span>
+                        </div>
+                      </label>
+                    </div>
+                    {isOpenArrival ? (
+                      <div className=" mx-auto bg-white rounded-xl shadow-md  absolute top-20  max-h-[600px] z-10 overflow-y-auto">
+                        <div className="p-8 ">
+                          <ul className="space-y-4">
+                            {filteredAirportsArrival.map((arrival, index) => (
+                              <li
+                                key={index}
+                                className="flex items-center space-x-4 cursor-pointer"
+                                onClick={() => {
+                                  setSearchQueryArrival(arrival.value);
+                                  setIsOpenArrival(false);
+                                  setDestinationAirport({
+                                    code: arrival.name,
+                                    value: arrival.value,
+                                    label: arrival.label,
+                                  });
+                                }}
+                              >
+                                <div className="flex-grow">
+                                  <p className="font-semibold">
+                                    {arrival.name}, {arrival.value}
+                                  </p>
+                                  <p className="text-sm text-gray-500">
+                                    {arrival.label}
+                                  </p>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
                       </div>
                     ) : (
                       ""
                     )}
                   </div>
                 </div>
-                {tripType == "OpenJaw" && (
-                  <div>
-                    {cities?.map((city) => (
-                      <div
-                        className="mt-5 flex items-center justify-evenly gap-5 flex-wrap"
-                        key={city.id}
+                <div
+                  className={`border-2 border-[#BEA8A8] pt-2 ps-5 rounded-md col-span-2 
+                      h-[69px] flex `}
+                >
+                  <label className="w-full cursor-pointer">
+                    <div className="block">
+                      <span className="text-[var(--gray)] text-[15px] font-semibold block ">
+                        Journey Date
+                      </span>
+                    </div>
+
+                    <DatePicker
+                      minDate={new Date()}
+                      selected={departureDate}
+                      className="custom-datepicker-input bg-transparent"
+                      calendarClassName="custom-datepicker-calendar"
+                      onChange={(date) => setDepartureDate(date)}
+                    />
+                  </label>
+                  {tripType == "Return" && (
+                    <label className="w-full cursor-pointer border-s-2 ps-2 ">
+                      <div className="block">
+                        <span className="text-[var(--gray)] text-[15px] font-semibold block ">
+                          Return Date
+                        </span>
+                      </div>
+
+                      {/* Conditionally render the DayPicker */}
+                      <DatePicker
+                        minDate={departureDate}
+                        selected={returnDate}
+                        className="custom-datepicker-input bg-transparent"
+                        calendarClassName="custom-datepicker-calendar"
+                        onChange={(date) => setReturnDate(date)}
+                      />
+                    </label>
+                  )}
+                </div>
+
+                <div className="col-span-1">
+                  {tripType !== "OpenJaw" ? (
+                    <div>
+                      <button
+                        onClick={fetchFlightData}
+                        className="bg-[var(--primary-btn)] text-white h-[69px] w-full rounded-xl"
                       >
-                        <div className="border-2 border-[#BEA8A8] pt-2 ps-5 rounded-[13px] w-[234px] h-[79px]">
-                          <label className="w-full cursor-pointer">
-                            <div className="block">
-                              <span className="text-[var(--gray)] text-[10px] font-semibold block ">
-                                FROM
-                              </span>
-                              <span className="text-[12px] font-semibold">
-                                Select a city
-                              </span>
-                            </div>
-                            {/* <Select
+                        {/* <Image
+                            src={search}
+                            alt="Search"
+                            className="mx-auto w-[50px] p-3"
+                          /> */}
+                        Search flights
+                      </button>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </div>
+              {tripType == "OpenJaw" && (
+                <div>
+                  {cities?.map((city) => (
+                    <div
+                      className="mt-5 flex items-center justify-evenly gap-5 flex-wrap"
+                      key={city.id}
+                    >
+                      <div className="border-2 border-[#BEA8A8] pt-2 ps-5 rounded-[13px] w-[234px] h-[79px]">
+                        <label className="w-full cursor-pointer">
+                          <div className="block">
+                            <span className="text-[var(--gray)] text-[10px] font-semibold block ">
+                              FROM
+                            </span>
+                            <span className="text-[12px] font-semibold">
+                              Select a city
+                            </span>
+                          </div>
+                          {/* <Select
                             className="cursor-pointer"
                             closeMenuOnSelect={true}
                             components={{
@@ -887,19 +882,19 @@ const FlightSearch = () => {
                             options={options}
                             styles={customStyles}
                           /> */}
-                          </label>
-                        </div>
-                        <div className="border-2 border-[#BEA8A8] pt-2 ps-5 rounded-[13px] w-[234px] h-[79px]">
-                          <label className="w-full cursor-pointer">
-                            <div className="block">
-                              <span className="text-[var(--gray)] text-[10px] font-semibold block ">
-                                To
-                              </span>
-                              <span className="text-[12px] font-semibold">
-                                Select a city
-                              </span>
-                            </div>
-                            {/* <Select
+                        </label>
+                      </div>
+                      <div className="border-2 border-[#BEA8A8] pt-2 ps-5 rounded-[13px] w-[234px] h-[79px]">
+                        <label className="w-full cursor-pointer">
+                          <div className="block">
+                            <span className="text-[var(--gray)] text-[10px] font-semibold block ">
+                              To
+                            </span>
+                            <span className="text-[12px] font-semibold">
+                              Select a city
+                            </span>
+                          </div>
+                          {/* <Select
                             className="cursor-pointer"
                             closeMenuOnSelect={true}
                             components={{
@@ -917,81 +912,80 @@ const FlightSearch = () => {
                             options={options}
                             styles={customStyles}
                           /> */}
-                          </label>
-                        </div>
-                        <div
-                          className={`border-2 border-[#BEA8A8] pt-2 ps-5 rounded-[13px] w-[234px]  h-[79px] flex `}
-                        >
-                          <label className="w-full cursor-pointer ">
-                            <div className="block">
-                              <span className="text-[var(--gray)] text-[9px] font-semibold block ">
-                                Journey Date
-                              </span>
-                              <span className="text-[12px]">
-                                {/* {flyFromPlaceholder.value} */}
-                                Saturday
-                              </span>
-                            </div>
-
-                            {/* Conditionally render the DayPicker */}
-                            <DatePicker
-                              minDate={new Date()}
-                              selected={departureDate}
-                              className="custom-datepicker-input"
-                              calendarClassName="custom-datepicker-calendar"
-                              onChange={(date) => setDepartureDate(date)}
-                            />
-                          </label>
-                        </div>
-                        <div class="flex items-center border border-gray-300 rounded-[13px] w-[234px]  h-[79px] overflow-hidden ">
-                          <button
-                            class="px-4 py-2 text-gray-600 text-[12px] w-[70%]"
-                            onClick={handleAddCity}
-                            disabled={cities.length > 2}
-                          >
-                            Add Another City
-                          </button>
-                          <button
-                            class="border-l border-gray-300 p-2 flex items-center justify-center text-gray-400 hover:text-gray-600  w-[25%]  h-full "
-                            onClick={handleDeleteCity}
-                          >
-                            <span className="bg-gray-200 rounded-full w-8 h-8 flex justify-center items-center">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-6 w-6 text-white font-bold"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M6 18L18 6M6 6l12 12"
-                                />
-                              </svg>
-                            </span>
-                          </button>
-                        </div>
+                        </label>
                       </div>
-                    ))}
-                    <div className="flex justify-end mt-5">
-                      <button
-                        className="bg-[var(--primary-btn)] h-[54px] w-[173px] rounded-md flex items-center justify-center"
-                        onClick={fetchFlightData}
+                      <div
+                        className={`border-2 border-[#BEA8A8] pt-2 ps-5 rounded-[13px] w-[234px]  h-[79px] flex `}
                       >
-                        <Image src={search} alt="" className=" w-[50px] p-3" />
-                        <span className="text-[20px] text-white underline font-bold py-1">
-                          Search
-                        </span>
-                      </button>
+                        <label className="w-full cursor-pointer ">
+                          <div className="block">
+                            <span className="text-[var(--gray)] text-[9px] font-semibold block ">
+                              Journey Date
+                            </span>
+                            <span className="text-[12px]">
+                              {/* {flyFromPlaceholder.value} */}
+                              Saturday
+                            </span>
+                          </div>
+
+                          {/* Conditionally render the DayPicker */}
+                          <DatePicker
+                            minDate={new Date()}
+                            selected={departureDate}
+                            className="custom-datepicker-input"
+                            calendarClassName="custom-datepicker-calendar"
+                            onChange={(date) => setDepartureDate(date)}
+                          />
+                        </label>
+                      </div>
+                      <div class="flex items-center border border-gray-300 rounded-[13px] w-[234px]  h-[79px] overflow-hidden ">
+                        <button
+                          class="px-4 py-2 text-gray-600 text-[12px] w-[70%]"
+                          onClick={handleAddCity}
+                          disabled={cities.length > 2}
+                        >
+                          Add Another City
+                        </button>
+                        <button
+                          class="border-l border-gray-300 p-2 flex items-center justify-center text-gray-400 hover:text-gray-600  w-[25%]  h-full "
+                          onClick={handleDeleteCity}
+                        >
+                          <span className="bg-gray-200 rounded-full w-8 h-8 flex justify-center items-center">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              class="h-6 w-6 text-white font-bold"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M6 18L18 6M6 6l12 12"
+                              />
+                            </svg>
+                          </span>
+                        </button>
+                      </div>
                     </div>
+                  ))}
+                  <div className="flex justify-end mt-5">
+                    <button
+                      className="bg-[var(--primary-btn)] h-[54px] w-[173px] rounded-md flex items-center justify-center"
+                      onClick={fetchFlightData}
+                    >
+                      <Image src={search} alt="" className=" w-[50px] p-3" />
+                      <span className="text-[20px] text-white underline font-bold py-1">
+                        Search
+                      </span>
+                    </button>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
-     
+        </div>
       </div>
     </section>
   );
