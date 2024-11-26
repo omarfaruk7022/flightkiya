@@ -22,9 +22,8 @@ export default function Navbar() {
   const router = useRouter();
 
   const handleLogOut = () => {
-    Cookies.remove("auth-token");
-
     setToken(null);
+    router.push("/");
   };
   useEffect(() => {
     const handleScroll = () => {
