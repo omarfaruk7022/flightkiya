@@ -31,6 +31,8 @@ const Login = () => {
     queryKey: ["login", payload],
     queryFn: () => fetchData(`auth/login`, "POST", payload),
     enabled: false,
+    staleTime: 0, 
+    cacheTime: 0, 
   });
 
   const handleLogin = (e) => {
@@ -54,7 +56,7 @@ const Login = () => {
       setPassword("");
 
       setToken(loginData?.token);
-      // Cookies.set("auth-token", loginData?.token, { expires: 1, path: "/" }); 
+      // Cookies.set("auth-token", loginData?.token, { expires: 1, path: "/" });
       router.push("/profile");
     } else {
       toast.error(loginData?.error.message);
