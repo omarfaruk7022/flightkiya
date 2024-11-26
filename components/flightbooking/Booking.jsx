@@ -238,29 +238,35 @@ const Booking = () => {
     }
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const formattedDate = `${date.getFullYear()}-${String(
+      date.getMonth() + 1
+    ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}T00:00:00`;
+    return formattedDate;
+  };
+
   const payload = {
     AirTravelers: travelersInfo.map((passenger) => ({
       PassengerType: passenger.Code,
-      Gender: passenger.Gender.value.charAt(0).toUpperCase(), // 'F', 'M', etc.
+      Gender: passenger.Gender.value.charAt(0).toUpperCase(),
       PassengerName: {
         PassengerTitle: passenger.Title,
         PassengerFirstName: passenger.FirstName,
         PassengerLastName: passenger.LastName,
       },
-      DateOfBirth: new Date(passenger.DateOfBirth).toISOString(), // Ensure ISO format
+      DateOfBirth: formatDate(passenger.DateOfBirth),
       Passport: {
         PassportNumber: passenger.PassportNumber,
-        ExpiryDate: new Date(passenger.ExpiryDate).toISOString(), // Ensure ISO format
+        ExpiryDate: formatDate(passenger.ExpiryDate),
         Country: passenger.Nationality.value,
       },
       PassengerNationality: passenger.PassengerNationality.value,
       NationalID: passenger.PassengerNationality.value,
     })),
     CountryCode: countryCode,
-    AreaCode: "125",
     PhoneNumber: contactNumber,
     Email: contactEmail,
-    PostCode: "154",
   };
   const {
     data: bookingData,
@@ -274,6 +280,7 @@ const Booking = () => {
   });
   const handleBooking = () => {
     bookingDataRefetch();
+    // console.log(payload);
   };
 
   useEffect(() => {
@@ -740,26 +747,26 @@ const Booking = () => {
             </button>
             {/* Modal */}
             <Modal isOpen={isModalOpen} onClose={closeModal}>
-              <div className="space-y-4 w-[800px]">
+              <div className="space-y-4 w-full">
                 <h2 className="text-[26px] flex items-center gap-2 font-semibold text-blue-800">
                   <span>
                     <MdReviews className=" w-9 h-9" />
                   </span>
                   <span> Review Details</span>
                 </h2>
-                <div className="min-w-full max-w-[790px] bg-red-100 p-2 rounded-lg flex flex-col">
+                <div className="w-full  bg-red-100 p-2 rounded-lg flex flex-col">
                   <p className=" text-red-500 font-bold">Important</p>
                   <p>
                     {" "}
                     Please recheck the traveler <b>Name</b> and <b>Details</b>{" "}
-                    with your <b>NID</b> or the airlines will penalise you for
+                    with your <b>NID</b> or the airlines will penalize you for
                     providing incorrect information.
                   </p>
                 </div>
                 <div className="mt-4 ">
                   <h2>Traveler Details</h2>
                   {travelersInfo?.map((passenger) => (
-                    <div className="min-w-full max-w-[790px] mt-3 h-42 border-[2px] p-5 rounded-lg overflow-y-scroll">
+                    <div className="w-full mt-3 h-42 border-[2px] p-5 rounded-lg ">
                       <p className=" font-bold text-xl">
                         {passenger?.Code} {passenger?.PassengerNumber}
                       </p>
@@ -815,19 +822,23 @@ const Booking = () => {
 
                   <button
                     onClick={handleBooking}
+                    disabled={bookingDataLoading}
                     className="bg-blue-600 text-white w-[300px] py-4 px-4 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none"
                   >
                     {bookingDataLoading ? (
-                      <Oval
-                        visible={true}
-                        height="25"
-                        width="25"
-                        secondaryColor="#fff"
-                        color="#fff"
-                        ariaLabel="oval-loading"
-                        wrapperStyle={{}}
-                        wrapperClass=""
-                      />
+                      <div className="flex justify-center items-center">
+                        {" "}
+                        <Oval
+                          visible={true}
+                          height="25"
+                          width="25"
+                          secondaryColor="#fff"
+                          color="#fff"
+                          ariaLabel="oval-loading"
+                          wrapperStyle={{}}
+                          wrapperClass=""
+                        />
+                      </div>
                     ) : (
                       <span> Confirm Booking</span>
                     )}

@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import Bkash from "@/public/icons/bkash.png";
+import stripe from "@/public/images/stripe.png";
 import Flightkiya from "@/public/icons/logoFlight.jpg";
 import flightStore from "@/store";
 import { fetchData } from "@/utils/fetcher";
@@ -84,7 +84,7 @@ function PayBill() {
           {/* Payment Details */}
           <main className="flex-1 mx-4 h-[650px] bg-white p-8 rounded-md shadow-md space-y-8">
             <h2 className="text-xl mb-28 text-center font-semibold text-gray-800">
-              You will be directed to the bKash platform where you can complete
+              You will be directed to the Stripe platform where you can complete
               your purchase.
             </h2>
             <div className="flex items-center justify-center flex-wrap space-x-2">
@@ -95,7 +95,7 @@ function PayBill() {
                 height={70}
               />
               <span className="text-xl">→</span>
-              <Image src={Bkash} alt="bKash Logo" width={200} height={70} />
+              <Image src={stripe} alt="Stripe logo" width={180} height={70} />
             </div>
             <p className=" text-gray-600 text-center ml-10 mr-10">
               By continuing to pay, I understand and agree with the{" "}

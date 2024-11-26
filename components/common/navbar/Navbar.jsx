@@ -11,14 +11,21 @@ import tour from "@/public/flight (3).svg";
 import visa from "@/public/flight (4).svg";
 import aboutImg from "@/public/icons/aboutImg.png";
 import Link from "next/link";
-
-
-
+import flightStore from "@/store";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 export default function Navbar() {
   const [scrollY, setScrollY] = useState(0); // State to track scroll position
   const [isScrollingDown, setIsScrollingDown] = useState(false); // State to track scroll direction
   const [categoryTab, setCategoryTab] = useState("flight");
+  const { token, setToken } = flightStore();
+  const router = useRouter();
 
+  const handleLogOut = () => {
+    Cookies.remove("auth-token");
+
+    setToken(null);
+  };
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -85,12 +92,28 @@ export default function Navbar() {
           </div>
 
           {/* Sign In Button */}
-          <Link href="http://localhost:3000/auth-login">
-          <button  className="w-[90px] h-[40px] bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold text-[12px]">
-            Sign in
-          </button>
-          </Link>
-          
+          {token ? (
+            <>
+              <Link href="/profile">
+                <button className="w-[90px] h-[40px] bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold text-[12px]">
+                  Profile
+                </button>
+              </Link>
+
+              <button
+                onClick={handleLogOut}
+                className="w-[90px] h-[40px] bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold text-[12px]"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <Link href="/auth-login">
+              <button className="w-[90px] h-[40px] bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold text-[12px]">
+                Sign in
+              </button>
+            </Link>
+          )}
         </div>
       </nav>
       <div
@@ -114,12 +137,11 @@ export default function Navbar() {
                 onClick={() => setCategoryTab("flight")}
               >
                 <div className=" flex flex-col items-center  gap-1">
-                <Image src={flight} alt="" className="w-[30px] h-[30px]" />
-                <span className="text-[var(--secondary)] text-[16px] font-semibold">
-                  Flight
-                </span>
+                  <Image src={flight} alt="" className="w-[30px] h-[30px]" />
+                  <span className="text-[var(--secondary)] text-[16px] font-semibold">
+                    Flight
+                  </span>
                 </div>
-                 
               </div>
               <div
                 className={`flex items-center gap-2 cursor-pointer ${
@@ -129,13 +151,12 @@ export default function Navbar() {
                 }`}
                 onClick={() => setCategoryTab("hotel")}
               >
-                 <div className=" flex flex-col items-center gap-1">
-                 <Image src={hotel} alt="" className="w-[28px] h-[28px]" />
-                <span className="text-[var(--secondary)] text-[16px] font-semibold">
-                  Hotel
-                </span>
-                 </div>
-               
+                <div className=" flex flex-col items-center gap-1">
+                  <Image src={hotel} alt="" className="w-[28px] h-[28px]" />
+                  <span className="text-[var(--secondary)] text-[16px] font-semibold">
+                    Hotel
+                  </span>
+                </div>
               </div>{" "}
               <div
                 className={`flex items-center gap-2 cursor-pointer ${
@@ -146,12 +167,15 @@ export default function Navbar() {
                 onClick={() => setCategoryTab("tour")}
               >
                 <div className=" flex flex-col items-center gap-1">
-                <Image src={tour} alt="" className="w-[28px] text-sky-950 h-[28px]" />
-                <span className="text-[var(--secondary)] text-[16px] font-semibold">
-                  Tour
-                </span>
+                  <Image
+                    src={tour}
+                    alt=""
+                    className="w-[28px] text-sky-950 h-[28px]"
+                  />
+                  <span className="text-[var(--secondary)] text-[16px] font-semibold">
+                    Tour
+                  </span>
                 </div>
-                
               </div>{" "}
               <div
                 className={`flex items-center gap-2 cursor-pointer ${
@@ -161,12 +185,12 @@ export default function Navbar() {
                 }`}
                 onClick={() => setCategoryTab("visa")}
               >
-                 <div className=" flex flex-col items-center gap-1">
-                 <Image src={visa} alt="" className="w-[22px] h-[22px]" />
-                <span className="text-[var(--secondary)] text-[16px] font-semibold">
-                  Visa
-                </span>
-                 </div>
+                <div className=" flex flex-col items-center gap-1">
+                  <Image src={visa} alt="" className="w-[22px] h-[22px]" />
+                  <span className="text-[var(--secondary)] text-[16px] font-semibold">
+                    Visa
+                  </span>
+                </div>
               </div>
               <div
                 className={`flex items-center gap-2 cursor-pointer ${
@@ -176,13 +200,12 @@ export default function Navbar() {
                 }`}
                 onClick={() => setCategoryTab("aboutus")}
               >
-                 <div className=" flex flex-col items-center gap-1">
-                 <Image src={aboutImg} alt="" className="w-[22px] h-[22px]" />
-                <span className="text-[var(--secondary)] text-[16px] font-semibold">
-                  About us
-                </span>
-                 </div>
-                
+                <div className=" flex flex-col items-center gap-1">
+                  <Image src={aboutImg} alt="" className="w-[22px] h-[22px]" />
+                  <span className="text-[var(--secondary)] text-[16px] font-semibold">
+                    About us
+                  </span>
+                </div>
               </div>
             </div>
           </div>
