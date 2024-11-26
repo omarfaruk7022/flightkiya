@@ -35,6 +35,8 @@ export default function SignUp() {
     queryKey: ["registration", payload],
     queryFn: () => fetchData(`auth/registration`, "POST", payload),
     enabled: false,
+    staleTime: 0,
+    cacheTime: 0,
   });
 
   const handleRegister = (e) => {
