@@ -13,6 +13,7 @@ import flightStore from "@/store";
 import { useQuery } from "@tanstack/react-query";
 import { revalidateFlight } from "@/utils/revalidateFlight";
 import { Oval } from "react-loader-spinner";
+import { toast } from "react-toastify";
 
 export default function FlightCard({ flight, index }) {
   const [openDetailsIndex, setOpenDetailsIndex] = useState(null);
@@ -59,6 +60,8 @@ export default function FlightCard({ flight, index }) {
     if (flightData?.data && flightData?.success == true) {
       router.push(`/booking`);
       setSelectedFlight(flightData?.data);
+    } else {
+      toast.error(flightData?.error?.message);
     }
   }, [flightData]);
 
