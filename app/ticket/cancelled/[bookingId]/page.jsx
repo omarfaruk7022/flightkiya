@@ -1,4 +1,5 @@
 'use client'
+import Link from "next/link";
 import { useParams } from "next/navigation";
 
 export default function CancelledPage() {
@@ -21,12 +22,12 @@ export default function CancelledPage() {
         <p className="text-lg text-gray-600 mb-6">
           If this was a mistake, please contact our support team to help you.
         </p>
-        <a
+        <Link
           href="/"
           className="inline-block px-6 py-3 bg-yellow-600 text-white rounded-lg font-semibold hover:bg-yellow-700 transition duration-300"
         >
           Go to Home
-        </a>
+        </Link>
       </div>
     </div>
   );

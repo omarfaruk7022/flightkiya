@@ -6,23 +6,33 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import logoBlack from "@/public/icons/logoFlight-removebg-preview.png";
-
+import jwt from "jsonwebtoken";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plane, MapPin, Calendar, CreditCard } from "lucide-react";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import flightStore from "@/store";
+import { toast } from "react-toastify";
+import { jwtDecode } from "jwt-decode";
 
 export default function ProfilePage() {
-  const { token } = flightStore();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
+
   useEffect(() => {
-    if (token == null) {
+    const token = Cookies.get("auth-token");
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      setUser(decodedToken);
+    } else {
       router.push("/auth-login");
     }
-  }, [token]);
+  }, [router]);
+
+  console.log(user);
   return (
     <>
       <Navbar />
@@ -43,8 +53,8 @@ export default function ProfilePage() {
                   </span>
                 </Avatar>
                 <div>
-                  <h2 className="text-2xl font-bold">John Doe</h2>
-                  <p className="text-sm text-gray-500">Gold Member</p>
+                  <h2 className="text-[22px] font-bold">{user?.full_name}</h2>
+                  <p className="text-sm text-gray-500">{user?.email}</p>
                 </div>
               </div>
               <div className="mt-6 grid gap-2">
@@ -93,15 +103,11 @@ export default function ProfilePage() {
                 <form className="space-y-4">
                   <div className="grid gap-2">
                     <Label htmlFor="name">Name</Label>
-                    <Input id="name" defaultValue="John Doe" />
+                    <Input id="name" defaultValue={user?.full_name} />
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      defaultValue="john.doe@example.com"
-                    />
+                    <Input id="email" type="email" defaultValue={user?.email} />
                   </div>
                   <Button>Save Changes</Button>
                 </form>

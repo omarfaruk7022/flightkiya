@@ -10,18 +10,24 @@ import { fetchData } from "@/utils/fetcher";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import giphy from "@/public/images/giphy.webp";
+import Cookies from "js-cookie";
 
 function PayBill() {
   const [timeLeft, setTimeLeft] = useState(18 * 60); // 18 minutes in seconds
   const router = useRouter();
-  const { selectedFlight, token, bookingId } = flightStore();
+  const [token,setToken] = useState()
+  const { selectedFlight, bookingId } = flightStore();
+  useEffect(() => {
+    const authToken = Cookies.get("auth-token");
+    setToken(authToken)
+  }, [router]);
   // Countdown timer logic
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, []); 
 
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
@@ -29,7 +35,7 @@ function PayBill() {
   const {
     data: paymentData,
     error: paymentDataError,
-    isLoading: paymentDataLoading = true,
+    isLoading: paymentDataLoading ,
     refetch: paymentDataRefetch,
   } = useQuery({
     queryKey: ["create-payment-intent", bookingId],

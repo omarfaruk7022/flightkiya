@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 
 export default function FailedPage() {
@@ -21,12 +22,12 @@ export default function FailedPage() {
         <p className="text-lg text-gray-600 mb-6">
           Please try again later or contact customer support for assistance.
         </p>
-        <a
+        <Link
           href="/"
           className="inline-block px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition duration-300"
         >
           Return to Home
-        </a>
+        </Link>
       </div>
     </div>
   );

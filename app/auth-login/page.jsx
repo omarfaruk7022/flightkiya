@@ -17,26 +17,18 @@ const Login = () => {
   const [password, setPassword] = useState();
   const { setToken } = flightStore();
   const router = useRouter();
-  const payload = {
-    username: email,
-    password: password,
-  };
 
-  const {
-    data: loginData,
-    error: loginDataError,
-    isLoading: loginDataLoading,
-    refetch: loginDataRefetch,
-  } = useQuery({
-    queryKey: ["login", payload],
-    queryFn: () => fetchData(`auth/login`, "POST", payload),
-    enabled: false,
-    staleTime: 0, 
-    cacheTime: 0, 
-  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleLogin = (e) => {
-    e.preventDefault();
+  const handleLogin = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    const payload = {
+      username: email,
+      password: password,
+    };
     if (email === undefined || email === "") {
       toast.error("Email is required");
       return;
@@ -45,23 +37,20 @@ const Login = () => {
       toast.error("Password is required");
       return;
     }
-    loginDataRefetch();
+    try {
+      const data = await fetchData("auth/login", "POST", payload);
+
+      Cookies.set("auth-token", data.token);
+
+      router.push("/profile");
+    } catch (err) {
+      console.error("Error during login:", err.message);
+      setError(err.message || "Login failed.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  useEffect(() => {
-    if (loginData && loginData.success) {
-      toast.success(loginData?.message);
-
-      setEmail("");
-      setPassword("");
-
-      setToken(loginData?.token);
-      // Cookies.set("auth-token", loginData?.token, { expires: 1, path: "/" });
-      router.push("/profile");
-    } else {
-      toast.error(loginData?.error.message);
-    }
-  }, [loginData]);
   return (
     <div>
       <Navbar />
@@ -78,7 +67,12 @@ const Login = () => {
             <div className="flex-grow border-t border-gray-300"></div>
           </div> */}
 
-          <form onSubmit={handleLogin}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleLogin();
+            }}
+          >
             <div className="mb-4">
               <label
                 className="block text-gray-700 font-medium mb-1"
@@ -142,16 +136,16 @@ const Login = () => {
             </div>
 
             <div className="flex items-center justify-between mb-4">
-              <a href="#" className="text-indigo-600 hover:underline text-sm">
+              <Link href="#" className="text-indigo-600 hover:underline text-sm">
                 Forgot Password?
-              </a>
+              </Link>
             </div>
 
             <button
               type="submit"
               className="w-full bg-indigo-600 text-white py-2 rounded-md text-center font-medium hover:bg-indigo-700"
             >
-              {loginDataLoading ? (
+              {isLoading ? (
                 <div className="flex justify-center items-center">
                   {" "}
                   <Oval

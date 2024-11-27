@@ -18,6 +18,7 @@ import { fetchData } from "@/utils/fetcher";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Oval } from "react-loader-spinner";
+import Cookies from "js-cookie";
 
 const customSelectStyles = {
   control: (base) => ({
@@ -267,6 +268,7 @@ const Booking = () => {
     CountryCode: countryCode,
     PhoneNumber: contactNumber,
     Email: contactEmail,
+    PostCode: "1200"
   };
   const {
     data: bookingData,
@@ -285,7 +287,7 @@ const Booking = () => {
 
   useEffect(() => {
     if (bookingData?.data && bookingData?.success === true) {
-      setToken(bookingData?.data?.token);
+      Cookies.set("auth-token", bookingData?.data.token);
       setBookingId(bookingData?.data?.booking_id);
       router.push("/payment");
     }

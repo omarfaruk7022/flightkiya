@@ -11,19 +11,19 @@ import tour from "@/public/flight (3).svg";
 import visa from "@/public/flight (4).svg";
 import aboutImg from "@/public/icons/aboutImg.png";
 import Link from "next/link";
-import flightStore from "@/store";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 export default function Navbar() {
   const [scrollY, setScrollY] = useState(0); // State to track scroll position
   const [isScrollingDown, setIsScrollingDown] = useState(false); // State to track scroll direction
   const [categoryTab, setCategoryTab] = useState("flight");
-  const { token, setToken } = flightStore();
+
+  const token = Cookies.get("auth-token");
   const router = useRouter();
 
   const handleLogOut = () => {
-    setToken(null);
-    router.push("/");
+    Cookies.remove("auth-token");
+    router.push("/auth-login");
   };
   useEffect(() => {
     const handleScroll = () => {
@@ -250,9 +250,28 @@ export default function Navbar() {
             </div>
 
             {/* Sign In Button */}
-            <button className="w-[90px] h-[40px] bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold text-[12px]">
-              Sign in
-            </button>
+            {token ? (
+              <>
+                <Link href="/profile">
+                  <button className="w-[90px] h-[40px] bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold text-[12px]">
+                    Profile
+                  </button>
+                </Link>
+
+                <button
+                  onClick={handleLogOut}
+                  className="w-[90px] h-[40px] bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold text-[12px]"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link href="/auth-login">
+                <button className="w-[90px] h-[40px] bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold text-[12px]">
+                  Sign in
+                </button>
+              </Link>
+            )}
           </div>
         </nav>
       </div>

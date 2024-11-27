@@ -192,9 +192,9 @@ export default function SignUp() {
                 />
                 <span className="ml-2 text-gray-600">
                   By creating an account you agree to our{" "}
-                  <a href="#" className="text-blue-600 hover:underline">
+                  <Link href="#" className="text-blue-600 hover:underline">
                     Terms & Conditions
-                  </a>
+                  </Link>
                   .
                 </span>
               </label>
