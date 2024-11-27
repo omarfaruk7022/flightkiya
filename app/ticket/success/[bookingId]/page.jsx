@@ -75,7 +75,6 @@ const FlightInvoice = () => {
       toast.success(ticketData?.message);
     } else {
       toast.error(ticketData?.error?.message);
-      router.push("/");
     }
   }, [ticketData]);
 
