@@ -304,18 +304,6 @@ const FlightSearch = () => {
   };
   const [travelerInputShow, setTravelerInputShow] = useState(false);
 
-  const [cities, setCities] = useState([{ id: 1 }]);
-
-  const handleAddCity = () => {
-    setCities([...cities, { id: cities.length + 1 }]);
-  };
-
-  const handleDeleteCity = () => {
-    if (cities.length > 1) {
-      setCities(cities.slice(0, -1));
-    }
-  };
-
   const filteredAirportsArrival = airportsData.filter(
     (airport) =>
       (airport.name.toLowerCase().includes(searchQueryArrival.toLowerCase()) ||
@@ -337,8 +325,67 @@ const FlightSearch = () => {
       airport.name.toLowerCase() !== searchQueryArrival.toLowerCase() &&
       airport.value.toLowerCase() !== searchQueryArrival.toLowerCase()
   );
+
+  const [cities, setCities] = useState([
+    {
+      id: 1,
+      searchQueryDestination: "",
+      searchQueryArrival: "",
+      departureDate: null,
+      
+    },
+  ]);
+  const filteredAirportsArrivalMulti = cities.map((city) => {
+    return airportsData.filter(
+      (airport) =>
+        airport.name
+          .toLowerCase()
+          .includes(city.searchQueryArrival.toLowerCase()) ||
+        airport.value
+          .toLowerCase()
+          .includes(city.searchQueryArrival.toLowerCase())
+    );
+  });
+
+  const filteredAirportsDestinationMulti = cities.map((city) => {
+    return airportsData.filter(
+      (airport) =>
+        airport.name
+          .toLowerCase()
+          .includes(city.searchQueryDestination.toLowerCase()) ||
+        airport.value
+          .toLowerCase()
+          .includes(city.searchQueryDestination.toLowerCase())
+    );
+  });
+
+  const handleAddCity = () => {
+    setCities([
+      ...cities,
+      {
+        id: cities.length + 1,
+        searchQueryDestination: "",
+        searchQueryArrival: "",
+        departureDate: null,
+      },
+    ]);
+  };
+  const handleDeleteCity = () => {
+    if (cities.length > 1) {
+      setCities(cities.slice(0, -1));
+    }
+  };
+
+  const updateCityData = (id, field, value) => {
+    setCities((prevCities) =>
+      prevCities.map((city) =>
+        city.id === id ? { ...city, [field]: value } : city
+      )
+    );
+  };
+
   return (
-    <section className="bg-[url('/images/banner-1.jpeg')] bg-center bg-fixed bg-cover w-full h-[50vh]  ">
+    <section className="bg-[url('/images/banner-1.jpeg')] bg-center bg-fixed bg-cover w-full   ">
       <div className=" w-full container mx-auto ">
         <div className="">
           <Navbar />
@@ -444,14 +491,10 @@ const FlightSearch = () => {
                         className="h-5  w-5 cursor-pointer"
                         name="route"
                         value="OpenJaw"
-                        disabled
                         onChange={(e) => setTripType(e.target.value)}
                       />
 
-                      <span
-                        className="text-[var(--primary)] text-[15px] font-bold "
-                        title="Upcoming..."
-                      >
+                      <span className="text-[var(--primary)] text-[15px] font-bold ">
                         Multi city
                       </span>
                     </label>
@@ -666,323 +709,429 @@ const FlightSearch = () => {
             {/* inputs section */}
             <div>
               <div className="mt-5 grid grid-cols-1 md:grid-cols-7 items-center gap-2 w-full">
-                <div className="flex items-center col-span-1  md:col-span-4 w-full">
-                  <div className="relative w-full">
-                    <div className="border-2 border-[#BEA8A8] pt-2 ps-5 w-full rounded-l-md  h-[69px]">
-                      <label
-                        className="w-full cursor-pointer"
-                        onClick={() => setIsOpenDestination(!isOpenDestination)}
-                      >
-                        <input
-                          value={searchQueryDestination}
-                          type="text"
-                          onChange={(e) =>
-                            setSearchQueryDestination(e.target.value)
-                          }
-                          placeholder="From ?"
-                          className="w-full focus:outline-none bg-transparent "
-                        />
-                        <div className="block">
-                          <span className="text-[8px] md:text-[15px] font-semibold ">
-                            {originAirport?.label} {originAirport?.value}
-                          </span>
+                {tripType == "OneWay" || tripType == "Return" ? (
+                  <>
+                    <div className="flex items-center col-span-1  md:col-span-4 w-full">
+                      <div className="relative w-full">
+                        <div className="border-2 border-[#BEA8A8] pt-2 ps-5 w-full rounded-l-md  h-[69px]">
+                          <label
+                            className="w-full cursor-pointer"
+                            onClick={() =>
+                              setIsOpenDestination(!isOpenDestination)
+                            }
+                          >
+                            <input
+                              value={searchQueryDestination}
+                              type="text"
+                              onChange={(e) =>
+                                setSearchQueryDestination(e.target.value)
+                              }
+                              placeholder="From ?"
+                              className="w-full focus:outline-none bg-transparent "
+                            />
+                            <div className="block">
+                              <span className="text-[8px] md:text-[15px] font-semibold ">
+                                {originAirport?.label} {originAirport?.value}
+                              </span>
+                            </div>
+                          </label>
                         </div>
-                      </label>
-                    </div>
-                    {isOpenDestination ? (
-                      <div className="w-full mx-auto bg-white rounded-xl shadow-md   absolute top-20  max-h-[600px] z-10 overflow-y-auto">
-                        <div className="p-8 ">
-                          <ul className="space-y-4">
-                            {filteredAirportsDestination.map(
-                              (destination, index) => (
-                                <li
-                                  key={index}
-                                  className="flex items-center space-x-4 cursor-pointer"
-                                  onClick={() => {
-                                    setSearchQueryDestination(
-                                      destination.value
-                                    );
-                                    setIsOpenDestination(false);
-                                    setOriginAirport({
-                                      label: destination.label,
-                                      value: destination.value,
-                                      code: destination.name,
-                                    });
-                                  }}
-                                >
-                                  <div className="flex-grow">
-                                    <p className="font-semibold">
-                                      {destination.name}, {destination.value}
-                                    </p>
-                                    <p className="text-sm text-gray-500">
-                                      {destination.label}
-                                    </p>
-                                  </div>
-                                </li>
-                              )
-                            )}
-                          </ul>
-                        </div>
+                        {isOpenDestination ? (
+                          <div className="w-full mx-auto bg-white rounded-xl shadow-md   absolute top-20  max-h-[600px] z-10 overflow-y-auto">
+                            <div className="p-8 ">
+                              <ul className="space-y-4">
+                                {filteredAirportsDestination.map(
+                                  (destination, index) => (
+                                    <li
+                                      key={index}
+                                      className="flex items-center space-x-4 cursor-pointer"
+                                      onClick={() => {
+                                        setSearchQueryDestination(
+                                          destination.value
+                                        );
+                                        setIsOpenDestination(false);
+                                        setOriginAirport({
+                                          label: destination.label,
+                                          value: destination.value,
+                                          code: destination.name,
+                                        });
+                                      }}
+                                    >
+                                      <div className="flex-grow">
+                                        <p className="font-semibold">
+                                          {destination.name},{" "}
+                                          {destination.value}
+                                        </p>
+                                        <p className="text-sm text-gray-500">
+                                          {destination.label}
+                                        </p>
+                                      </div>
+                                    </li>
+                                  )
+                                )}
+                              </ul>
+                            </div>
+                          </div>
+                        ) : (
+                          ""
+                        )}
                       </div>
-                    ) : (
-                      ""
-                    )}
-                  </div>
-                  <div className="relative w-full ">
-                    <div className="border-2  border-l-0 border-[#BEA8A8] pt-2 ps-5 rounded-r-md  h-[69px]">
-                      <label
-                        className="w-full cursor-pointer"
-                        onClick={() => setIsOpenArrival(!isOpenArrival)}
-                      >
-                        <input
-                          value={searchQueryArrival}
-                          type="text"
-                          onChange={(e) =>
-                            setSearchQueryArrival(e.target.value)
-                          }
-                          placeholder="To ?"
-                          className="w-full focus:outline-none  bg-transparent"
-                        />
-                        <div className="block">
-                          <span className="text-[8px] md:text-[15px] font-semibold">
-                            {destinationAirport?.label}{" "}
-                            {destinationAirport?.value}
-                          </span>
+                      <div className="relative w-full ">
+                        <div className="border-2  border-l-0 border-[#BEA8A8] pt-2 ps-5 rounded-r-md  h-[69px]">
+                          <label
+                            className="w-full cursor-pointer"
+                            onClick={() => setIsOpenArrival(!isOpenArrival)}
+                          >
+                            <input
+                              value={searchQueryArrival}
+                              type="text"
+                              onChange={(e) =>
+                                setSearchQueryArrival(e.target.value)
+                              }
+                              placeholder="To ?"
+                              className="w-full focus:outline-none  bg-transparent"
+                            />
+                            <div className="block">
+                              <span className="text-[8px] md:text-[15px] font-semibold">
+                                {destinationAirport?.label}{" "}
+                                {destinationAirport?.value}
+                              </span>
+                            </div>
+                          </label>
                         </div>
-                      </label>
-                    </div>
-                    {isOpenArrival ? (
-                      <div className=" mx-auto bg-white rounded-xl shadow-md  absolute top-20  max-h-[600px] z-10 overflow-y-auto">
-                        <div className="p-8 ">
-                          <ul className="space-y-4">
-                            {filteredAirportsArrival.map((arrival, index) => (
-                              <li
-                                key={index}
-                                className="flex items-center space-x-4 cursor-pointer"
-                                onClick={() => {
-                                  setSearchQueryArrival(arrival.value);
-                                  setIsOpenArrival(false);
-                                  setDestinationAirport({
-                                    code: arrival.name,
-                                    value: arrival.value,
-                                    label: arrival.label,
-                                  });
-                                }}
-                              >
-                                <div className="flex-grow">
-                                  <p className="font-semibold">
-                                    {arrival.name}, {arrival.value}
-                                  </p>
-                                  <p className="text-sm text-gray-500">
-                                    {arrival.label}
-                                  </p>
-                                </div>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
+                        {isOpenArrival ? (
+                          <div className=" mx-auto bg-white rounded-xl shadow-md  absolute top-20  max-h-[600px] z-10 overflow-y-auto">
+                            <div className="p-8 ">
+                              <ul className="space-y-4">
+                                {filteredAirportsArrival.map(
+                                  (arrival, index) => (
+                                    <li
+                                      key={index}
+                                      className="flex items-center space-x-4 cursor-pointer"
+                                      onClick={() => {
+                                        setSearchQueryArrival(arrival.value);
+                                        setIsOpenArrival(false);
+                                        setDestinationAirport({
+                                          code: arrival.name,
+                                          value: arrival.value,
+                                          label: arrival.label,
+                                        });
+                                      }}
+                                    >
+                                      <div className="flex-grow">
+                                        <p className="font-semibold">
+                                          {arrival.name}, {arrival.value}
+                                        </p>
+                                        <p className="text-sm text-gray-500">
+                                          {arrival.label}
+                                        </p>
+                                      </div>
+                                    </li>
+                                  )
+                                )}
+                              </ul>
+                            </div>
+                          </div>
+                        ) : (
+                          ""
+                        )}
                       </div>
-                    ) : (
-                      ""
-                    )}
-                  </div>
-                </div>
-                <div
-                  className={`border-2 border-[#BEA8A8] pt-2 ps-5 rounded-md col-span-2 
-                      h-[69px] flex `}
-                >
-                  <label className="w-full cursor-pointer">
-                    <div className="block">
-                      <span className="text-[var(--gray)] text-[15px] font-semibold block ">
-                        Journey Date
-                      </span>
                     </div>
-
-                    <DatePicker
-                      minDate={new Date()}
-                      selected={departureDate}
-                      className="custom-datepicker-input bg-transparent"
-                      calendarClassName="custom-datepicker-calendar"
-                      onChange={(date) => setDepartureDate(date)}
-                    />
-                  </label>
-                  {tripType == "Return" && (
-                    <label className="w-full cursor-pointer border-s-2 ps-2 ">
-                      <div className="block">
-                        <span className="text-[var(--gray)] text-[15px] font-semibold block ">
-                          Return Date
-                        </span>
-                      </div>
-
-                      {/* Conditionally render the DayPicker */}
-                      <DatePicker
-                        minDate={departureDate}
-                        selected={returnDate}
-                        className="custom-datepicker-input bg-transparent"
-                        calendarClassName="custom-datepicker-calendar"
-                        onChange={(date) => setReturnDate(date)}
-                      />
-                    </label>
-                  )}
-                </div>
-
-                <div className="col-span-1">
-                  {tripType !== "OpenJaw" ? (
-                    <div>
-                      <button
-                        onClick={fetchFlightData}
-                        className="bg-[var(--primary-btn)] text-white h-[69px] w-full rounded-xl"
-                      >
-                        {/* <Image
-                            src={search}
-                            alt="Search"
-                            className="mx-auto w-[50px] p-3"
-                          /> */}
-                        Search flights
-                      </button>
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                </div>
-              </div>
-              {tripType == "OpenJaw" && (
-                <div>
-                  {cities?.map((city) => (
                     <div
-                      className="mt-5 flex items-center justify-evenly gap-5 flex-wrap"
-                      key={city.id}
+                      className={`border-2 border-[#BEA8A8] pt-2 ps-5 rounded-md col-span-2 
+                      h-[69px] flex `}
                     >
-                      <div className="border-2 border-[#BEA8A8] pt-2 ps-5 rounded-[13px] w-[234px] h-[79px]">
-                        <label className="w-full cursor-pointer">
-                          <div className="block">
-                            <span className="text-[var(--gray)] text-[10px] font-semibold block ">
-                              FROM
-                            </span>
-                            <span className="text-[12px] font-semibold">
-                              Select a city
-                            </span>
-                          </div>
-                          {/* <Select
-                            className="cursor-pointer"
-                            closeMenuOnSelect={true}
-                            components={{
-                              ...animatedComponents,
-                            }}
-                            // value={flyFromPlaceholder}
+                      <label className="w-full cursor-pointer">
+                        <div className="block">
+                          <span className="text-[var(--gray)] text-[15px] font-semibold block ">
+                            Journey Date
+                          </span>
+                        </div>
 
-                            placeholder={"Click to choose an airport"}
-                            onChange={(e) => {
-                              setFlyFrom(e.value);
-                              setFlyFromPlaceholder({
-                                label: e.label,
-                                value: e.value,
-                              });
-                            }}
-                            options={options}
-                            styles={customStyles}
-                          /> */}
-                        </label>
-                      </div>
-                      <div className="border-2 border-[#BEA8A8] pt-2 ps-5 rounded-[13px] w-[234px] h-[79px]">
-                        <label className="w-full cursor-pointer">
+                        <DatePicker
+                          minDate={new Date()}
+                          selected={departureDate}
+                          className="custom-datepicker-input bg-transparent"
+                          calendarClassName="custom-datepicker-calendar"
+                          onChange={(date) => setDepartureDate(date)}
+                        />
+                      </label>
+                      {tripType == "Return" && (
+                        <label className="w-full cursor-pointer border-s-2 ps-2 ">
                           <div className="block">
-                            <span className="text-[var(--gray)] text-[10px] font-semibold block ">
-                              To
-                            </span>
-                            <span className="text-[12px] font-semibold">
-                              Select a city
-                            </span>
-                          </div>
-                          {/* <Select
-                            className="cursor-pointer"
-                            closeMenuOnSelect={true}
-                            components={{
-                              ...animatedComponents,
-                            }}
-                            placeholder={"Click to choose an airport"}
-                            // value={flyToPlaceholder}
-                            onChange={(e) => {
-                              setFlyTo(e.value);
-                              setFlyToPlaceholder({
-                                label: e.label,
-                                value: e.value,
-                              });
-                            }}
-                            options={options}
-                            styles={customStyles}
-                          /> */}
-                        </label>
-                      </div>
-                      <div
-                        className={`border-2 border-[#BEA8A8] pt-2 ps-5 rounded-[13px] w-[234px]  h-[79px] flex `}
-                      >
-                        <label className="w-full cursor-pointer ">
-                          <div className="block">
-                            <span className="text-[var(--gray)] text-[9px] font-semibold block ">
-                              Journey Date
-                            </span>
-                            <span className="text-[12px]">
-                              {/* {flyFromPlaceholder.value} */}
-                              Saturday
+                            <span className="text-[var(--gray)] text-[15px] font-semibold block ">
+                              Return Date
                             </span>
                           </div>
 
                           {/* Conditionally render the DayPicker */}
                           <DatePicker
-                            minDate={new Date()}
-                            selected={departureDate}
-                            className="custom-datepicker-input"
+                            minDate={departureDate}
+                            selected={returnDate}
+                            className="custom-datepicker-input bg-transparent"
                             calendarClassName="custom-datepicker-calendar"
-                            onChange={(date) => setDepartureDate(date)}
+                            onChange={(date) => setReturnDate(date)}
                           />
                         </label>
-                      </div>
-                      <div class="flex items-center border border-gray-300 rounded-[13px] w-[234px]  h-[79px] overflow-hidden ">
-                        <button
-                          class="px-4 py-2 text-gray-600 text-[12px] w-[70%]"
-                          onClick={handleAddCity}
-                          disabled={cities.length > 2}
-                        >
-                          Add Another City
-                        </button>
-                        <button
-                          class="border-l border-gray-300 p-2 flex items-center justify-center text-gray-400 hover:text-gray-600  w-[25%]  h-full "
-                          onClick={handleDeleteCity}
-                        >
-                          <span className="bg-gray-200 rounded-full w-8 h-8 flex justify-center items-center">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              class="h-6 w-6 text-white font-bold"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                          </span>
-                        </button>
-                      </div>
+                      )}
                     </div>
-                  ))}
-                  <div className="flex justify-end mt-5">
+
+                    <div className="col-span-1">
+                      {tripType == "OneWay" || tripType == "Return" ? (
+                        <div>
+                          <button
+                            onClick={fetchFlightData}
+                            className="bg-[var(--primary-btn)] text-white h-[69px] w-full rounded-xl"
+                          >
+                            {/* <Image
+                            src={search}
+                            alt="Search"
+                            className="mx-auto w-[50px] p-3"
+                          /> */}
+                            Search flights
+                          </button>
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {cities?.map((city, index) => (
+                      <>
+                        <div
+                          key={city.id}
+                          className="flex items-center col-span-1  md:col-span-4 w-full"
+                        >
+                          <div className="relative w-full">
+                            <div className="border-2 border-[#BEA8A8] pt-2 ps-5 w-full rounded-l-md  h-[69px]">
+                              <label
+                                className="w-full cursor-pointer"
+                                onClick={() =>
+                                  setIsOpenDestination(!isOpenDestination)
+                                }
+                              >
+                                <input
+                                  value={city.searchQueryDestination}
+                                  type="text"
+                                  onChange={(e) =>
+                                    updateCityData(
+                                      city.id,
+                                      "searchQueryDestination",
+                                      e.target.value
+                                    )
+                                  }
+                                  placeholder="From ?"
+                                  className="w-full focus:outline-none bg-transparent "
+                                />
+                                <div className="block">
+                                  <span className="text-[8px] md:text-[15px] font-semibold ">
+                                    {city.originAirport?.label}{" "}
+                                    {city.originAirport?.value}
+                                  </span>
+                                </div>
+                              </label>
+                            </div>
+                            {isOpenDestination ? (
+                              <div className="w-full mx-auto bg-white rounded-xl shadow-md   absolute top-20  max-h-[600px] z-10 overflow-y-auto">
+                                <div className="p-8 ">
+                                  <ul className="space-y-4">
+                                    {filteredAirportsDestinationMulti[
+                                      city.id - 1
+                                    ]?.map((destination, index) => (
+                                      <li
+                                        key={destination?.id}
+                                        className="flex items-center space-x-4 cursor-pointer"
+                                        onClick={() => {
+                                          // Update airport details for the current city
+                                          updateCityData(
+                                            city.id,
+                                            "searchQueryDestination",
+                                            destination.value
+                                          );
+                                          setIsOpenDestination(false);
+                                          updateCityData(
+                                            city.id,
+                                            "originAirport",
+                                            {
+                                              label: destination.label,
+                                              value: destination.value,
+                                              code: destination.name,
+                                            }
+                                          );
+                                        }}
+                                      >
+                                        <div className="flex-grow">
+                                          <p className="font-semibold">
+                                            {destination.name},{" "}
+                                            {destination.value}
+                                          </p>
+                                          <p className="text-sm text-gray-500">
+                                            {destination.label}
+                                          </p>
+                                        </div>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              </div>
+                            ) : (
+                              ""
+                            )}
+                          </div>
+                          <div className="relative w-full ">
+                            <div className="border-2  border-l-0 border-[#BEA8A8] pt-2 ps-5 rounded-r-md  h-[69px]">
+                              <label
+                                className="w-full cursor-pointer"
+                                onClick={() => setIsOpenArrival(!isOpenArrival)}
+                              >
+                                <input
+                                  value={city.searchQueryArrival}
+                                  type="text"
+                                  onChange={(e) =>
+                                    updateCityData(
+                                      city.id,
+                                      "searchQueryArrival",
+                                      e.target.value
+                                    )
+                                  }
+                                  placeholder="To ?"
+                                  className="w-full focus:outline-none  bg-transparent"
+                                />
+                                <div className="block">
+                                  <span className="text-[8px] md:text-[15px] font-semibold">
+                                    {city.destinationAirport?.label}{" "}
+                                    {city.destinationAirport?.value}
+                                  </span>
+                                </div>
+                              </label>
+                            </div>
+                            {isOpenArrival ? (
+                              <div className=" mx-auto bg-white rounded-xl shadow-md  absolute top-20  max-h-[600px] z-10 overflow-y-auto">
+                                <div className="p-8 ">
+                                  <ul className="space-y-4">
+                                    {filteredAirportsArrivalMulti[
+                                      city.id - 1
+                                    ].map((arrival, index) => (
+                                      <li
+                                        key={arrival?.id}
+                                        className="flex items-center space-x-4 cursor-pointer"
+                                        onClick={() => {
+                                          // Update airport details for the current city
+                                          updateCityData(
+                                            city.id,
+                                            "searchQueryArrival",
+                                            arrival.value
+                                          );
+                                          setIsOpenArrival(false);
+                                          updateCityData(
+                                            city.id,
+                                            "destinationAirport",
+                                            {
+                                              code: arrival.name,
+                                              value: arrival.value,
+                                              label: arrival.label,
+                                            }
+                                          );
+                                        }}
+                                      >
+                                        <div className="flex-grow">
+                                          <p className="font-semibold">
+                                            {arrival.name}, {arrival.value}
+                                          </p>
+                                          <p className="text-sm text-gray-500">
+                                            {arrival.label}
+                                          </p>
+                                        </div>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              </div>
+                            ) : (
+                              ""
+                            )}
+                          </div>
+                        </div>
+                        <div
+                          className={`border-2 border-[#BEA8A8] pt-2 ps-5 rounded-md col-span-2 
+                      h-[69px] flex `}
+                        >
+                          <label className="w-full cursor-pointer">
+                            <div className="block">
+                              <span className="text-[var(--gray)] text-[15px] font-semibold block ">
+                                Journey Date
+                              </span>
+                            </div>
+
+                            <DatePicker
+                              minDate={new Date()}
+                              selected={city.departureDate}
+                              className="custom-datepicker-input bg-transparent"
+                              calendarClassName="custom-datepicker-calendar"
+                              onChange={(date) =>
+                                updateCityData(city.id, "departureDate", date)
+                              }
+                            />
+                          </label>
+                        </div>
+
+                        {index !== 0 && index !== 1 && (
+                          <div class="flex items-center border border-gray-300 rounded-md w-full  h-[69px] overflow-hidden ">
+                            <button
+                              class="border-l border-gray-300 p-2 flex items-center justify-center text-gray-400 hover:text-gray-600  w-full  h-full "
+                              onClick={handleDeleteCity}
+                            >
+                              <span className="bg-gray-200 rounded-full w-8 h-8 flex justify-center items-center">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  class="h-6 w-6 text-white font-bold"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M6 18L18 6M6 6l12 12"
+                                  />
+                                </svg>
+                              </span>
+                            </button>
+                          </div>
+                        )}
+                      </>
+                    ))}
+
+                    <div class="flex items-center border border-gray-300 rounded-md w-full  h-[69px] overflow-hidden ">
+                      <button
+                        class="px-4 py-2 text-gray-600 text-[15px]  text-center"
+                        onClick={handleAddCity}
+                        disabled={cities.length > 3}
+                      >
+                        Add Another City
+                      </button>
+                    </div>
+                  </>
+                )}
+                {tripType == "OpenJaw" && (
+                  <div>
                     <button
-                      className="bg-[var(--primary-btn)] h-[54px] w-[173px] rounded-md flex items-center justify-center"
                       onClick={fetchFlightData}
+                      className="bg-[var(--primary-btn)] text-white h-[69px] w-full rounded-xl"
                     >
-                      <Image src={search} alt="" className=" w-[50px] p-3" />
-                      <span className="text-[20px] text-white underline font-bold py-1">
-                        Search
-                      </span>
+                      {/* <Image
+                        src={search}
+                        alt="Search"
+                        className="mx-auto w-[50px] p-3"
+                      /> */}
+                      Search flights
                     </button>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </div>

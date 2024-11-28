@@ -14,29 +14,29 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 export default function Navbar() {
-  const [scrollY, setScrollY] = useState(0); 
-  const [isScrollingDown, setIsScrollingDown] = useState(false); 
+  const [scrollY, setScrollY] = useState(0);
+  const [isScrollingDown, setIsScrollingDown] = useState(false);
   const [categoryTab, setCategoryTab] = useState("flight");
   const [token, setToken] = useState();
-
-  useEffect(() =>{
-
-    const authToken = Cookies.get("auth-token");
-    setToken(authToken)
-  },[])
   const router = useRouter();
+
+  useEffect(() => {
+    const authToken = Cookies.get("auth-token");
+    setToken(authToken);
+  }, []);
 
   const handleLogOut = () => {
     Cookies.remove("auth-token");
     router.push("/auth-login");
   };
+
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       if (currentScrollY > scrollY) {
-        setIsScrollingDown(true); // If scrolling down
+        setIsScrollingDown(true);
       } else {
-        setIsScrollingDown(false); // If scrolling up
+        setIsScrollingDown(false);
       }
       setScrollY(currentScrollY);
     };
