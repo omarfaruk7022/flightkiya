@@ -24,6 +24,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const token = Cookies.get("auth-token");
+    console.log(token)
     if (token) {
       const decodedToken = jwtDecode(token);
       setUser(decodedToken);
