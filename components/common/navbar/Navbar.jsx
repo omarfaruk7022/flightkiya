@@ -17,8 +17,13 @@ export default function Navbar() {
   const [scrollY, setScrollY] = useState(0); // State to track scroll position
   const [isScrollingDown, setIsScrollingDown] = useState(false); // State to track scroll direction
   const [categoryTab, setCategoryTab] = useState("flight");
+  const [token, setToken] = useState();
 
-  const token = Cookies.get("auth-token");
+  useEffect(() =>{
+
+    const authToken = Cookies.get("auth-token");
+    setToken(authToken)
+  },[])
   const router = useRouter();
 
   const handleLogOut = () => {
