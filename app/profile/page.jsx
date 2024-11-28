@@ -27,12 +27,9 @@ export default function ProfilePage() {
     if (token) {
       const decodedToken = jwtDecode(token);
       setUser(decodedToken);
-    } else {
-      router.push("/auth-login");
     }
   }, [router]);
 
-  console.log(user);
   return (
     <>
       <Navbar />
