@@ -19,18 +19,47 @@ import { jwtDecode } from "jwt-decode";
 
 export default function ProfilePage() {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const token = Cookies.get("auth-token");
-    console.log(token)
-    if (token) {
-      const decodedToken = jwtDecode(token);
-      setUser(decodedToken);
-    }
+    const checkAuth = () => {
+      const token = Cookies.get("auth-token");
+      if (!token) {
+        router.push("/auth-login");
+        return;
+      }
+
+      try {
+        const decodedToken = jwtDecode(token);
+        setUser(decodedToken);
+      } catch (error) {
+        console.error("Failed to decode token:", error);
+        Cookies.remove("auth-token");
+        router.push("/auth-login");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
   }, [router]);
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-2">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render anything if user is not authenticated
+  if (!user) {
+    return null;
+  }
   return (
     <>
       <Navbar />
