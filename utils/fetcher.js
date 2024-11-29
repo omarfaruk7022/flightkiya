@@ -1,5 +1,3 @@
-// src/utils/api.js
-
 export const fetchData = async (
   endpoint,
   method = "GET",

@@ -67,7 +67,7 @@ export default function page({ searchParams }) {
     } else {
       setError(allFlights?.error?.message);
     }
-  }, [allFlights, allFlightsError]);
+  }, [allFlights]);
 
   useEffect(() => {
     if (originDestinations) {

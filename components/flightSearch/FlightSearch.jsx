@@ -151,6 +151,23 @@ const FlightSearch = () => {
     code: "JFK",
     value: "New York, USA",
   });
+
+  const [cities, setCities] = useState([
+    {
+      id: 1,
+      searchQueryDestination: "",
+      searchQueryArrival: "",
+      departureDate: null,
+      isOpenOrigin: false,
+      isOpenDestination: false,
+    },
+  ]);
+
+  const transformedData = cities.map((item) => ({
+    DepartureDateTime: item.departureDate,
+    OriginLocationCode: item.searchQueryDestination,
+    DestinationLocationCode: item.searchQueryArrival,
+  }));
   const [travelersData, setTravelersData] = useState();
   let originDestinations = [];
   // Handle OneWay trip type
@@ -185,27 +202,6 @@ const FlightSearch = () => {
         DepartureDateTime: returnDateTime,
         OriginLocationCode: searchQueryArrival,
         DestinationLocationCode: searchQueryDestination,
-      }
-    );
-  }
-
-  // Handle OpenJaw trip type
-  if (tripType === "OpenJaw") {
-    originDestinations.push(
-      {
-        DepartureDateTime: departureDateTime,
-        OriginLocationCode: searchQueryDestination,
-        DestinationLocationCode: searchQueryArrival,
-      },
-      {
-        DepartureDateTime: `${secondDepartureDate}T00:00:00`,
-        OriginLocationCode: secondOriginCode,
-        DestinationLocationCode: secondDestinationCode,
-      },
-      {
-        DepartureDateTime: `${thirdDepartureDate}T00:00:00`,
-        OriginLocationCode: thirdOriginCode,
-        DestinationLocationCode: thirdDestinationCode,
       }
     );
   }
@@ -256,28 +252,68 @@ const FlightSearch = () => {
     setLoading(true);
     setError("");
 
-    if (
-      !departureDate ||
-      !searchQueryDestination ||
-      !searchQueryArrival ||
-      travelerInputShow ||
-      (tripType === "Return" && !returnDate) ||
-      (tripType === "OpenJaw" &&
-        (!secondDepartureDate ||
-          !secondOriginCode ||
-          !secondDestinationCode ||
-          !thirdDepartureDate ||
-          !thirdOriginCode ||
-          !thirdDestinationCode))
-    ) {
-      toast.error("Invalid ");
-      setError("Please fill in all required fields.");
+    if (!departureDate) {
+      toast.error("Please select a departure date.");
+      setError("Departure date is required.");
       setLoading(false);
       return;
     }
 
+    if (!searchQueryDestination) {
+      toast.error("Please select a departure location.");
+      setError("Departure location is required.");
+      setLoading(false);
+      return;
+    }
+
+    if (!searchQueryArrival) {
+      toast.error("Please select a destination location.");
+      setError("Destination location is required.");
+      setLoading(false);
+      return;
+    }
+
+    if (travelerInputShow) {
+      toast.error("Please complete the traveler input.");
+      setError("Traveler input is required.");
+      setLoading(false);
+      return;
+    }
+
+    if (tripType === "Return" && !returnDate) {
+      toast.error("Please select a return date.");
+      setError("Return date is required for return trips.");
+      setLoading(false);
+      return;
+    }
+
+    if (tripType == "OpenJaw") {
+      if (transformedData.length < 2) {
+        toast.error("You must select at least 2 cities.");
+        setError("City selection is too few.");
+        setLoading(false);
+        return;
+      }
+      const invalidTransformedData = transformedData.find(
+        (item) =>
+          !item.DepartureDateTime ||
+          !item.OriginLocationCode ||
+          !item.DestinationLocationCode
+      );
+
+      if (invalidTransformedData) {
+        toast.error("One or more city data entries are invalid.");
+        setError("Please ensure all city data entries are filled correctly.");
+        setLoading(false);
+        return;
+      }
+    }
+
     const queryString = new URLSearchParams({
-      originDestinations: JSON.stringify(originDestinations),
+      originDestinations:
+        tripType == "OpenJaw"
+          ? JSON.stringify(transformedData)
+          : JSON.stringify(originDestinations),
       tripType,
       travelersData: JSON.stringify(travelersData),
       pricingSourceType: "Public",
@@ -326,65 +362,6 @@ const FlightSearch = () => {
       airport.value.toLowerCase() !== searchQueryArrival.toLowerCase()
   );
 
-  const [cities, setCities] = useState([
-    {
-      id: 1,
-      searchQueryDestination: "",
-      searchQueryArrival: "",
-      departureDate: null,
-      isOpenOrigin: false,
-      isOpenDestination: false,
-    },
-  ]);
-
-  const updateCityAirport = (id, field, airport) => {
-    setCities((prevCities) => {
-      const updatedCities = prevCities.map((city, index) => {
-        if (city.id === id) {
-          // Update the specific airport (origin or destination)
-          return {
-            ...city,
-            [`${field}Airport`]: airport,
-            [`searchQuery${field.charAt(0).toUpperCase() + field.slice(1)}`]:
-              airport.value,
-          };
-        }
-
-        // Auto-fill the next city's origin with the current city's destination
-        if (
-          field === "destination" &&
-          index > 0 &&
-          prevCities[index - 1].id === id
-        ) {
-          return {
-            ...city,
-            originAirport: airport,
-            searchQueryDestination: airport.value,
-          };
-        }
-
-        return city;
-      });
-
-      // Ensure uniqueness
-      const usedAirports = new Set();
-      return updatedCities.map((city) => {
-        if (
-          usedAirports.has(city.originAirport?.value) ||
-          usedAirports.has(city.destinationAirport?.value)
-        ) {
-          return { ...city, originAirport: null, destinationAirport: null };
-        }
-
-        if (city.originAirport) usedAirports.add(city.originAirport.value);
-        if (city.destinationAirport)
-          usedAirports.add(city.destinationAirport.value);
-
-        return city;
-      });
-    });
-  };
-
   const filterAvailableAirports = (field) => {
     const usedAirports = new Set(
       cities.flatMap((city) => [
@@ -420,7 +397,6 @@ const FlightSearch = () => {
     )
   );
 
-  
   const handleAddCity = () => {
     setCities([
       ...cities,
@@ -449,14 +425,11 @@ const FlightSearch = () => {
   const toggleField = (id, field) => {
     setCities((prevCities) =>
       prevCities.map((city) =>
-        city.id === id
-          ? { ...city, [field]: !city[field] } // Toggle the specified field
-          : city
+        city.id === id ? { ...city, [field]: !city[field] } : city
       )
     );
   };
 
-  console.log(cities);
   return (
     <section className="bg-[url('/images/banner-1.jpeg')] bg-center bg-fixed bg-cover w-full   ">
       <div className=" w-full container mx-auto ">
@@ -1017,12 +990,13 @@ const FlightSearch = () => {
                                         key={destination?.id}
                                         className="flex items-center space-x-4 cursor-pointer"
                                         onClick={() => {
-                                          // Update airport details for the current city
-                                          updateCityData(
-                                            city.id,
-                                            "searchQueryDestination",
-                                            destination.value
-                                          );
+                                          toggleField(city.id, "isOpenOrigin"),
+                                            // Update airport details for the current city
+                                            updateCityData(
+                                              city.id,
+                                              "searchQueryDestination",
+                                              destination.value
+                                            );
                                           setIsOpenDestination(false);
                                           updateCityData(
                                             city.id,
@@ -1093,12 +1067,15 @@ const FlightSearch = () => {
                                         key={arrival?.id}
                                         className="flex items-center space-x-4 cursor-pointer"
                                         onClick={() => {
-                                          // Update airport details for the current city
-                                          updateCityData(
+                                          toggleField(
                                             city.id,
-                                            "searchQueryArrival",
-                                            arrival.value
-                                          );
+                                            "isOpenDestination"
+                                          ),
+                                            updateCityData(
+                                              city.id,
+                                              "searchQueryArrival",
+                                              arrival.value
+                                            );
                                           setIsOpenArrival(false);
                                           updateCityData(
                                             city.id,

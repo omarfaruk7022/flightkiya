@@ -61,9 +61,15 @@ export default function FlightCard({ flight, index }) {
       router.push(`/booking`);
       setSelectedFlight(flightData?.data);
     } else {
-      toast.error(flightData?.error?.message);
+      if (flightData?.error?.message) {
+        toast.error(flightData?.error?.message);
+      } else {
+        toast.error(error);
+      }
     }
   }, [flightData]);
+
+  console.log(flightData, error);
 
   const segment = flight?.segments?.[0];
   const fare = flight?.fares;
