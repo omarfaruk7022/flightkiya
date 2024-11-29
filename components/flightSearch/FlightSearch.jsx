@@ -332,11 +332,72 @@ const FlightSearch = () => {
       searchQueryDestination: "",
       searchQueryArrival: "",
       departureDate: null,
-      
+      isOpenOrigin: false,
+      isOpenDestination: false,
     },
   ]);
-  const filteredAirportsArrivalMulti = cities.map((city) => {
-    return airportsData.filter(
+
+  const updateCityAirport = (id, field, airport) => {
+    setCities((prevCities) => {
+      const updatedCities = prevCities.map((city, index) => {
+        if (city.id === id) {
+          // Update the specific airport (origin or destination)
+          return {
+            ...city,
+            [`${field}Airport`]: airport,
+            [`searchQuery${field.charAt(0).toUpperCase() + field.slice(1)}`]:
+              airport.value,
+          };
+        }
+
+        // Auto-fill the next city's origin with the current city's destination
+        if (
+          field === "destination" &&
+          index > 0 &&
+          prevCities[index - 1].id === id
+        ) {
+          return {
+            ...city,
+            originAirport: airport,
+            searchQueryDestination: airport.value,
+          };
+        }
+
+        return city;
+      });
+
+      // Ensure uniqueness
+      const usedAirports = new Set();
+      return updatedCities.map((city) => {
+        if (
+          usedAirports.has(city.originAirport?.value) ||
+          usedAirports.has(city.destinationAirport?.value)
+        ) {
+          return { ...city, originAirport: null, destinationAirport: null };
+        }
+
+        if (city.originAirport) usedAirports.add(city.originAirport.value);
+        if (city.destinationAirport)
+          usedAirports.add(city.destinationAirport.value);
+
+        return city;
+      });
+    });
+  };
+
+  const filterAvailableAirports = (field) => {
+    const usedAirports = new Set(
+      cities.flatMap((city) => [
+        city.originAirport?.value,
+        city.destinationAirport?.value,
+      ])
+    );
+
+    return airportsData.filter((airport) => !usedAirports.has(airport.value));
+  };
+
+  const filteredAirportsArrivalMulti = cities.map((city) =>
+    filterAvailableAirports("origin").filter(
       (airport) =>
         airport.name
           .toLowerCase()
@@ -344,11 +405,11 @@ const FlightSearch = () => {
         airport.value
           .toLowerCase()
           .includes(city.searchQueryArrival.toLowerCase())
-    );
-  });
+    )
+  );
 
-  const filteredAirportsDestinationMulti = cities.map((city) => {
-    return airportsData.filter(
+  const filteredAirportsDestinationMulti = cities.map((city) =>
+    filterAvailableAirports("destination").filter(
       (airport) =>
         airport.name
           .toLowerCase()
@@ -356,9 +417,10 @@ const FlightSearch = () => {
         airport.value
           .toLowerCase()
           .includes(city.searchQueryDestination.toLowerCase())
-    );
-  });
+    )
+  );
 
+  
   const handleAddCity = () => {
     setCities([
       ...cities,
@@ -384,6 +446,17 @@ const FlightSearch = () => {
     );
   };
 
+  const toggleField = (id, field) => {
+    setCities((prevCities) =>
+      prevCities.map((city) =>
+        city.id === id
+          ? { ...city, [field]: !city[field] } // Toggle the specified field
+          : city
+      )
+    );
+  };
+
+  console.log(cities);
   return (
     <section className="bg-[url('/images/banner-1.jpeg')] bg-center bg-fixed bg-cover w-full   ">
       <div className=" w-full container mx-auto ">
@@ -909,7 +982,7 @@ const FlightSearch = () => {
                               <label
                                 className="w-full cursor-pointer"
                                 onClick={() =>
-                                  setIsOpenDestination(!isOpenDestination)
+                                  toggleField(city.id, "isOpenOrigin")
                                 }
                               >
                                 <input
@@ -933,7 +1006,7 @@ const FlightSearch = () => {
                                 </div>
                               </label>
                             </div>
-                            {isOpenDestination ? (
+                            {city?.isOpenOrigin ? (
                               <div className="w-full mx-auto bg-white rounded-xl shadow-md   absolute top-20  max-h-[600px] z-10 overflow-y-auto">
                                 <div className="p-8 ">
                                   <ul className="space-y-4">
@@ -984,7 +1057,9 @@ const FlightSearch = () => {
                             <div className="border-2  border-l-0 border-[#BEA8A8] pt-2 ps-5 rounded-r-md  h-[69px]">
                               <label
                                 className="w-full cursor-pointer"
-                                onClick={() => setIsOpenArrival(!isOpenArrival)}
+                                onClick={() =>
+                                  toggleField(city.id, "isOpenDestination")
+                                }
                               >
                                 <input
                                   value={city.searchQueryArrival}
@@ -1007,7 +1082,7 @@ const FlightSearch = () => {
                                 </div>
                               </label>
                             </div>
-                            {isOpenArrival ? (
+                            {city?.isOpenDestination ? (
                               <div className=" mx-auto bg-white rounded-xl shadow-md  absolute top-20  max-h-[600px] z-10 overflow-y-auto">
                                 <div className="p-8 ">
                                   <ul className="space-y-4">
