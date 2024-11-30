@@ -268,7 +268,7 @@ const Booking = () => {
     CountryCode: countryCode,
     PhoneNumber: contactNumber,
     Email: contactEmail,
-    PostCode: "1200"
+    PostCode: "1200",
   };
   const {
     data: bookingData,
@@ -298,23 +298,23 @@ const Booking = () => {
       <div className=" space-y-6">
         {/* Header */}
         <div className="text-xl font-semibold text-blue-900">
-          <h1 className=" text-[26px]">Review Your Booking</h1>
+          <h1 className="text-[20px] md:text-[26px]">Review Your Booking</h1>
         </div>
         <div></div>
 
-        <div className=" flex gap-6">
-          <div className=" flex flex-col gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-9 gap-3">
+          <div className="col-span-1 md:col-span-6 flex flex-col gap-8 flex-wrap">
             {/* Flight Info Section */}
             {flightSegments?.map((segment, index) => (
               <>
-                <div className="bg-white h-[250px] w-[900px] rounded-lg shadow-lg p-9 mb-4">
-                  <h2 className="text-[24px] font-bold text-blue-900">{`${segment?.DepartureAirportLocationCode}-${segment?.ArrivalAirportLocationCode}`}</h2>
+                <div className="bg-white max-h-[350px] w-full rounded-lg shadow-lg p-9 mb-4">
+                  <h2 className="text-[22px] md:text-[24px] font-bold text-blue-900">{`${segment?.DepartureAirportLocationCode}-${segment?.ArrivalAirportLocationCode}`}</h2>
                   <div className="flex justify-between items-center mt-2">
                     <div className=" w-full">
-                      <div className=" w-full flex items-center justify-between">
+                      <div className=" w-full flex items-center justify-between flex-wrap">
                         <span className=" flex flex-col space-y-3">
                           <p className="text-gray-700">
-                            <div className=" flex gap-2">
+                            <div className="flex-wrap flex gap-2">
                               <span>
                                 <Image src={biman} className=" w-[80px]" />
                               </span>
@@ -331,30 +331,15 @@ const Booking = () => {
                       <div className=" flex items-center justify-center">
                         <span>{segment?.StopQuantity} Stops</span>
                       </div>
-                      <div className=" mt-3 flex justify-between items-center">
+                      <div className=" mt-3 flex justify-between items-center flex-wrap gap-4 md:gap-0">
                         <div>
                           {" "}
-                          <p className="text-xl font-semibold text-gray-800">
+                          <p className="text-[18px] md:text-xl font-semibold text-gray-800">
                             {" "}
                             {new Date(
                               segment?.DepartureDateTime
                             ).toLocaleTimeString()}
                           </p>
-                        </div>
-                        <div>
-                          {" "}
-                          <p className="text-xl font-semibold text-gray-800">
-                            {" "}
-                            {new Date(
-                              segment?.ArrivalDateTime
-                            ).toLocaleTimeString()}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className=" flex items-center justify-between">
-                        <div>
-                          {" "}
                           <p className="text-sm text-gray-500">
                             {" "}
                             {new Date(
@@ -363,17 +348,29 @@ const Booking = () => {
                           </p>
                         </div>
                         <div>
+                          {" "}
+                          <p className="text-[18px] md:text-xl font-semibold text-gray-800">
+                            {" "}
+                            {new Date(
+                              segment?.ArrivalDateTime
+                            ).toLocaleTimeString()}
+                          </p>
                           <p className="text-sm text-gray-500">
                             {" "}
                             {new Date(segment?.ArrivalDateTime).toDateString()}
                           </p>
                         </div>
                       </div>
+
+                      <div className=" flex items-center justify-between">
+                        <div> </div>
+                        <div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
                 <div className="bg-white rounded-lg shadow-lg p-6 mb-4">
-                  <h3 className="font-semibold text-[24px] text-blue-900">
+                  <h3 className="font-semibold text-[20px] md:text-[24px] text-blue-900">
                     Flight Details
                   </h3>
                   <div className="border-b border-gray-300 my-2"></div>
@@ -384,7 +381,7 @@ const Booking = () => {
                       <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
-                        className={`text-[20px] ${
+                        className={`text-[18px] md:text-[20px] ${
                           activeTab === tab
                             ? "text-blue-900 border-b-2 border-blue-900"
                             : "text-gray-600"
@@ -399,16 +396,10 @@ const Booking = () => {
                   <div className="mt-4">
                     {activeTab === "baggage" && (
                       <div className=" flex space-y-5 flex-col">
-                        <div className=" flex justify-between items-center">
-                          <p className="text-[20px] text-blue-800 mb-2">
-                            Flight
-                          </p>
-                          <p className="text-[20px] text-blue-800 mb-2">
-                            Cabin
-                          </p>
-                          <p className="text-[20px] text-blue-800 mb-2">
-                            Check-in
-                          </p>
+                        <div className=" flex justify-between items-center text-[16px] md:text-[20px]">
+                          <p className="  text-blue-800 mb-2">Flight</p>
+                          <p className=" text-blue-800 mb-2">Cabin</p>
+                          <p className=" text-blue-800 mb-2">Check-in</p>
                         </div>
                         <div className=" flex justify-between mr-8 items-center">
                           <p className="text-[16px]  mb-2">{`${segment?.DepartureAirportLocationCode}-${segment?.ArrivalAirportLocationCode}`}</p>
@@ -419,14 +410,10 @@ const Booking = () => {
                     )}
                     {activeTab === "fare" && (
                       <div className=" flex gap-4 flex-col">
-                        <div className=" flex justify-between  items-center">
-                          <p className="text-[20px]  text-blue-800 mb-2">
-                            Fare Summary
-                          </p>
-                          <p className="text-[20px]  text-blue-800 mb-2 pr-9">
-                            Base Fare
-                          </p>
-                          <p className="text-[20px]  text-blue-800 mb-2">Tax</p>
+                        <div className=" flex justify-between  items-center  text-[16px] md:text-[20px] text-blue-800">
+                          <p className="   mb-2">Fare Summary</p>
+                          <p className=" mb-2 pr-9">Base Fare</p>
+                          <p className=" mb-2">Tax</p>
                         </div>
                         <div className=" flex ml-5 items-center justify-between">
                           <p className="text-[16px]  mb-2">
@@ -488,7 +475,7 @@ const Booking = () => {
             <div>
               <Link href="/auth-login">
                 <div className=" flex items-center gap-3">
-                  <h1 className=" text-[24px] font-semibold text-blue-900">
+                  <h1 className="text-[20px]  md:text-[24px] font-semibold text-blue-900">
                     Sign In
                   </h1>
                   <span className=" text-[18px]">
@@ -497,7 +484,7 @@ const Booking = () => {
                 </div>
               </Link>
               <div className="bg-white rounded-lg shadow-lg p-6 mb-4 mt-4">
-                <h2 className="text-blue-900 text-[20px] font-semibold underline">
+                <h2 className="text-blue-900 text-[16px] md:text-[20px] font-semibold underline">
                   Have a coupon?
                 </h2>
               </div>
@@ -505,7 +492,7 @@ const Booking = () => {
 
             {/* Traveler Details Section */}
             <div className="bg-white rounded-lg shadow-lg p-6 mb-4">
-              <h3 className="font-semibold text-[24px] text-blue-900">
+              <h3 className="font-semibold text-[20px] md:text-[24px] text-blue-900">
                 Enter Traveller Details
               </h3>
               <div className="border-b border-gray-300 my-2"></div>
@@ -573,7 +560,7 @@ const Booking = () => {
                         ))}
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div className="grid grid-cols-1  md:grid-cols-2 gap-4 mb-4">
                         <input
                           type="text"
                           name="firstName"
@@ -599,7 +586,7 @@ const Booking = () => {
                           className="border border-gray-300 p-3 rounded"
                         />
                       </div>
-                      <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div className="grid grid-cols-1  md:grid-cols-2 gap-4 mb-4">
                         <Select
                           options={nationalityOptions}
                           value={passenger.Nationality}
@@ -625,7 +612,7 @@ const Booking = () => {
                           styles={customSelectStyles}
                         />
                       </div>
-                      <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div className="grid grid-cols-1  md:grid-cols-2 gap-4 mb-4">
                         <input
                           type="text"
                           name="passportNumber"
@@ -660,7 +647,7 @@ const Booking = () => {
                           />
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div className="grid grid-cols-1  md:grid-cols-2 gap-4 mb-4">
                         <ReactDatePicker
                           selected={
                             passenger.DateOfBirth
@@ -692,13 +679,13 @@ const Booking = () => {
             </div>
             {/* Contact Details Section */}
             <div className="bg-white rounded-lg shadow-lg p-6 mb-4">
-              <h3 className="text-[24px] font-bold text-blue-900 mb-2">
+              <h3 className="text-[22px] md:text-[24px] font-bold text-blue-900 mb-2">
                 Contact Details
               </h3>
               <p className="text-sm text-gray-600 mb-4">
                 Receive booking confirmation & updates
               </p>
-              <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 w-full">
                 <input
                   type="email"
                   id="contact-email"
@@ -707,9 +694,9 @@ const Booking = () => {
                   placeholder="Email"
                   className="border border-gray-300 p-3 rounded"
                 />
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 w-full">
                   <select
-                    className="border border-gray-300 px-3 py-4 rounded"
+                    className="border border-gray-300 px-3 py-3 rounded"
                     onChange={(e) => setCountryCode(e.target.value)}
                   >
                     <option>+880</option> <option>+880</option>{" "}
@@ -720,7 +707,7 @@ const Booking = () => {
                     type="text"
                     onChange={(e) => setContactNumber(e.target.value)}
                     placeholder="1XXX XXXXX"
-                    className="border border-gray-300 p-3 rounded flex-grow"
+                    className="border border-gray-300 p-3 rounded  w-full"
                   />
                 </div>
               </div>
@@ -808,13 +795,13 @@ const Booking = () => {
                       </div>
                     </div>
                   ))}
-                  <p className=" mt-7 ml-20 justify-center text-gray-400">
+                  <p className=" mt-7  justify-center text-gray-400">
                     Your booking will be confirmed and held for 20 minutes to
                     complete payment
                   </p>
                 </div>
                 {/* You can add more details here if needed */}
-                <div className="flex justify-center  flex-wrap space-x-3 mt-4">
+                <div className="flex justify-center gap-5 md:gap-0 space-x-3 mt-4">
                   <button
                     onClick={closeModal}
                     className="bg-gray-200 text-gray-700 w-[300px] py-4 px-4 rounded-lg hover:bg-gray-300 transition-colors focus:outline-none"
@@ -850,9 +837,9 @@ const Booking = () => {
             </Modal>
           </div>
 
-          <div className="flex gap-4 flex-col">
-            <div className=" bg-white rounded-[8px] w-[400px] h-[150px] flex gap-5">
-              <div className=" bg-slate-400 absolute ml-10 mt-8  w-[300px] rounded-[8px] p-8 h-[80px] flex justify-center items-center">
+          <div className="flex gap-4 flex-col colspan-1 md:col-span-3 w-full mx-auto">
+            <div className=" bg-white rounded-[8px] w-full min-h-[150px] flex gap-5 justify-center">
+              <div className=" bg-slate-400 absolute mt-8  px-2 rounded-[8px] w-[250px]  h-[80px] flex justify-center items-center">
                 <div className="flex gap-2 text-sky-700 items-center">
                   {" "}
                   <TbClockFilled className="w-[35px] h-[35px] text-sky-800" />
@@ -867,7 +854,7 @@ const Booking = () => {
                 </div>
               </div>
             </div>
-            <div className="w-[400px] mx-auto h-[400px] bg-white shadow-md rounded-lg p-4 space-y-4">
+            <div className="w-full mx-auto max-h-[500px] bg-white shadow-md rounded-lg p-4 space-y-4">
               <div className="flex items-center space-x-3">
                 <Image
                   src={biman} // Replace with the path to your logo image

@@ -7,9 +7,10 @@ export default function page() {
   return (
     <div className="w-full overflow-x-hidden">
       <Navbar />
-      <div className="bg-[#F0F4F4] px-5 md:px-48 min-h-screen">
-      <Booking/>
-    
+      <div className="bg-[#F0F4F4]">
+        <div className=" max-w-7xl min-h-screen mx-auto">
+          <Booking />
+        </div>
       </div>
     </div>
   );

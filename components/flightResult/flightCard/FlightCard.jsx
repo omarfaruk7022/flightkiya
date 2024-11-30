@@ -165,7 +165,7 @@ export default function FlightCard({ flight, index }) {
                   />
                 ) : (
                   <>
-                    Select
+                    <span>Select</span>
                     <Image src={right} alt="Right Arrow" />
                   </>
                 )}

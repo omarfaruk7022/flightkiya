@@ -15,11 +15,11 @@ import Cookies from "js-cookie";
 function PayBill() {
   const [timeLeft, setTimeLeft] = useState(18 * 60); // 18 minutes in seconds
   const router = useRouter();
-  const [token,setToken] = useState()
+  const [token, setToken] = useState();
   const { selectedFlight, bookingId } = flightStore();
   useEffect(() => {
     const authToken = Cookies.get("auth-token");
-    setToken(authToken)
+    setToken(authToken);
   }, [router]);
   // Countdown timer logic
   useEffect(() => {
@@ -27,7 +27,7 @@ function PayBill() {
       setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
     return () => clearInterval(timer);
-  }, []); 
+  }, []);
 
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
@@ -35,7 +35,7 @@ function PayBill() {
   const {
     data: paymentData,
     error: paymentDataError,
-    isLoading: paymentDataLoading ,
+    isLoading: paymentDataLoading,
     refetch: paymentDataRefetch,
   } = useQuery({
     queryKey: ["create-payment-intent", bookingId],
@@ -68,10 +68,10 @@ function PayBill() {
           />
         </div>
       ) : (
-        <div className="min-h-screen  p-4 flex">
+        <div className="min-h-screen  p-4 flex flex-col-reverse md:flex-row gap-5 md:gap-0">
           {/* Sidebar */}
-          <aside className="w-1/4 bg-white h-[650px] p-4 rounded-md shadow-md space-y-4">
-            <div className="space-y-2 ">
+          <aside className="w-full  md:w-1/4 bg-white h-fit p-4 rounded-md shadow-md space-y-4">
+            <div className="space-y-2 h-full">
               {["Stripe"].map((method, index) => (
                 <button
                   key={index}
@@ -88,19 +88,20 @@ function PayBill() {
           </aside>
 
           {/* Payment Details */}
-          <main className="flex-1 mx-4 h-[650px] bg-white p-8 rounded-md shadow-md space-y-8">
-            <h2 className="text-xl mb-28 text-center font-semibold text-gray-800">
+          <main className="flex-1  w-full max-h-[650px] bg-white p-8 rounded-md shadow-md space-y-8">
+            <h2 className="text-[18px] md:text-xl mb-0  md:mb-28 text-center font-semibold text-gray-800">
               You will be directed to the Stripe platform where you can complete
               your purchase.
             </h2>
-            <div className="flex items-center justify-center flex-wrap space-x-2">
+            <div className="flex items-center justify-center flex-col md:flex-row flex-wrap space-x-2">
               <Image
                 src={Flightkiya}
                 alt="FlightKiya Logo"
                 width={200}
                 height={70}
               />
-              <span className="text-xl">→</span>
+              <span className="text-xl hidden md:block">→</span>
+              <span className="text-xl block md:hidden">+</span>
               <Image src={stripe} alt="Stripe logo" width={180} height={70} />
             </div>
             <p className=" text-gray-600 text-center ml-10 mr-10">
@@ -134,7 +135,7 @@ function PayBill() {
           </main>
 
           {/* Fare Summary & Timer */}
-          <section className="w-1/4 h-[650px] bg-white p-4 rounded-md shadow-md">
+          <section className="w-full md:w-1/4 max-h-[650px] bg-white p-4 rounded-md shadow-md">
             <div className="bg-blue-100 p-4 rounded-md mb-4">
               <p className="text-gray-800 text-center">
                 Booking confirmed. Complete payment before timeout.

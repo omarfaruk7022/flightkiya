@@ -6,7 +6,7 @@ function page() {
     <div>
       <Navbar />
       <div className=" w-full bg-slate-100">
-        <div className=" justify-center flex ml-[250px] mr-[250px]">
+        <div className="  justify-center flex max-w-9xl md:max-w-7xl mx-auto">
           <Paybill />
         </div>
       </div>

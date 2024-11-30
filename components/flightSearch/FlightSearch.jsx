@@ -362,38 +362,29 @@ const FlightSearch = () => {
       airport.value.toLowerCase() !== searchQueryArrival.toLowerCase()
   );
 
-  const filterAvailableAirports = (field) => {
-    const usedAirports = new Set(
-      cities.flatMap((city) => [
-        city.originAirport?.value,
-        city.destinationAirport?.value,
-      ])
-    );
-
-    return airportsData.filter((airport) => !usedAirports.has(airport.value));
-  };
-
   const filteredAirportsArrivalMulti = cities.map((city) =>
-    filterAvailableAirports("origin").filter(
+    airportsData.filter(
       (airport) =>
-        airport.name
+        (airport.name
           .toLowerCase()
           .includes(city.searchQueryArrival.toLowerCase()) ||
-        airport.value
-          .toLowerCase()
-          .includes(city.searchQueryArrival.toLowerCase())
+          airport.value
+            .toLowerCase()
+            .includes(city.searchQueryArrival.toLowerCase())) &&
+        airport.value !== city.searchQueryDestination
     )
   );
 
   const filteredAirportsDestinationMulti = cities.map((city) =>
-    filterAvailableAirports("destination").filter(
+    airportsData.filter(
       (airport) =>
-        airport.name
+        (airport.name
           .toLowerCase()
           .includes(city.searchQueryDestination.toLowerCase()) ||
-        airport.value
-          .toLowerCase()
-          .includes(city.searchQueryDestination.toLowerCase())
+          airport.value
+            .toLowerCase()
+            .includes(city.searchQueryDestination.toLowerCase())) &&
+        airport.value !== city.searchQueryArrival
     )
   );
 
