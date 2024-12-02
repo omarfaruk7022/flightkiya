@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { FaFacebookMessenger, FaPhoneAlt } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 export default function page({ searchParams }) {
   const router = useRouter();
@@ -66,8 +67,10 @@ export default function page({ searchParams }) {
       setFlightResults(results);
     } else {
       setError(allFlights?.error?.message);
+      toast.error(allFlights?.error?.message);
+      toast.error(allFlightsError?.error?.message);
     }
-  }, [allFlights]);
+  }, [allFlights,allFlightsError]);
 
   useEffect(() => {
     if (originDestinations) {
