@@ -9,6 +9,7 @@ export const fetchData = async (
 
   const url = `${NEXT_API_URL}${endpoint}`;
 
+  console.log(token)
   const options = {
     method,
     headers: {

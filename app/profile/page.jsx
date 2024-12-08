@@ -13,25 +13,31 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-import flightStore from "@/store";
-import { toast } from "react-toastify";
+
 import { jwtDecode } from "jwt-decode";
+import { fetchData } from "@/utils/fetcher";
+import { useQuery } from "@tanstack/react-query";
+import flightStore from "@/store";
 
 export default function ProfilePage() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
+  const { token, setToken } = flightStore();
+
+  console.log(token);
+
   useEffect(() => {
     const checkAuth = () => {
-      const token = Cookies.get("auth-token");
-      if (!token) {
+      const authToken = Cookies.get("auth-token");
+      if (!authToken) {
         router.push("/auth-login");
         return;
       }
 
       try {
-        const decodedToken = jwtDecode(token);
+        const decodedToken = jwtDecode(authToken);
         setUser(decodedToken);
       } catch (error) {
         console.error("Failed to decode token:", error);
@@ -44,6 +50,22 @@ export default function ProfilePage() {
 
     checkAuth();
   }, [router]);
+
+  const {
+    data: allBookings,
+    error: allBookingsError,
+    isLoading: allBookingsLoading = true,
+    refetch: allBookingsRefetch,
+  } = useQuery({
+    queryKey: ["bookings"],
+    queryFn: () => fetchData(`b2c/user/bookings`, token),
+    enabled: false,
+  });
+  useEffect(() => {
+    if (user && token) {
+      allBookingsRefetch();
+    }
+  }, [token, user]);
 
   if (isLoading) {
     return (
@@ -104,28 +126,27 @@ export default function ProfilePage() {
                 <TabsTrigger value="flights">Recent Flights</TabsTrigger>
                 <TabsTrigger value="settings">Account Settings</TabsTrigger>
               </TabsList>
-              <TabsContent value="flights" className="p-4">
-                <div className="space-y-4">
-                  <FlightCard
-                    from="JFK"
-                    to="LAX"
-                    date="May 15, 2023"
-                    status="Completed"
-                  />
-                  <FlightCard
-                    from="LAX"
-                    to="ORD"
-                    date="June 2, 2023"
-                    status="Upcoming"
-                  />
-                  <FlightCard
-                    from="ORD"
-                    to="MIA"
-                    date="July 10, 2023"
-                    status="Upcoming"
-                  />
+              {allBookingsLoading ? (
+                <div className="flex items-center justify-center min-h-screen">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+                    <p className="mt-2">Loading...</p>
+                  </div>
                 </div>
-              </TabsContent>
+              ) : (
+                <TabsContent value="flights" className="p-4">
+                  <div className="space-y-4">
+                    {/* {allBookings?.data?.map((flight) => ( */}
+                    <FlightCard
+                      from="JFK"
+                      to="LAX"
+                      date="May 15, 2023"
+                      status="Completed"
+                    />
+                    {/* ))} */}
+                  </div>
+                </TabsContent>
+              )}
               <TabsContent value="settings" className="p-4">
                 <form className="space-y-4">
                   <div className="grid gap-2">

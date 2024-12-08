@@ -10,6 +10,7 @@ import Link from "next/link";
 import { toast } from "react-toastify";
 import flightStore from "@/store";
 import { Oval } from "react-loader-spinner";
+import Cookies from "js-cookie";
 export default function SignUp() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [email, setEmail] = useState();
@@ -74,6 +75,8 @@ export default function SignUp() {
       setPassword("");
       setConfirmPassword("");
       setPhone("");
+      Cookies.set("auth-token", registerData.token);
+
       setToken(registerData?.token);
     } else {
       toast.error(registerData.error.message);

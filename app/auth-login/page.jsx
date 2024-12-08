@@ -41,6 +41,7 @@ const Login = () => {
       const data = await fetchData("auth/login", "POST", payload);
 
       Cookies.set("auth-token", data.token);
+      setToken(data.token);
 
       router.push("/profile");
     } catch (err) {
@@ -136,7 +137,10 @@ const Login = () => {
             </div>
 
             <div className="flex items-center justify-between mb-4">
-              <Link href="#" className="text-indigo-600 hover:underline text-sm">
+              <Link
+                href="#"
+                className="text-indigo-600 hover:underline text-sm"
+              >
                 Forgot Password?
               </Link>
             </div>

@@ -288,6 +288,7 @@ const Booking = () => {
   useEffect(() => {
     if (bookingData?.data && bookingData?.success === true) {
       Cookies.set("auth-token", bookingData?.data.token);
+      setToken(bookingData?.data.token);
       setBookingId(bookingData?.data?.booking_id);
       router.push("/payment");
     }

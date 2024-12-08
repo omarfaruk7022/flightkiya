@@ -94,7 +94,7 @@ export default function FlightCard({ flight, index }) {
                 className="w-10 h-10 sm:w-12 sm:h-12"
               />
               <span className="text-xs sm:text-sm font-medium">
-                {segment?.operating_airline || "Unknown Airline"}
+                {flight?.airline_name || "Unknown Airline"}
               </span>
             </div>
 
@@ -102,8 +102,8 @@ export default function FlightCard({ flight, index }) {
             <div className="flex flex-col justify-between sm:col-span-2 md:col-span-1">
               <div className="flex justify-between items-center text-xs sm:text-sm">
                 <span>
-                  {segment?.DepartureDateTime
-                    ? new Date(segment.DepartureDateTime).toLocaleTimeString(
+                  {flight?.DepartureDateTime
+                    ? new Date(flight.DepartureDateTime).toLocaleTimeString(
                         [],
                         {
                           hour: "2-digit",
@@ -114,8 +114,8 @@ export default function FlightCard({ flight, index }) {
                     : "N/A"}
                 </span>
                 <span>
-                  {segment?.ArrivalDateTime
-                    ? new Date(segment.ArrivalDateTime).toLocaleTimeString([], {
+                  {flight?.ArrivalDateTime
+                    ? new Date(flight.ArrivalDateTime).toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit",
                         hour12: true,
@@ -125,27 +125,31 @@ export default function FlightCard({ flight, index }) {
               </div>
               <div className="flex items-center justify-center flex-col space-y-2">
                 <span className="text-xs sm:text-sm">
-                  {segment?.stops === 0 ? "Non-stop" : `${segment.stops} Stops`}
+                  {flight?.stoppage === 0
+                    ? "Non-stop"
+                    : flight?.stoppage == 1
+                    ? "1 Stop"
+                    : `${flight.stoppage} Stops`}
                 </span>
                 <Image src={arrowRight} alt="Flight Path Arrow" />
               </div>
               <div className="flex justify-between items-center text-xs sm:text-sm">
-                <span>{segment?.DepartureAirportLocationCode || "N/A"}</span>
-                <span>{segment?.ArrivalAirportLocationCode || "N/A"}</span>
+                <span>{flight?.departureAirportCode || "N/A"}</span>
+                <span>{flight?.arrivalAirportCode || "N/A"}</span>
               </div>
             </div>
 
             {/* Fare Information */}
             <div className="flex flex-col justify-between items-end">
               <div className="text-right space-y-1 sm:space-y-2">
-                {fare.BaseFare && (
-                  <p className="text-xs sm:text-sm text-red-500 line-through">
-                    ${fare.BaseFare}
-                  </p>
-                )}
                 <p className="text-black text-xl sm:text-2xl font-bold">
                   ${fare.TotalFare || "N/A"}
                 </p>
+                {fare.BaseFare && (
+                  <p className="text-xs sm:text-sm text-black ">
+                    ${fare.BaseFare} / Person
+                  </p>
+                )}
               </div>
               <button
                 onClick={() => handleRevalidateFlight(flight?.flight_id)}
