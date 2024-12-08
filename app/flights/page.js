@@ -57,7 +57,7 @@ export default function page({ searchParams }) {
     refetch: allFlightsRefetch,
   } = useQuery({
     queryKey: ["flights", payload],
-    queryFn: () => fetchData("b2c/search", "POST", payload),
+    queryFn: () => fetchData(`b2c/search?filter=true`, "POST", payload),
     enabled: false,
   });
 

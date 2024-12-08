@@ -5,7 +5,7 @@ export const fetchData = async (
   token = null
 ) => {
   const NEXT_API_URL =
-    process.env.NEXT_API_URL || "https://fk-api.adbiyas.com/api/";
+    process.env.NEXT_API_URL || "https://flightkiya.cosmelic.com/api/";
 
   const url = `${NEXT_API_URL}${endpoint}`;
 
