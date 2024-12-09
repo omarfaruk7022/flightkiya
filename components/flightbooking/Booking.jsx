@@ -304,20 +304,24 @@ const Booking = () => {
         <div></div>
 
         <div className="grid grid-cols-1 md:grid-cols-9 gap-3">
-          <div className="col-span-1 md:col-span-6 flex flex-col gap-8 flex-wrap">
+          <div className="col-span-1 md:col-span-6 flex flex-col  flex-wrap">
             {/* Flight Info Section */}
             {flightSegments?.map((segment, index) => (
               <>
-                <div className="bg-white max-h-[350px] w-full rounded-lg shadow-lg p-9 mb-4">
+                <div className="bg-white max-h-[350px] w-full rounded-t-lg shadow-lg p-9 ">
                   <h2 className="text-[22px] md:text-[24px] font-bold text-blue-900">{`${segment?.DepartureAirportLocationCode}-${segment?.ArrivalAirportLocationCode}`}</h2>
                   <div className="flex justify-between items-center mt-2">
                     <div className=" w-full">
                       <div className=" w-full flex items-center justify-between flex-wrap">
                         <span className=" flex flex-col space-y-3">
                           <p className="text-gray-700">
-                            <div className="flex-wrap flex gap-2">
+                            <div className="flex-wrap flex items-center gap-2">
                               <span>
-                                <Image src={biman} className=" w-[80px]" />
+                                <Image
+                                  src={segment?.airline_img}
+                                  width={80}
+                                  height={80}
+                                />
                               </span>
                               <span>{segment?.operating_airline}</span>
                             </div>
@@ -370,7 +374,7 @@ const Booking = () => {
                     </div>
                   </div>
                 </div>
-                <div className="bg-white rounded-lg shadow-lg p-6 mb-4">
+                <div className="bg-white rounded-b-lg shadow-lg p-6 mb-4">
                   <h3 className="font-semibold text-[20px] md:text-[24px] text-blue-900">
                     Flight Details
                   </h3>
