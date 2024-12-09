@@ -172,8 +172,11 @@ const FlightSearch = () => {
   let originDestinations = [];
   // Handle OneWay trip type
 
-  const validDepartureDate = new Date(departureDate); // Ensure it's a Date object
-  const validReturnDate = new Date(returnDate); // Ensure it's a Date
+
+
+  console.log(new Date(departureDate))
+  const validDepartureDate = new Date(departureDate); 
+  const validReturnDate = new Date(returnDate); 
   const departureDateTime =
     validDepartureDate instanceof Date && !isNaN(validDepartureDate)
       ? `${validDepartureDate.toISOString().split("T")[0]}T00:00:00`

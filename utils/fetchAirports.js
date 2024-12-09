@@ -1,6 +1,6 @@
 export const fetchAirports = async (searchTerm) => {
   const NEXT_API_URL =
-    process.env.NEXT_API_URL || "https://fk-api.adbiyas.com/api/";
+    process.env.NEXT_API_URL || "https://flightkiya.cosmelic.com/api/";
   const response = await fetch(
     `${NEXT_API_URL}common/airports?size=25&search=${searchTerm}`
   );
@@ -9,7 +9,7 @@ export const fetchAirports = async (searchTerm) => {
   }
   const data = await response.json();
   if (data.success) {
-    return data.data; // Return the airport suggestions
+    return data.data; 
   } else {
     throw new Error("No airport data found");
   }
