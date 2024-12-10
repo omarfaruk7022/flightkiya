@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import logoBlack from "@/public/icons/logoFlight-removebg-preview.png";
+import avatar from "@/public/images/avatar.jpg";
 import jwt from "jsonwebtoken";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plane, MapPin, Calendar, CreditCard } from "lucide-react";
@@ -25,8 +25,6 @@ export default function ProfilePage() {
   const router = useRouter();
 
   const { token, setToken } = flightStore();
-
-  console.log(token);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -58,7 +56,7 @@ export default function ProfilePage() {
     refetch: allBookingsRefetch,
   } = useQuery({
     queryKey: ["bookings"],
-    queryFn: () => fetchData(`b2c/user/bookings`, token),
+    queryFn: () => fetchData(`b2c/user/bookings`, "GET", null, token),
     enabled: false,
   });
   useEffect(() => {
@@ -94,12 +92,10 @@ export default function ProfilePage() {
                 <Avatar className="h-16 w-16">
                   <Image
                     alt="User avatar"
-                    src={logoBlack}
+                    src={avatar}
                     className="rounded-full "
                   />
-                  <span className="absolute inset-0 flex items-center justify-center text-xl font-medium">
-                    JD
-                  </span>
+                 
                 </Avatar>
                 <div>
                   <h2 className="text-[22px] font-bold">{user?.full_name}</h2>
@@ -120,7 +116,7 @@ export default function ProfilePage() {
           </Card>
 
           {/* Tabs Section */}
-          <Card className="col-span-full lg:col-span-2">
+          <Card className="col-span-full lg:col-span-2 ">
             <Tabs defaultValue="flights" className="w-full">
               <TabsList className="w-full justify-start rounded-none border-b">
                 <TabsTrigger value="flights">Recent Flights</TabsTrigger>
@@ -135,15 +131,15 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 <TabsContent value="flights" className="p-4">
-                  <div className="space-y-4">
-                    {/* {allBookings?.data?.map((flight) => ( */}
-                    <FlightCard
-                      from="JFK"
-                      to="LAX"
-                      date="May 15, 2023"
-                      status="Completed"
-                    />
-                    {/* ))} */}
+                  <div className="space-y-4 h-[700px] overflow-y-scroll hide-scrollbar">
+                    {allBookings?.data?.map((flight) => (
+                      <FlightCard
+                        from="JFK"
+                        to="LAX"
+                        date="May 15, 2023"
+                        status={flight?.ticketStatus}
+                      />
+                    ))}
                   </div>
                 </TabsContent>
               )}
@@ -184,9 +180,9 @@ function FlightCard({ from, to, date, status }) {
         </div>
         <div
           className={`rounded-full px-2 py-1 text-xs font-semibold ${
-            status === "Completed"
+            status === "BOOKED"
               ? "bg-green-100 text-green-800"
-              : "bg-blue-100 text-blue-800"
+              : "bg-blue-100 text-orange-500"
           }`}
         >
           {status}

@@ -131,7 +131,7 @@ export default function Navbar() {
             <Image src={logoBlack} alt="Logo" className=" w-[350px]" />
           </Link>
           <div className="   container  rounded-[22px] w-full px-32 mx-auto bottom-[-25px] hidden md:block">
-            <div className="flex items-center justify-between px-14 flex-wrap">
+            {/* <div className="flex items-center justify-between px-14 flex-wrap">
               <div
                 className={`flex items-center gap-2 cursor-pointer ${
                   categoryTab == "flight"
@@ -211,7 +211,7 @@ export default function Navbar() {
                   </span>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
           {/* Right Section */}
           <div className="flex items-center gap-10">
