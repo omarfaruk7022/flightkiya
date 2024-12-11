@@ -15,7 +15,7 @@ import html2canvas from "html2canvas";
 import Navbar from "@/components/common/navbar/Navbar";
 import { toast } from "react-toastify";
 import { useParams, useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 import { fetchData } from "@/utils/fetcher";
 import { getFormattedDate } from "@/hooks/DateTimeFormatter";
@@ -67,6 +67,19 @@ const FlightInvoice = () => {
     }
   };
 
+  const mutation = useMutation({
+    mutationFn: () =>
+      fetchData(`payment/success-mail/${bookingId}`, "POST", null, token),
+    onSuccess: (data) => {
+      console.log("Mutation successful", data);
+      toast.success(data?.message);
+    },
+    onError: (error) => {
+      console.error("Mutation failed", error);
+      toast.error(error?.message);
+    },
+  });
+
   const {
     data: ticketData,
     error: ticketDataError,
@@ -82,10 +95,13 @@ const FlightInvoice = () => {
   useEffect(() => {
     if (ticketData?.success == true) {
       toast.success(ticketData?.message);
+      mutation.mutate();
     } else {
       toast.error(ticketData?.error?.message);
     }
   }, [ticketData]);
+
+
 
   return (
     <>
@@ -108,7 +124,6 @@ const FlightInvoice = () => {
       )}
 
       {/* Always render the div with the ref */}
-      
 
       {!ticketDataLoading && (
         <div className="max-w-3xl mx-auto">
