@@ -79,7 +79,7 @@ export default function SignUp() {
 
       setToken(registerData?.token);
     } else {
-      toast.error(registerData.error.message);
+      toast.error(registerData?.error?.message);
     }
   }, [registerData]);
 
