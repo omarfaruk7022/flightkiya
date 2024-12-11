@@ -95,7 +95,6 @@ export default function ProfilePage() {
                     src={avatar}
                     className="rounded-full "
                   />
-                 
                 </Avatar>
                 <div>
                   <h2 className="text-[22px] font-bold">{user?.full_name}</h2>
@@ -134,10 +133,11 @@ export default function ProfilePage() {
                   <div className="space-y-4 h-[700px] overflow-y-scroll hide-scrollbar">
                     {allBookings?.data?.map((flight) => (
                       <FlightCard
-                        from="JFK"
-                        to="LAX"
-                        date="May 15, 2023"
+                        from={flight?.origin}
+                        to={flight?.destination}
+                        date={flight?.departure_datetime}
                         status={flight?.ticketStatus}
+                        id={flight?.pnrId}
                       />
                     ))}
                   </div>
@@ -164,10 +164,14 @@ export default function ProfilePage() {
   );
 }
 
-function FlightCard({ from, to, date, status }) {
+function FlightCard({ from, to, date, status, id }) {
+  const router = useRouter();
   return (
     <Card>
-      <div className="flex items-center gap-4 p-4">
+      <div
+        className="flex items-center gap-4 p-4 cursor-pointer"
+        onClick={() => router.push(`tripDetails/${id}`)}
+      >
         <Plane className="h-8 w-8 text-blue-500" />
         <div className="flex-1">
           <div className="text-lg font-semibold">

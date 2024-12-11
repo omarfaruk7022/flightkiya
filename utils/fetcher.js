@@ -6,7 +6,6 @@ export const fetchData = async (
 ) => {
   const NEXT_API_URL =
     process.env.NEXT_API_URL || "https://flightkiya.cosmelic.com/api/";
-  console.log(token);
   const url = `${NEXT_API_URL}${endpoint}`;
 
   console.log(token);

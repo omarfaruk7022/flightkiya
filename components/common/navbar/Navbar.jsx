@@ -57,7 +57,7 @@ export default function Navbar() {
         {/* Right Section */}
         <div className="flex items-center gap-10">
           {/* Currency Selector */}
-          <Image src={usd} alt="USD Icon" />
+          {/* <Image src={usd} alt="USD Icon" />
           <div className="relative">
             <div
               className="flex items-center gap-1 cursor-pointer"
@@ -93,27 +93,27 @@ export default function Navbar() {
                 </div>
               </div>
             )}
-          </div>
+          </div> */}
 
           {/* Sign In Button */}
           {token ? (
             <>
               <Link href="/profile">
-                <button className="w-[90px] h-[40px] bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold text-[12px]">
+                <button className=" bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold py-2  px-2  md:px-5 md:py-3 text-[12px]">
                   Profile
                 </button>
               </Link>
 
               <button
                 onClick={handleLogOut}
-                className="w-[90px] h-[40px] bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold text-[12px]"
+                className=" bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold py-2  px-2  md:px-5 md:py-3 text-[12px]"
               >
                 Logout
               </button>
             </>
           ) : (
             <Link href="/auth-login">
-              <button className="w-[90px] h-[40px] bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold text-[12px]">
+              <button className=" bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold py-2  px-2  md:px-5 md:py-3 text-[12px]">
                 Sign in
               </button>
             </Link>
@@ -216,7 +216,7 @@ export default function Navbar() {
           {/* Right Section */}
           <div className="flex items-center gap-10">
             {/* Currency Selector */}
-            <Image src={usd} alt="USD Icon" />
+            {/* <Image src={usd} alt="USD Icon" />
             <div className="relative">
               <div
                 className="flex items-center gap-1 cursor-pointer"
@@ -252,20 +252,20 @@ export default function Navbar() {
                   </div>
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* Sign In Button */}
             {token ? (
               <>
                 <Link href="/profile">
-                  <button className="w-[90px] h-[40px] bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold text-[12px]">
+                  <button className="w-full md:w-[90px] h-full md:h-[40px] bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold text-[12px]">
                     Profile
                   </button>
                 </Link>
 
                 <button
                   onClick={handleLogOut}
-                  className="w-[90px] h-[40px] bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold text-[12px]"
+                  className=" w-full md:w-[90px] h-full md:h-[40px] bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold text-[12px]"
                 >
                   Logout
                 </button>
