@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import flightStore from "@/store";
 import { Oval } from "react-loader-spinner";
 import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 export default function SignUp() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [email, setEmail] = useState();
@@ -20,6 +21,7 @@ export default function SignUp() {
   const [name, setName] = useState();
   const [isChecked, setIsChecked] = useState(false);
   const { setToken } = flightStore();
+  const router = useRouter();
   const payload = {
     full_name: name,
     email: email,
@@ -76,6 +78,7 @@ export default function SignUp() {
       setConfirmPassword("");
       setPhone("");
       Cookies.set("auth-token", registerData.token);
+      router.push("profile");
 
       setToken(registerData?.token);
     } else {

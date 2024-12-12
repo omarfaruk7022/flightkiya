@@ -9,10 +9,10 @@ import React from "react";
 
 export default function Home() {
   return (
-    <div className=" w-full bg-[#FCF5F5] ">
+    <div className=" w-full  ">
       <FlightSearch />
       <div className="px-5 md:px-48 py-20 mt-52  md:mt-20 z-0">
-      <RequestNow/>
+        <RequestNow />
 
         <BannerAds />
         <ExclusiveOffers />

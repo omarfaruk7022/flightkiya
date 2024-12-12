@@ -76,6 +76,17 @@ export default function FlightCard({ flight, index }) {
   const imageurl = flight?.airline_img || biman; // Fallback image
 
   if (!segment || !fare) return null;
+
+  // if (isLoading) {
+  //   return (
+  //     <div className="flex items-center justify-center min-h-screen">
+  //       <div className="text-center">
+  //         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+  //         <p className="mt-2">Loading...</p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
   return (
     <section className="">
       <div className="space-y-8 w-full">
@@ -91,7 +102,7 @@ export default function FlightCard({ flight, index }) {
                 width={40}
                 height={40}
                 priority
-                className="w-10 h-10 sm:w-12 sm:h-12"
+                className="w-10 h-10 sm:w-12 sm:h-12 object-cover"
               />
               <span className="text-xs sm:text-sm font-medium">
                 {flight?.airline_name || "Unknown Airline"}

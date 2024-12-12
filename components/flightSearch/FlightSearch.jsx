@@ -116,22 +116,14 @@ const FlightSearch = () => {
   const [childAges, setChildAges] = useState([]); // Default ages for children
   const [flightClass, setFlightClass] = useState("Economy");
   const [searchQueryArrival, setSearchQueryArrival] = useState("JFK");
-  const [searchQueryDestination, setSearchQueryDestination] = useState("BOM");
+  const [searchQueryDestination, setSearchQueryDestination] = useState("DAC");
   const [isOpenDestination, setIsOpenDestination] = useState(false);
   const [isOpenArrival, setIsOpenArrival] = useState(false);
   const handleIncrement = (setter, value) => setter(value + 1);
   const handleDecrement = (setter, value) => value > 0 && setter(value - 1);
   const [tripType, setTripType] = useState("OneWay"); // Default trip type is OneWay
   const [passengerType, setPassengerType] = useState("ADT");
-  const [passengerQuantity, setPassengerQuantity] = useState(1);
 
-  const [date, setDate] = useState();
-  const [secondDepartureDate, setSecondDepartureDate] = useState("");
-  const [secondOriginCode, setSecondOriginCode] = useState("");
-  const [secondDestinationCode, setSecondDestinationCode] = useState("");
-  const [thirdDepartureDate, setThirdDepartureDate] = useState("");
-  const [thirdOriginCode, setThirdOriginCode] = useState("");
-  const [thirdDestinationCode, setThirdDestinationCode] = useState("");
   const {
     setPassengerInformation,
     setSelectedFlight,
@@ -142,9 +134,9 @@ const FlightSearch = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [originAirport, setOriginAirport] = useState({
-    label: "Chhatrapati Shivaji Intl",
-    code: "BOM",
-    value: "Mumbai, India",
+    label: "Hazrat shahjalal Intl",
+    code: "DAC",
+    value: "Dhaka, Bangladesh",
   });
   const [destinationAirport, setDestinationAirport] = useState({
     label: "New York, USA (JFK)",
@@ -170,13 +162,9 @@ const FlightSearch = () => {
   }));
   const [travelersData, setTravelersData] = useState();
   let originDestinations = [];
-  // Handle OneWay trip type
 
-
-
-  console.log(new Date(departureDate))
-  const validDepartureDate = new Date(departureDate); 
-  const validReturnDate = new Date(returnDate); 
+  const validDepartureDate = new Date(departureDate);
+  const validReturnDate = new Date(returnDate);
   const departureDateTime =
     validDepartureDate instanceof Date && !isNaN(validDepartureDate)
       ? `${validDepartureDate.toISOString().split("T")[0]}T00:00:00`
@@ -248,7 +236,7 @@ const FlightSearch = () => {
   const handleDoneClick = () => {
     const travelerData = generateTravelerData();
     setTravelersData(travelerData);
-    setTravelerInputShow(!travelerInputShow); // Close the modal
+    setTravelerInputShow(!travelerInputShow);
   };
 
   const fetchFlightData = async () => {
@@ -425,13 +413,13 @@ const FlightSearch = () => {
   };
 
   return (
-    <section className="bg-[url('/images/banner-1.jpeg')] bg-center bg-fixed bg-cover w-full   ">
+    <section className="bg-[url('/images/banner-1.jpeg')] bg-cover w-full  ">
       <div className=" w-full container mx-auto ">
         <div className="">
           <Navbar />
         </div>
 
-        <div className="px-5 md:px-20 mt-20 ">
+        <div className="px-5 md:px-20   pt-36 pb-32">
           <div className="relative bg-white p-6  container shadow-xl h-fit md:h-[84px] rounded-[10px] w-full md:w-[551px] mx-auto bottom-[-25px]">
             <div className="flex items-center justify-between px-2 md:px-14 flex-wrap">
               <div
@@ -492,7 +480,7 @@ const FlightSearch = () => {
             {/* Way tabs */}
             <div className="flex items-center flex-wrap justify-center  gap-5">
               <div className="  flex justify-center  gap-5 ">
-                <div className="bg-[#d7cbe9] rounded-full flex items-center gap-4  p-3">
+                <div className="bg-[#d7cbe9] rounded-full flex items-center gap-1 md:gap-4  p-3">
                   <div className="flex items-center gap-1 cursor-pointer">
                     <label className="flex items-center gap-1 cursor-pointer">
                       <input
@@ -503,7 +491,7 @@ const FlightSearch = () => {
                         value="OneWay"
                         onChange={(e) => setTripType(e.target.value)}
                       />
-                      <span className="text-[var(--primary)] text-[15px] font-bold">
+                      <span className="text-[var(--primary)] text-[12px] md:text-[15px] font-bold">
                         One way
                       </span>
                     </label>
@@ -518,7 +506,7 @@ const FlightSearch = () => {
                         value="Return"
                         onChange={(e) => setTripType(e.target.value)}
                       />
-                      <span className="text-[var(--primary)] text-[15px] font-bold">
+                      <span className="text-[var(--primary)] text-[12px] md:text-[15px] font-bold">
                         Round trip
                       </span>
                     </label>
@@ -534,7 +522,7 @@ const FlightSearch = () => {
                         onChange={(e) => setTripType(e.target.value)}
                       />
 
-                      <span className="text-[var(--primary)] text-[15px] font-bold ">
+                      <span className="text-[var(--primary)] text-[12px] md:text-[15px] font-bold ">
                         Multi city
                       </span>
                     </label>
@@ -942,7 +930,7 @@ const FlightSearch = () => {
                       <>
                         <div
                           key={city.id}
-                          className="flex items-center col-span-1  md:col-span-4 w-full"
+                          className="flex items-center col-span-2  md:col-span-4 w-full"
                         >
                           <div className="relative w-full">
                             <div className="border-2 border-[#BEA8A8] pt-2 ps-5 w-full rounded-l-md  h-[69px]">
@@ -1166,14 +1154,14 @@ const FlightSearch = () => {
                   <div>
                     <button
                       onClick={fetchFlightData}
-                      className="bg-[var(--primary-btn)] text-white h-[69px] w-full rounded-xl"
+                      className="bg-[var(--primary-btn)] text-white py-5 px-3 w-full rounded-xl"
                     >
                       {/* <Image
                         src={search}
                         alt="Search"
                         className="mx-auto w-[50px] p-3"
                       /> */}
-                      Search flights
+                      Search
                     </button>
                   </div>
                 )}

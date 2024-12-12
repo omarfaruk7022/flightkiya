@@ -30,105 +30,32 @@ export default function Navbar() {
     router.push("/auth-login");
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      if (currentScrollY > scrollY) {
-        setIsScrollingDown(true);
-      } else {
-        setIsScrollingDown(false);
-      }
-      setScrollY(currentScrollY);
-    };
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     const currentScrollY = window.scrollY;
+  //     if (currentScrollY > scrollY) {
+  //       setIsScrollingDown(true);
+  //     } else {
+  //       setIsScrollingDown(false);
+  //     }
+  //     setScrollY(currentScrollY);
+  //   };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [scrollY]);
+  //   window.addEventListener("scroll", handleScroll);
+  //   return () => window.removeEventListener("scroll", handleScroll);
+  // }, [scrollY]);
   const [isOpenCurrency, setIsOpenCurrency] = useState(false);
 
   return (
     <>
-      <nav className="max-w-7xl mx-auto p-4 flex justify-between items-center">
-        {/* Logo */}
-        <Link href={"/"}>
-          <Image src={logoBlack} alt="Logo" className=" w-[200px]" />
-        </Link>
-
-        {/* Right Section */}
-        <div className="flex items-center gap-10">
-          {/* Currency Selector */}
-          {/* <Image src={usd} alt="USD Icon" />
-          <div className="relative">
-            <div
-              className="flex items-center gap-1 cursor-pointer"
-              onClick={() => setIsOpenCurrency(!isOpenCurrency)}
-            >
-              <span className="text-gray-700">USD</span>
-              <IoIosArrowDown size={20} className="text-gray-700" />
-            </div>
-
-            {isOpenCurrency && (
-              <div
-                className="absolute end-0 z-10 mt-2 rounded-2xl w-full md:w-[243px] h-[112px] border border-gray-100 bg-white shadow-lg"
-                role="menu"
-              >
-                <div className=" flex p-5 justify-between ">
-                  <div>
-                    <p className="text-[#0F5677] text-[14px] font-semibold mb-2">
-                      Region
-                    </p>
-                    <ul className="text-[12px] space-y-2">
-                      <li>Bangladesh</li>
-                      <li>Bangladesh</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <p className="text-[#0F5677] text-[14px] font-semibold mb-2">
-                      Currency
-                    </p>
-                    <ul className="text-[12px] space-y-2">
-                      <li>USD</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div> */}
-
-          {/* Sign In Button */}
-          {token ? (
-            <>
-              <Link href="/profile">
-                <button className=" bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold py-2  px-2  md:px-5 md:py-3 text-[12px]">
-                  Profile
-                </button>
-              </Link>
-
-              <button
-                onClick={handleLogOut}
-                className=" bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold py-2  px-2  md:px-5 md:py-3 text-[12px]"
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            <Link href="/auth-login">
-              <button className=" bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold py-2  px-2  md:px-5 md:py-3 text-[12px]">
-                Sign in
-              </button>
-            </Link>
-          )}
-        </div>
-      </nav>
+    
       <div
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out ${
-          scrollY > 0 ? "bg-white shadow-md" : "bg-transparent"
-        } ${isScrollingDown ? "translate-y-0" : "-translate-y-full"}`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out bg-white`}
       >
         <nav className="max-w-7xl mx-auto p-4 flex justify-between items-center">
           {/* Logo */}
           <Link href={"/"}>
-            <Image src={logoBlack} alt="Logo" className=" w-[350px]" />
+            <Image src={logoBlack} alt="Logo" className="w-[200px]  md:w-[350px]" />
           </Link>
           <div className="   container  rounded-[22px] w-full px-32 mx-auto bottom-[-25px] hidden md:block">
             {/* <div className="flex items-center justify-between px-14 flex-wrap">
@@ -258,14 +185,14 @@ export default function Navbar() {
             {token ? (
               <>
                 <Link href="/profile">
-                  <button className="w-full md:w-[90px] h-full md:h-[40px] bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold text-[12px]">
+                  <button className="p-3 bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold text-[12px]">
                     Profile
                   </button>
                 </Link>
 
                 <button
                   onClick={handleLogOut}
-                  className=" w-full md:w-[90px] h-full md:h-[40px] bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold text-[12px]"
+                  className=" p-3 bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold text-[12px]"
                 >
                   Logout
                 </button>

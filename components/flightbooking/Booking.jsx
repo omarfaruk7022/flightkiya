@@ -740,107 +740,106 @@ const Booking = () => {
               Continue
             </button>
             {/* Modal */}
-            <Modal isOpen={isModalOpen} onClose={closeModal}>
-              <div className="space-y-4 w-full">
-                <h2 className="text-[26px] flex items-center gap-2 font-semibold text-blue-800">
-                  <span>
-                    <MdReviews className=" w-9 h-9" />
-                  </span>
-                  <span> Review Details</span>
-                </h2>
-                <div className="w-full  bg-red-100 p-2 rounded-lg flex flex-col">
-                  <p className=" text-red-500 font-bold">Important</p>
-                  <p>
-                    {" "}
-                    Please recheck the traveler <b>Name</b> and <b>Details</b>{" "}
-                    with your <b>NID</b> or the airlines will penalize you for
-                    providing incorrect information.
-                  </p>
-                </div>
-                <div className="mt-4 ">
-                  <h2>Traveler Details</h2>
-                  {travelersInfo?.map((passenger) => (
-                    <div className="w-full mt-3 h-42 border-[2px] p-5 rounded-lg ">
-                      <p className=" font-bold text-xl">
-                        {passenger?.Code} {passenger?.PassengerNumber}
-                      </p>
-                      <div className=" mt-2 grid grid-cols-1 md:grid-cols-2">
-                        <div className="flex flex-col gap-2">
-                          <span className=" text-gray-300">
-                            Given Name/First Name
-                          </span>
-                          <span className=" font-semibold text-blue-900">
-                            {passenger?.FirstName}
-                          </span>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <span className=" text-gray-300">
-                            Surname/Last Name
-                          </span>
-                          <span className=" font-semibold text-blue-900">
-                            {passenger?.LastName}
-                          </span>
-                        </div>
+          </div>
+
+          <Modal isOpen={isModalOpen} onClose={closeModal}>
+            <div className="space-y-4 w-full ">
+              <h2 className="text-[26px] flex items-center gap-2 font-semibold text-blue-800">
+                <span>
+                  <MdReviews className=" w-9 h-9" />
+                </span>
+                <span> Review Details</span>
+              </h2>
+              <div className="w-full  bg-red-100 p-2 rounded-lg flex flex-col">
+                <p className=" text-red-500 font-bold">Important</p>
+                <p>
+                  {" "}
+                  Please recheck the traveler <b>Name</b> and <b>Details</b>{" "}
+                  with your <b>NID</b> or the airlines will penalize you for
+                  providing incorrect information.
+                </p>
+              </div>
+              <div className="mt-4 ">
+                <h2>Traveler Details</h2>
+                {travelersInfo?.map((passenger) => (
+                  <div className="w-full mt-3 h-42 border-[2px] p-5 rounded-lg ">
+                    <p className=" font-bold text-xl">
+                      {passenger?.Code} {passenger?.PassengerNumber}
+                    </p>
+                    <div className=" mt-2 grid grid-cols-1 md:grid-cols-2">
+                      <div className="flex flex-col gap-2">
+                        <span className=" text-gray-300">
+                          Given Name/First Name
+                        </span>
+                        <span className=" font-semibold text-blue-900">
+                          {passenger?.FirstName}
+                        </span>
                       </div>
-                      <div className=" mt-2 grid grid-cols-1 md:grid-cols-2 ">
-                        <div className="flex flex-col gap-2">
-                          <span className=" text-gray-300">
-                            Passport Number
-                          </span>
-                          <span className=" font-semibold text-blue-900">
-                            {passenger?.PassportNumber}
-                          </span>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <span className=" text-gray-300">Expiry Date</span>
-                          <span className=" font-semibold text-blue-900">
-                            {passenger?.ExpiryDate}
-                          </span>
-                        </div>
+                      <div className="flex flex-col gap-2">
+                        <span className=" text-gray-300">
+                          Surname/Last Name
+                        </span>
+                        <span className=" font-semibold text-blue-900">
+                          {passenger?.LastName}
+                        </span>
                       </div>
                     </div>
-                  ))}
-                  <p className=" mt-7  justify-center text-gray-400">
-                    Your booking will be confirmed and held for 20 minutes to
-                    complete payment
-                  </p>
-                </div>
-                {/* You can add more details here if needed */}
-                <div className="flex justify-center gap-5 md:gap-0 space-x-3 mt-4">
-                  <button
-                    onClick={closeModal}
-                    className="bg-gray-200 text-gray-700 w-[300px] py-4 px-4 rounded-lg hover:bg-gray-300 transition-colors focus:outline-none"
-                  >
-                    Edit Details
-                  </button>
-
-                  <button
-                    onClick={handleBooking}
-                    disabled={bookingDataLoading}
-                    className="bg-blue-600 text-white w-[300px] py-4 px-4 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none"
-                  >
-                    {bookingDataLoading ? (
-                      <div className="flex justify-center items-center">
-                        {" "}
-                        <Oval
-                          visible={true}
-                          height="25"
-                          width="25"
-                          secondaryColor="#fff"
-                          color="#fff"
-                          ariaLabel="oval-loading"
-                          wrapperStyle={{}}
-                          wrapperClass=""
-                        />
+                    <div className=" mt-2 grid grid-cols-1 md:grid-cols-2 ">
+                      <div className="flex flex-col gap-2">
+                        <span className=" text-gray-300">Passport Number</span>
+                        <span className=" font-semibold text-blue-900">
+                          {passenger?.PassportNumber}
+                        </span>
                       </div>
-                    ) : (
-                      <span> Confirm Booking</span>
-                    )}
-                  </button>
-                </div>
+                      <div className="flex flex-col gap-2">
+                        <span className=" text-gray-300">Expiry Date</span>
+                        <span className=" font-semibold text-blue-900">
+                          {passenger?.ExpiryDate}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <p className=" mt-7  justify-center text-gray-400">
+                  Your booking will be confirmed and held for 20 minutes to
+                  complete payment
+                </p>
               </div>
-            </Modal>
-          </div>
+              {/* You can add more details here if needed */}
+              <div className="flex justify-center gap-5 md:gap-0 space-x-3 mt-4">
+                <button
+                  onClick={closeModal}
+                  className="bg-gray-200 text-gray-700 w-[300px] py-4 px-4 rounded-lg hover:bg-gray-300 transition-colors focus:outline-none"
+                >
+                  Edit Details
+                </button>
+
+                <button
+                  onClick={handleBooking}
+                  disabled={bookingDataLoading}
+                  className="bg-blue-600 text-white w-[300px] py-4 px-4 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none"
+                >
+                  {bookingDataLoading ? (
+                    <div className="flex justify-center items-center">
+                      {" "}
+                      <Oval
+                        visible={true}
+                        height="25"
+                        width="25"
+                        secondaryColor="#fff"
+                        color="#fff"
+                        ariaLabel="oval-loading"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                      />
+                    </div>
+                  ) : (
+                    <span> Confirm Booking</span>
+                  )}
+                </button>
+              </div>
+            </div>
+          </Modal>
 
           <div className="flex gap-4 flex-col colspan-1 md:col-span-3 w-full mx-auto">
             <div className=" bg-white rounded-[8px] w-full min-h-[150px] flex gap-5 justify-center">
