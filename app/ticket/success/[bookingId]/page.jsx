@@ -101,13 +101,11 @@ const FlightInvoice = () => {
     }
   }, [ticketData]);
 
-
-
   return (
     <>
       <Navbar />
       {ticketDataLoading ? (
-        <div className="h-screen flex justify-center items-center w-full">
+        <div className="h-screen flex justify-center items-center w-full ">
           <div>
             <img
               src="https://zupimages.net/up/19/34/4820.gif"
@@ -118,7 +116,7 @@ const FlightInvoice = () => {
           </div>
         </div>
       ) : (
-        <div>
+        <div className="pt-20">
           <Invoice ticketData={ticketData} id="flight-invoice" />
         </div>
       )}

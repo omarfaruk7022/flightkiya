@@ -69,7 +69,6 @@ export default function FlightCard({ flight, index }) {
     }
   }, [flightData]);
 
-  console.log(flightData, error);
 
   const segment = flight?.segments?.[0];
   const fare = flight?.fares;

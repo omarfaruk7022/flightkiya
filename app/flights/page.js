@@ -16,6 +16,10 @@ export default function page({ searchParams }) {
   const [error, setError] = useState("");
   // const { setFlightResults } = flightStore();
   const [flightResults, setFlightResults] = useState();
+  const [filterStops, setFilterStops] = useState([]);
+  const [departureTime, setDepartureTime] = useState([]);
+  const [airlineFIlter, setAirlineFIlter] = useState([]);
+
   const {
     originDestinations = "[]",
     tripType = "",
@@ -70,7 +74,7 @@ export default function page({ searchParams }) {
       toast.error(allFlights?.error?.message);
       toast.error(allFlightsError?.error?.message);
     }
-  }, [allFlights,allFlightsError]);
+  }, [allFlights, allFlightsError]);
 
   useEffect(() => {
     if (originDestinations) {
@@ -86,7 +90,13 @@ export default function page({ searchParams }) {
       ) : (
         <div className="bg-[#F0F4F4] pt-20">
           <div className=" max-w-7xl md:max-w-5xl min-h-screen mx-auto">
-            <FlightFilter />
+            <FlightFilter
+              departureTIme={departureTime}
+              setFilterStops={setFilterStops}
+              setDepartureTime={setDepartureTime}
+              airlineFIlter={airlineFIlter}
+              filter={allFlights?.filter}
+            />
             {allFlights?.success ? (
               <>
                 <div className="grid  grid-cols-1 md:grid-cols-9 gap-5">
