@@ -41,19 +41,24 @@ import { jwtVerify } from "jose";
 export async function middleware(request) {
   const token = request.cookies.get("auth-token")?.value;
 
-  // If there's no token and the user is trying to access the profile page, redirect to login
-  if (!token && request.nextUrl.pathname.startsWith("/profile")) {
-    return NextResponse.redirect(new URL("/auth-login", request.url));
+  // Handle protected routes
+  if (!token) {
+    // Redirect to login for protected pages if there's no token
+    if (
+      request.nextUrl.pathname.startsWith("/profile") ||
+      request.nextUrl.pathname.startsWith("/ticket/success")
+    ) {
+      return NextResponse.redirect(new URL("/auth-login", request.url));
+    }
   }
 
   // If there's a token, verify it
   if (token) {
     try {
-      // This is a simplified example. In a real-world scenario, use a proper secret key management system.
       const secret = new TextEncoder().encode(process.env.JWT_SECRET);
       await jwtVerify(token, secret);
 
-      // If the token is valid and the user is trying to access login or signup, redirect to profile
+      // Redirect to profile if user is authenticated and tries to access login or signup pages
       if (
         request.nextUrl.pathname === "/auth-login" ||
         request.nextUrl.pathname === "/auth-signup"
@@ -63,8 +68,11 @@ export async function middleware(request) {
     } catch (error) {
       console.error("Token verification failed:", error);
 
-      // If token verification fails and user is on profile page, redirect to login
-      if (request.nextUrl.pathname.startsWith("/profile")) {
+      // Redirect to login if token is invalid and user is on protected routes
+      if (
+        request.nextUrl.pathname.startsWith("/profile") ||
+        request.nextUrl.pathname.startsWith("/ticket/success")
+      ) {
         return NextResponse.redirect(new URL("/auth-login", request.url));
       }
     }
@@ -74,5 +82,10 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/profile/:path*", "/auth-login", "/auth-signup"],
+  matcher: [
+    "/profile/:path*",
+    "/auth-login",
+    "/auth-signup",
+    "/ticket/success/:path*", // Add this line to include the ticket success page
+  ],
 };

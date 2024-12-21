@@ -27,13 +27,9 @@ const FlightInvoice = () => {
   const { bookingId } = useParams();
   const [token, setToken] = useState();
   const router = useRouter();
+  const [isLoadingFirst, setIsLoadingFirst] = useState(true);
   useEffect(() => {
     setFormattedDate(new Date().toLocaleDateString());
-  }, []);
-
-  useEffect(() => {
-    const authToken = Cookies.get("auth-token");
-    setToken(authToken);
   }, []);
 
   // const componentRef = useRef(null);
@@ -83,14 +79,35 @@ const FlightInvoice = () => {
   const {
     data: ticketData,
     error: ticketDataError,
-    isLoading: ticketDataLoading,
+    isLoading: ticketDataLoading = true,
+    isError: ticketDataIsError,
     refetch: ticketDataRefetch,
   } = useQuery({
     queryKey: ["payment-success", bookingId],
     queryFn: () =>
       fetchData(`payment/success/${bookingId}`, "POST", null, token),
-    enabled: true,
+    enabled: false,
+    retry: false,
   });
+
+  useEffect(() => {
+    const authToken = Cookies.get("auth-token");
+    setToken(authToken);
+  }, []);
+
+  useEffect(() => {
+    if (token) {
+      ticketDataRefetch();
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (ticketDataLoading) {
+      setIsLoadingFirst(false);
+    }
+  }, [ticketDataLoading]);
+
+  console.log(isLoadingFirst, ticketDataLoading);
 
   useEffect(() => {
     if (ticketData?.success == true) {
@@ -100,6 +117,17 @@ const FlightInvoice = () => {
       toast.error(ticketData?.error?.message);
     }
   }, [ticketData]);
+
+  if (isLoadingFirst) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-2">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -117,13 +145,26 @@ const FlightInvoice = () => {
         </div>
       ) : (
         <div className="pt-20">
-          <Invoice ticketData={ticketData} id="flight-invoice" />
+          {ticketDataError ? (
+            <div className="h-screen flex justify-center items-center w-full ">
+              <div className="text-center">
+                <p className="text-red-600">
+                  {ticketDataError?.message
+                    ? ticketDataError?.message
+                    : "An error occurred ..."}{" "}
+                </p>
+                <span>Please contact with adbiyastour support team</span>
+              </div>
+            </div>
+          ) : (
+            <Invoice ticketData={ticketData} id="flight-invoice" />
+          )}
         </div>
       )}
 
       {/* Always render the div with the ref */}
 
-      {!ticketDataLoading && (
+      {!ticketDataLoading && !ticketDataError && (
         <div className="max-w-3xl mx-auto">
           <div className="flex space-x-2 justify-end mb-4">
             {/* <button

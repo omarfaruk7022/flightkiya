@@ -1,5 +1,6 @@
 "use client";
 import biman from "@/public/images/biman-bd.png";
+import plane from "@/public/images/plane.gif";
 import arrowRight from "@/public/icons/arrow-right.svg";
 import right from "@/public/icons/right-arrow1.svg";
 import axios from "axios";
@@ -14,6 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 import { revalidateFlight } from "@/utils/revalidateFlight";
 import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
+import airline from "@/public/images/airline.jpg";
 
 export default function FlightCard({ flight, index }) {
   const [openDetailsIndex, setOpenDetailsIndex] = useState(null);
@@ -49,13 +51,18 @@ export default function FlightCard({ flight, index }) {
       return revalidateFlight(flight_id);
     },
     enabled: false,
+    retry: false,
   });
 
   const handleRevalidateFlight = (flight_id) => {
     setFlightId(flight_id);
-    revalidateFlightQuery();
   };
 
+  useEffect(() => {
+    if (flightId) {
+      revalidateFlightQuery();
+    }
+  }, [flightId]);
   useEffect(() => {
     if (flightData?.data && flightData?.success == true) {
       router.push(`/booking`);
@@ -68,7 +75,6 @@ export default function FlightCard({ flight, index }) {
       }
     }
   }, [flightData]);
-
 
   const segment = flight?.segments?.[0];
   const fare = flight?.fares;
@@ -88,66 +94,83 @@ export default function FlightCard({ flight, index }) {
   // }
   return (
     <section className="">
+      {isLoading && (
+        <div className="fixed inset-0 bg-gradient-to-br from-purple-500/30 via-pink-500/30 to-orange-500/30 backdrop-blur-sm flex items-center justify-center z-50 ">
+          <div>
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Wikimania2023_Animated_Sticker_Airplane.gif/600px-Wikimania2023_Animated_Sticker_Airplane.gif?20230727043952"
+              alt="Processing"
+              className="w-[200px]"
+            />
+            <p>Please wait, your request is processing...</p>
+          </div>
+        </div>
+      )}
       <div className="space-y-8 w-full">
         <div className="bg-white relative rounded-2xl shadow-md p-5 md:p-6">
           {/* Flight Details */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {/* Airline Logo and Name */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-center">
+            {flight?.flights?.map((fly) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 col-span-2">
+                <div className="flex items-center gap-4">
+                  <Image
+                    src={fly?.airline_image ? fly?.airline_image : airline}
+                    alt="airline logo"
+                    width={40}
+                    height={40}
+                    priority
+                    className="w-10 h-10 sm:w-12 sm:h-12 object-cover"
+                  />
+                  <span className="text-xs sm:text-sm font-medium">
+                    {fly?.airline_name || "Unknown Airline"}
+                  </span>
+                </div>
 
-            <div className="flex items-center gap-4">
-              <Image
-                src={imageurl}
-                alt="airline logo"
-                width={40}
-                height={40}
-                priority
-                className="w-10 h-10 sm:w-12 sm:h-12 object-cover"
-              />
-              <span className="text-xs sm:text-sm font-medium">
-                {flight?.airline_name || "Unknown Airline"}
-              </span>
-            </div>
-
-            {/* Flight Information */}
-            <div className="flex flex-col justify-between sm:col-span-2 md:col-span-1">
-              <div className="flex justify-between items-center text-xs sm:text-sm">
-                <span>
-                  {flight?.DepartureDateTime
-                    ? new Date(flight.DepartureDateTime).toLocaleTimeString(
-                        [],
-                        {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true,
-                        }
-                      )
-                    : "N/A"}
-                </span>
-                <span>
-                  {flight?.ArrivalDateTime
-                    ? new Date(flight.ArrivalDateTime).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: true,
-                      })
-                    : "N/A"}
-                </span>
+                {/* Flight Information */}
+                <div className="flex flex-col justify-between sm:col-span-2 md:col-span-1">
+                  <div className="flex justify-between items-center text-xs sm:text-sm">
+                    <span>
+                      {fly?.DepartureDateTime
+                        ? new Date(fly?.DepartureDateTime).toLocaleTimeString(
+                            [],
+                            {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true,
+                            }
+                          )
+                        : "N/A"}
+                    </span>
+                    <span>
+                      {fly?.ArrivalDateTime
+                        ? new Date(fly?.ArrivalDateTime).toLocaleTimeString(
+                            [],
+                            {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true,
+                            }
+                          )
+                        : "N/A"}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-center flex-col space-y-2">
+                    <span className="text-xs sm:text-sm">
+                      {fly?.totalStops === 0
+                        ? "Non-stop"
+                        : fly?.totalStops == 1
+                        ? "1 Stop"
+                        : `${fly.totalStops} Stops`}
+                    </span>
+                    <Image src={arrowRight} alt="Flight Path Arrow" />
+                  </div>
+                  <div className="flex justify-between items-center text-xs sm:text-sm">
+                    <span>{fly?.DepartureAirportLocationCode || "N/A"}</span>
+                    <span>{fly?.ArrivalAirportLocationCode || "N/A"}</span>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center justify-center flex-col space-y-2">
-                <span className="text-xs sm:text-sm">
-                  {flight?.stoppage === 0
-                    ? "Non-stop"
-                    : flight?.stoppage == 1
-                    ? "1 Stop"
-                    : `${flight.stoppage} Stops`}
-                </span>
-                <Image src={arrowRight} alt="Flight Path Arrow" />
-              </div>
-              <div className="flex justify-between items-center text-xs sm:text-sm">
-                <span>{flight?.departureAirportCode || "N/A"}</span>
-                <span>{flight?.arrivalAirportCode || "N/A"}</span>
-              </div>
-            </div>
+            ))}
 
             {/* Fare Information */}
             <div className="flex flex-col justify-between items-end">
@@ -155,21 +178,21 @@ export default function FlightCard({ flight, index }) {
                 <p className="text-black text-xl sm:text-2xl font-bold">
                   ${fare.TotalFare || "N/A"}
                 </p>
-                {fare.BaseFare && (
+                {/* {fare.BaseFare && (
                   <p className="text-xs sm:text-sm text-black ">
                     ${fare.BaseFare} / Person
                   </p>
-                )}
+                )} */}
               </div>
               <button
                 onClick={() => handleRevalidateFlight(flight?.flight_id)}
                 disabled={isLoading}
-                className={`bg-purple-600 text-white py-1  w-[120px] sm:py-2 sm:px-6 rounded-lg flex items-center justify-center space-x-2 mt-0 md:mt-3 mb-5`}
+                className={`bg-purple-600 hover:bg-purple-800 text-white py-1  w-[120px] sm:py-2 sm:px-6 rounded-lg flex items-center justify-center space-x-2 mt-0 md:mt-3 mb-5 cursor-pointer`}
               >
                 {flight?.flight_id == flightId && isLoading ? (
                   <Oval
                     visible={true}
-                    height="20"
+                    height="25"
                     width="20"
                     secondaryColor="#fff"
                     color="#fff"

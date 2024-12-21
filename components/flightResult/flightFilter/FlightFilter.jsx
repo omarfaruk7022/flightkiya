@@ -6,18 +6,21 @@ import down from "@/public/icons/down-arrow.svg";
 import { TbClockFilled } from "react-icons/tb";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Sun, Moon, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 export default function FlightFilter({
   filter,
-  setFlightStops,
+  setSelectedStops,
   departureTime,
   setDepartureTime,
+  selectedStops,
+  setIsPartiallyRefundable,
+  isPartiallyRefundable,
   setAirlinesFilter,
 }) {
   const [flightType, setFlightType] = useState();
-  const [selectedStops, setSelectedStops] = useState([]);
-  const [priceRange, setPriceRange] = useState([6950]);
+  const router = useRouter();
+  // const [selectedStops, setSelectedStops] = useState([]);
   const [isOpenFIlter, setIsOpenFilter] = useState(false);
-  const [selectedAirlines, setSelectedAirlines] = useState([]);
   const departTimes = [
     { label: "00-06", icon: Moon, id: "time-00-06" },
     { label: "06-12", icon: Sun, id: "time-06-12" },
@@ -28,7 +31,7 @@ export default function FlightFilter({
   const layoverTimes = ["0h - 5h", "5h - 10h", "10h - 15h", "15h+"];
 
   const [time, setTime] = useState(1800); // 30 minutes in seconds
-
+  const [showModal, setShowModal] = useState(false); // Modal visibility state
   useEffect(() => {
     if (time > 0) {
       const timerId = setInterval(() => {
@@ -36,8 +39,15 @@ export default function FlightFilter({
       }, 1000);
 
       return () => clearInterval(timerId); // Cleanup on unmount
+    } else {
+      setShowModal(true); // Show the modal when time reaches 0
     }
   }, [time]);
+
+  const handleRedirect = () => {
+    setShowModal(false); // Close the modal
+    router.push("/"); // Redirect to home page
+  };
 
   // Format time as MM:SS
   const formatTime = (timeInSeconds) => {
@@ -68,9 +78,69 @@ export default function FlightFilter({
       }
     });
   };
+
+  const handleCheckboxChange = () => {
+    setIsPartiallyRefundable((prevState) => !prevState);
+  };
+
   return (
     <div>
-      <div className="py-5 ">
+      {showModal && (
+        <div className="fixed inset-0 bg-gradient-to-br from-purple-500/30 via-pink-500/30 to-orange-500/30 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md p-8 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.1)] dark:shadow-[0_0_40px_rgba(255,255,255,0.1)] w-full max-w-md mx-4">
+            <div className="flex flex-col items-center">
+              {/* Icon Container */}
+              <div className="bg-gradient-to-br from-purple-500 to-pink-500 p-3 rounded-full">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-8 h-8 text-white"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+              </div>
+
+              {/* Title */}
+              <h2 className="text-2xl font-bold mt-6 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Time is Up!
+              </h2>
+
+              {/* Message */}
+              <p className="text-gray-600 dark:text-gray-300 mt-4 text-center">
+                Your search session has expired. Please try searching again.
+              </p>
+
+              {/* Button */}
+              <button
+                onClick={handleRedirect}
+                className="mt-8 flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl text-white font-semibold shadow-lg shadow-purple-500/30 hover:shadow-purple-500/40 hover:opacity-90 transition-opacity"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-4 h-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+                Return Home
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      <div className="py-5 mt-20">
         <div className=" bg-white">
           <div
             className="grid grid-cols-1  md:grid-cols-2 rounded-lg "
@@ -117,9 +187,6 @@ export default function FlightFilter({
           {isOpenFIlter && (
             <div className="max-w-screen-xl mx-auto p-4">
               <div className="flex items-center justify-between mb-6">
-                <h1 className="text-lg font-semibold">
-                  Showing 24 Flight Results
-                </h1>
                 <div className="flex gap-4">
                   <button
                     className="px-4 py-2 border rounded-md hover:bg-gray-50"
@@ -131,7 +198,8 @@ export default function FlightFilter({
                     className="px-4 py-2 text-blue-600 hover:text-blue-700"
                     onClick={() => {
                       setSelectedStops([]);
-                      setPriceRange([6950]);
+                      setIsPartiallyRefundable(false);
+                      setAirlinesFilter([]);
                     }}
                   >
                     Reset All Filters
@@ -203,13 +271,25 @@ export default function FlightFilter({
 
                 {/* Schedule Section */}
                 <div className="space-y-4">
-                  <h2 className="font-semibold  bg-gray-100  p-2">Schedule</h2>
+                  <h2 className="font-semibold  bg-gray-100  p-2">Fare Type</h2>
 
                   <div className="space-y-2">
-                    <h3 className="text-sm text-gray-600">
-                      Onward Depart Time
-                    </h3>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Checkbox
+                          id="partially-refundable"
+                          // checked={isPartiallyRefundable}
+                          onClick={handleCheckboxChange}
+                        />
+                        <label
+                          htmlFor="partially-refundable"
+                          className="cursor-pointer"
+                        >
+                          Partially Refundable
+                        </label>
+                      </div>
+                    </div>
+                    {/* <div className="grid grid-cols-2 gap-2">
                       {departTimes.map(({ label, icon: Icon, id }) => (
                         <button
                           key={id}
@@ -224,10 +304,10 @@ export default function FlightFilter({
                           <span>{label}</span>
                         </button>
                       ))}
-                    </div>
+                    </div> */}
                   </div>
 
-                  <div className="space-y-2">
+                  {/* <div className="space-y-2">
                     <h3 className="text-sm text-gray-600">Layover Time</h3>
                     <div className="grid grid-cols-2 gap-2">
                       {layoverTimes.map((time) => (
@@ -239,7 +319,7 @@ export default function FlightFilter({
                         </button>
                       ))}
                     </div>
-                  </div>
+                  </div> */}
                 </div>
 
                 {/* Airlines Section */}

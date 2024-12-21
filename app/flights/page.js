@@ -16,9 +16,10 @@ export default function page({ searchParams }) {
   const [error, setError] = useState("");
   // const { setFlightResults } = flightStore();
   const [flightResults, setFlightResults] = useState();
-  const [filterStops, setFilterStops] = useState([]);
+  const [selectedStops, setSelectedStops] = useState([]);
   const [departureTime, setDepartureTime] = useState([]);
-  const [airlineFIlter, setAirlineFIlter] = useState([]);
+  const [airlinesFilter, setAirlinesFilter] = useState([]);
+  const [isPartiallyRefundable, setIsPartiallyRefundable] = useState(false);
 
   const {
     originDestinations = "[]",
@@ -54,6 +55,23 @@ export default function page({ searchParams }) {
     RequestOptions: requestOptions,
   };
 
+  // const {
+  //   data: allFlights,
+  //   error: allFlightsError,
+  //   isLoading: allFlightsLoading = true,
+  //   refetch: allFlightsRefetch,
+  // } = useQuery({
+  //   queryKey: ["flights", payload],
+  //   queryFn: () => fetchData(`b2c/search?filter=true`, "POST", payload),
+  //   enabled: false,
+  // });
+  console.log(selectedStops);
+  const queryString = `airlines=${airlinesFilter
+    .join(",")
+    .toUpperCase()}&stops=${selectedStops.join(
+    ","
+  )}&refundable=${isPartiallyRefundable}`;
+
   const {
     data: allFlights,
     error: allFlightsError,
@@ -61,9 +79,14 @@ export default function page({ searchParams }) {
     refetch: allFlightsRefetch,
   } = useQuery({
     queryKey: ["flights", payload],
-    queryFn: () => fetchData(`b2c/search?filter=true`, "POST", payload),
+    queryFn: () =>
+      fetchData(`b2c/search?filter=true&${queryString}`, "POST", payload),
     enabled: false,
   });
+
+  useEffect(() => {
+    allFlightsRefetch();
+  }, [airlinesFilter, selectedStops, isPartiallyRefundable]);
 
   useEffect(() => {
     if (allFlights?.success) {
@@ -82,19 +105,23 @@ export default function page({ searchParams }) {
     }
   }, [originDestinations]);
 
+
   return (
     <div>
       <Navbar />
       {allFlightsLoading ? (
         <SearchResultSkeleton />
       ) : (
-        <div className="bg-[#F0F4F4] pt-20">
+        <div className="bg-[#F0F0F4]">
           <div className=" max-w-7xl md:max-w-5xl min-h-screen mx-auto">
             <FlightFilter
               departureTIme={departureTime}
-              setFilterStops={setFilterStops}
+              setAirlinesFilter={setAirlinesFilter}
+              setSelectedStops={setSelectedStops}
+              isPartiallyRefundable={isPartiallyRefundable}
+              setIsPartiallyRefundable={setIsPartiallyRefundable}
+              selectedStops={selectedStops}
               setDepartureTime={setDepartureTime}
-              airlineFIlter={airlineFIlter}
               filter={allFlights?.filter}
             />
             {allFlights?.success ? (
@@ -107,6 +134,7 @@ export default function page({ searchParams }) {
                         ))
                       : ""}
                   </div>
+
                   <div className="w-full lg:h-[300px] md:h-[300px] bg-white rounded-lg shadow-md overflow-hidden col-span-2">
                     <div className="bg-gradient-to-r from-blue-500 to-teal-500 p-4">
                       <h2 className="text-white text-lg font-semibold text-center">
@@ -123,11 +151,11 @@ export default function page({ searchParams }) {
                         </span>
                       </div>
                       <hr className="border-gray-300" />
-                      <div className="flex items-center space-x-4">
+                      <div className="flex items-center space-x-4 w-full">
                         <div className="p-2 bg-yellow-400 rounded-full">
                           <FaFacebookMessenger className="text-white text-xl" />
                         </div>
-                        <span className="text-blue-900 font-semibold">
+                        <span className="text-blue-900 font-semibold w-full break-all">
                           m.me/Flightkiya.com
                         </span>
                       </div>

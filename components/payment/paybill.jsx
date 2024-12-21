@@ -68,7 +68,7 @@ function PayBill() {
           />
         </div>
       ) : (
-        <div className="min-h-screen  p-4 flex flex-col-reverse md:flex-row gap-5 md:gap-0">
+        <div className="min-h-screen  p-4 flex flex-col-reverse md:flex-row gap-5 md:gap-2">
           {/* Sidebar */}
           <aside className="w-full  md:w-1/4 bg-white h-fit p-4 rounded-md shadow-md space-y-4">
             <div className="space-y-2 h-full">

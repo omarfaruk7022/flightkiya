@@ -758,9 +758,9 @@ const FlightSearch = () => {
                               className="w-full focus:outline-none bg-transparent "
                             />
                             <div className="block">
-                              <span className="text-[8px] md:text-[15px] font-semibold ">
+                              <p className="text-[8px] md:text-[12px] font-semibold ">
                                 {originAirport?.label} {originAirport?.value}
-                              </span>
+                              </p>
                             </div>
                           </label>
                         </div>
@@ -820,10 +820,10 @@ const FlightSearch = () => {
                               className="w-full focus:outline-none  bg-transparent"
                             />
                             <div className="block">
-                              <span className="text-[8px] md:text-[15px] font-semibold">
+                              <p className="text-[8px] md:text-[12px] font-semibold">
                                 {destinationAirport?.label}{" "}
                                 {destinationAirport?.value}
-                              </span>
+                              </p>
                             </div>
                           </label>
                         </div>
