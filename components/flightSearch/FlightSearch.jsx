@@ -413,13 +413,13 @@ const FlightSearch = () => {
   };
 
   return (
-    <section className="bg-[url('/images/banner-1.jpeg')] bg-cover w-full  ">
+    <section className=" w-full  ">
       <div className=" w-full container mx-auto ">
         <div className="">
           <Navbar />
         </div>
 
-        <div className="px-5 md:px-20   pt-36 pb-32">
+        <div className="px-5 md:px-20   pt-36 ">
           <div className="relative bg-white p-6  container shadow-xl h-fit md:h-[84px] rounded-[10px] w-full md:w-[551px] mx-auto bottom-[-25px]">
             <div className="flex items-center justify-between px-2 md:px-14 flex-wrap">
               <div
@@ -741,7 +741,7 @@ const FlightSearch = () => {
                   <>
                     <div className="flex items-center col-span-1  md:col-span-4 w-full">
                       <div className="relative w-full">
-                        <div className="border-2 border-[#BEA8A8] pt-2 ps-5 w-full rounded-l-md  h-[69px]">
+                        <div className="border-2  pt-2 ps-5 w-full rounded-l-md  h-[69px]">
                           <label
                             className="w-full cursor-pointer"
                             onClick={() =>
@@ -805,7 +805,7 @@ const FlightSearch = () => {
                         )}
                       </div>
                       <div className="relative w-full ">
-                        <div className="border-2  border-l-0 border-[#BEA8A8] pt-2 ps-5 rounded-r-md  h-[69px]">
+                        <div className="border-2  border-l-0  pt-2 ps-5 rounded-r-md  h-[69px]">
                           <label
                             className="w-full cursor-pointer"
                             onClick={() => setIsOpenArrival(!isOpenArrival)}
@@ -866,7 +866,7 @@ const FlightSearch = () => {
                       </div>
                     </div>
                     <div
-                      className={`border-2 border-[#BEA8A8] pt-2 ps-5 rounded-md col-span-2 
+                      className={`border-2  pt-2 ps-5 rounded-md col-span-2 
                       h-[69px] flex `}
                     >
                       <label className="w-full cursor-pointer">
@@ -933,7 +933,7 @@ const FlightSearch = () => {
                           className="flex items-center col-span-2  md:col-span-4 w-full"
                         >
                           <div className="relative w-full">
-                            <div className="border-2 border-[#BEA8A8] pt-2 ps-5 w-full rounded-l-md  h-[69px]">
+                            <div className="border-2  pt-2 ps-5 w-full rounded-l-md  h-[69px]">
                               <label
                                 className="w-full cursor-pointer"
                                 onClick={() =>
@@ -1010,7 +1010,7 @@ const FlightSearch = () => {
                             )}
                           </div>
                           <div className="relative w-full ">
-                            <div className="border-2  border-l-0 border-[#BEA8A8] pt-2 ps-5 rounded-r-md  h-[69px]">
+                            <div className="border-2  border-l-0  pt-2 ps-5 rounded-r-md  h-[69px]">
                               <label
                                 className="w-full cursor-pointer"
                                 onClick={() =>
@@ -1089,7 +1089,7 @@ const FlightSearch = () => {
                           </div>
                         </div>
                         <div
-                          className={`border-2 border-[#BEA8A8] pt-2 ps-5 rounded-md col-span-2 
+                          className={`border-2  pt-2 ps-5 rounded-md col-span-2 
                       h-[69px] flex `}
                         >
                           <label className="w-full cursor-pointer">
