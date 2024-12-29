@@ -16,6 +16,7 @@ import { revalidateFlight } from "@/utils/revalidateFlight";
 import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import airline from "@/public/images/airline.jpg";
+import { Calendar, Clock, Luggage, Plane } from "lucide-react";
 
 export default function FlightCard({ flight, index }) {
   const [openDetailsIndex, setOpenDetailsIndex] = useState(null);
@@ -92,6 +93,27 @@ export default function FlightCard({ flight, index }) {
   //     </div>
   //   );
   // }
+
+  const formatDateTime = (dateTimeStr) => {
+    const date = new Date(dateTimeStr);
+    return {
+      date: date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      }),
+      time: date.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    };
+  };
+
+  const formatDuration = (minutes) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours}h ${mins}m`;
+  };
   return (
     <section className="">
       {isLoading && (
@@ -114,7 +136,7 @@ export default function FlightCard({ flight, index }) {
               <div className="grid grid-cols-1 md:grid-cols-2 col-span-2">
                 <div className="flex items-center gap-4">
                   <Image
-                    src={fly?.airline_image ? fly?.airline_image : airline}
+                    src={fly?.airline_img ? fly?.airline_img : airline}
                     alt="airline logo"
                     width={40}
                     height={40}
@@ -122,7 +144,7 @@ export default function FlightCard({ flight, index }) {
                     className="w-10 h-10 sm:w-12 sm:h-12 object-cover"
                   />
                   <span className="text-xs sm:text-sm font-medium">
-                    {fly?.airline_name || "Unknown Airline"}
+                    {fly?.airline || "Unknown Airline"}
                   </span>
                 </div>
 
@@ -156,11 +178,11 @@ export default function FlightCard({ flight, index }) {
                   </div>
                   <div className="flex items-center justify-center flex-col space-y-2">
                     <span className="text-xs sm:text-sm">
-                      {fly?.totalStops === 0
+                      {flight?.stoppage == 0
                         ? "Non-stop"
-                        : fly?.totalStops == 1
+                        : flight?.stoppage == 1
                         ? "1 Stop"
-                        : `${fly.totalStops} Stops`}
+                        : `${flight.stoppage} Stops`}
                     </span>
                     <Image src={arrowRight} alt="Flight Path Arrow" />
                   </div>
@@ -211,7 +233,7 @@ export default function FlightCard({ flight, index }) {
           </div>
 
           {/* Expandable Details Section */}
-          <div className="border-t pt-3 pb-3 sm:pt-4 sm:pb-4 flex flex-col sm:flex-row justify-between items-start text-xs sm:text-sm px-3 sm:px-5">
+          <div className="border-t sm:pt-4 flex flex-col gap-3  text-xs sm:text-sm ">
             {/* Flight Details */}
             <div className="mb-3 sm:mb-0">
               <button
@@ -221,23 +243,142 @@ export default function FlightCard({ flight, index }) {
                 Flight Details {openDetailsIndex === index ? "▲" : "▼"}
               </button>
               {openDetailsIndex === index && (
-                <div className="mt-2 border p-3 rounded-lg bg-gray-50 space-y-1 sm:space-y-2">
-                  <p>
-                    <strong>Flight Number:</strong>{" "}
-                    {segment?.OperatingFlightNumber || "N/A"}
-                  </p>
-                  <p>
-                    <strong>Cabin Class:</strong>{" "}
-                    {segment?.CabinClassCode || "N/A"}
-                  </p>
-                  <p>
-                    <strong>Baggage Info:</strong>{" "}
-                    {segment?.CheckinBaggage?.[0]?.Value || "N/A"} Checked,{" "}
-                    {segment?.CabinBaggage?.[0]?.Value || "N/A"} Carry-on
-                  </p>
-                  <p>
-                    <strong>Equipment:</strong> {segment?.Equipment || "N/A"}
-                  </p>
+                // <div className="mt-2 border p-3 rounded-lg bg-gray-50 space-y-1 sm:space-y-2">
+                //   <p>
+                //     <strong>Flight Number:</strong>{" "}
+                //     {segment?.OperatingFlightNumber || "N/A"}
+                //   </p>
+                //   <p>
+                //     <strong>Cabin Class:</strong>{" "}
+                //     {segment?.CabinClassCode || "N/A"}
+                //   </p>
+                //   <p>
+                //     <strong>Baggage Info:</strong>{" "}
+                //     {segment?.CheckinBaggage?.[0]?.Value || "N/A"} Checked,{" "}
+                //     {segment?.CabinBaggage?.[0]?.Value || "N/A"} Carry-on
+                //   </p>
+                //   <p>
+                //     <strong>Equipment:</strong> {segment?.Equipment || "N/A"}
+                //   </p>
+                // </div>
+
+                <div className="p-6 bg-gray-50">
+                  {flight?.segments.map((fly, index) => (
+                    <div key={fly.flight_no} className="mb-8 last:mb-0">
+                      <div className="flex flex-col gap-6">
+                        {/* Flight Header */}
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                          <div className="flex items-center gap-2">
+                            <Plane className="w-5 h-5 text-blue-600" />
+                            <span className="font-semibold">
+                              Flight {fly.flight_no}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 text-gray-600">
+                            <Clock className="w-4 h-4" />
+                            <span>
+                              Duration: {formatDuration(fly.JourneyDuration)}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Flight Route */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                          {/* Departure */}
+                          <div>
+                            <p className="text-gray-600 mb-1">Departure</p>
+                            <h3 className="font-bold text-lg">
+                              {fly.departure_city} (
+                              {fly.DepartureAirportLocationCode})
+                            </h3>
+                            <p className="text-sm text-gray-600">
+                              {fly.departure_airport}
+                            </p>
+                            <div className="flex items-center gap-2 mt-2">
+                              <Calendar className="w-4 h-4 text-gray-600" />
+                              <div>
+                                <p className="font-medium">
+                                  {formatDateTime(fly.DepartureDateTime).time}
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  {formatDateTime(fly.DepartureDateTime).date}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Flight Info */}
+                          <div className="flex flex-col items-center justify-center">
+                            <div className="w-full h-0.5 bg-gray-300 relative">
+                              {/* <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-blue-600" /> */}
+                              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">
+                                <Plane className="w-5 h-5 text-blue-600" />
+                              </div>
+                            </div>
+                            <p className="text-sm text-gray-600 mt-2">
+                              {fly.Equipment} • {fly.CabinClassCode}
+                            </p>
+                          </div>
+
+                          {/* Arrival */}
+                          <div>
+                            <p className="text-gray-600 mb-1">Arrival</p>
+                            <h3 className="font-bold text-lg">
+                              {fly.arrival_city} (
+                              {fly.ArrivalAirportLocationCode})
+                            </h3>
+                            <p className="text-sm text-gray-600">
+                              {fly.arrival_airport}
+                            </p>
+                            <div className="flex items-center gap-2 mt-2">
+                              <Calendar className="w-4 h-4 text-gray-600" />
+                              <div>
+                                <p className="font-medium">
+                                  {formatDateTime(fly.ArrivalDateTime).time}
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  {formatDateTime(fly.ArrivalDateTime).date}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Baggage Information */}
+                        <div className="bg-white p-4 rounded-lg border">
+                          <div className="flex items-center gap-2 mb-3">
+                            <Luggage className="w-5 h-5 text-blue-600" />
+                            <h4 className="font-semibold">
+                              Baggage Information
+                            </h4>
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                              <p className="text-sm text-gray-600">
+                                Check-in Baggage
+                              </p>
+                              <p className="font-medium">
+                                {fly.CheckinBaggage[0].Value}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-600">
+                                Cabin Baggage
+                              </p>
+                              <p className="font-medium">
+                                {fly.CabinBaggage[0].Value}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Divider between flights */}
+                      {index < flight?.segments.length - 1 && (
+                        <div className="my-8 border-t border-dashed border-gray-300" />
+                      )}
+                    </div>
+                  ))}
                 </div>
               )}
             </div>

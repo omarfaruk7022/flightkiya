@@ -1,18 +1,12 @@
 "use client";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
-import logo from "@/public/images/logo-white.png";
-import logoBlack from "@/public/icons/logoFlight-removebg-preview.png";
-import usd from "@/public/icons/usd.png";
-import { IoIosArrowDown } from "react-icons/io";
-import flight from "@/public/flight (1).svg";
-import hotel from "@/public/flight (2).svg";
-import tour from "@/public/flight (3).svg";
-import visa from "@/public/flight (4).svg";
-import aboutImg from "@/public/icons/aboutImg.png";
+import logoBlack from "@/public/images/logo.png";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import TopBar from "@/components/topbar/TopBar";
 export default function Navbar() {
   const [scrollY, setScrollY] = useState(0);
   const [isScrollingDown, setIsScrollingDown] = useState(false);
@@ -30,32 +24,20 @@ export default function Navbar() {
     router.push("/auth-login");
   };
 
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     const currentScrollY = window.scrollY;
-  //     if (currentScrollY > scrollY) {
-  //       setIsScrollingDown(true);
-  //     } else {
-  //       setIsScrollingDown(false);
-  //     }
-  //     setScrollY(currentScrollY);
-  //   };
-
-  //   window.addEventListener("scroll", handleScroll);
-  //   return () => window.removeEventListener("scroll", handleScroll);
-  // }, [scrollY]);
-  const [isOpenCurrency, setIsOpenCurrency] = useState(false);
-
   return (
     <>
-    
       <div
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out bg-white`}
       >
+        <TopBar />
         <nav className="max-w-7xl mx-auto p-4 flex justify-between items-center">
           {/* Logo */}
           <Link href={"/"}>
-            <Image src={logoBlack} alt="Logo" className="w-[200px]  md:w-[350px]" />
+            <Image
+              src={logoBlack}
+              alt="Logo"
+              className="w-[170px]  md:w-[300px]"
+            />
           </Link>
           <div className="   container  rounded-[22px] w-full px-32 mx-auto bottom-[-25px] hidden md:block">
             {/* <div className="flex items-center justify-between px-14 flex-wrap">

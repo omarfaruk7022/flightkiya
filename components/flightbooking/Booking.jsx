@@ -140,6 +140,7 @@ const Booking = () => {
   };
 
   const handleInputChange = (index, field, value) => {
+    console.log(value);
     setPassengerDetails((prev) =>
       prev.map((passenger, i) =>
         i === index ? { ...passenger, [field]: value } : passenger
@@ -632,28 +633,9 @@ const Booking = () => {
                           }
                           className="border border-gray-300 p-3 rounded"
                         />
-                        <div className="w-full">
-                          <ReactDatePicker
-                            selected={
-                              passenger.ExpiryDate
-                                ? new Date(passenger.ExpiryDate)
-                                : null
-                            }
-                            onChange={(date) =>
-                              handleInputChange(
-                                index,
-                                "ExpiryDate",
-                                date ? format(date, "yyyy-MM-dd") : ""
-                              )
-                            }
-                            dateFormat="yyyy-MM-dd"
-                            placeholderText="Passport Expiry Date"
-                            className="w-full border border-gray-300 p-3 rounded"
-                          />
-                        </div>
                       </div>
                       <div className="grid grid-cols-1  md:grid-cols-2 gap-4 mb-4">
-                        <ReactDatePicker
+                        {/* <ReactDatePicker
                           selected={
                             passenger.DateOfBirth
                               ? new Date(passenger.DateOfBirth)
@@ -669,7 +651,71 @@ const Booking = () => {
                           dateFormat="yyyy-MM-dd"
                           placeholderText=" Date of birth"
                           className="w-full border border-gray-300 focus:outline-none p-3 rounded"
-                        />
+                        /> */}
+
+                        <div className="w-full">
+                          <label
+                            htmlFor={`dateOfBirth-${index}`}
+                            className="block text-sm font-medium text-gray-700 mb-2"
+                          >
+                            Date of Birth
+                          </label>
+                          <input
+                            type="date"
+                            value={
+                              passenger.ExpiryDate
+                                ? format(
+                                    new Date(passenger.DateOfBirth),
+                                    "yyyy-MM-dd"
+                                  )
+                                : ""
+                            }
+                            name="dateOfBirth"
+                            id={`dateOfBirth-${index}`}
+                            placeholder="Passport Expiry Date"
+                            className="w-full border border-gray-300 p-3 rounded"
+                            onChange={(event) => {
+                              const date = event.target.value;
+                              handleInputChange(
+                                index,
+                                "DateOfBirth",
+                                date || ""
+                              );
+                            }}
+                          />
+                        </div>
+
+                        <div className="w-full">
+                          <label
+                            htmlFor={`dateOfBirth-${index}`}
+                            className="block text-sm font-medium text-gray-700 mb-2"
+                          >
+                            Passport expiry date
+                          </label>
+                          <input
+                            type="date"
+                            value={
+                              passenger.ExpiryDate
+                                ? format(
+                                    new Date(passenger.ExpiryDate),
+                                    "yyyy-MM-dd"
+                                  )
+                                : ""
+                            }
+                            name=""
+                            id=""
+                            placeholder="Passport Expiry Date"
+                            className="w-full border border-gray-300 p-3 rounded"
+                            onChange={(event) => {
+                              const date = event.target.value;
+                              handleInputChange(
+                                index,
+                                "ExpiryDate",
+                                date || ""
+                              );
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -743,7 +789,7 @@ const Booking = () => {
           </div>
 
           <Modal isOpen={isModalOpen} onClose={closeModal}>
-            <div className="space-y-4 w-full ">
+            <div className="space-y-4 w-full">
               <h2 className="text-[26px] flex items-center gap-2 font-semibold text-blue-800">
                 <span>
                   <MdReviews className=" w-9 h-9" />
@@ -982,7 +1028,7 @@ const Modal = ({ isOpen, onClose, children }) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black bg-opacity-25" />
+          <div className="fixed inset-0 bg-black bg-opacity-25 " />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -996,7 +1042,7 @@ const Modal = ({ isOpen, onClose, children }) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className=" w-[850px] transform overflow-hidden rounded-lg bg-white p-6 text-left align-middle shadow-xl transition-all">
+              <Dialog.Panel className=" w-[850px] transform overflow-hidden rounded-lg bg-white p-6 text-left align-middle shadow-xl transition-all mt-36">
                 <div className="flex justify-end">
                   <button
                     onClick={onClose}

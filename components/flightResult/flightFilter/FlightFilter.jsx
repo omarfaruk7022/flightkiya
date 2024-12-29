@@ -140,7 +140,7 @@ export default function FlightFilter({
           </div>
         </div>
       )}
-      <div className="py-5 mt-20">
+      <div className="py-5 mt-36">
         <div className=" bg-white">
           <div
             className="grid grid-cols-1  md:grid-cols-2 rounded-lg "

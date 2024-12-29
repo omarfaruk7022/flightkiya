@@ -105,14 +105,15 @@ export default function page({ searchParams }) {
     }
   }, [originDestinations]);
 
-
   return (
     <div>
       <Navbar />
       {allFlightsLoading ? (
-        <SearchResultSkeleton />
+        <div className="pb-20">
+          <SearchResultSkeleton />
+        </div>
       ) : (
-        <div className="bg-[#F0F0F4]">
+        <div className="bg-[#F0F0F4] ">
           <div className=" max-w-7xl md:max-w-5xl min-h-screen mx-auto">
             <FlightFilter
               departureTIme={departureTime}

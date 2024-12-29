@@ -413,13 +413,13 @@ const FlightSearch = () => {
   };
 
   return (
-    <section className=" w-full  ">
+    <section className=" w-full bg-[url('/images/bg.png')] bg-cover">
       <div className=" w-full container mx-auto ">
         <div className="">
           <Navbar />
         </div>
 
-        <div className="px-5 md:px-20   pt-36 ">
+        <div className="px-5 md:px-20   pt-44 pb-32 ">
           <div className="relative bg-white p-6  container shadow-xl h-fit md:h-[84px] rounded-[10px] w-full md:w-[551px] mx-auto bottom-[-25px]">
             <div className="flex items-center justify-between px-2 md:px-14 flex-wrap">
               <div

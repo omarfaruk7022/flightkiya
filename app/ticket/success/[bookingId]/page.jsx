@@ -144,7 +144,7 @@ const FlightInvoice = () => {
           </div>
         </div>
       ) : (
-        <div className="pt-20">
+        <div className="pt-36">
           {ticketDataError ? (
             <div className="h-screen flex justify-center items-center w-full ">
               <div className="text-center">
