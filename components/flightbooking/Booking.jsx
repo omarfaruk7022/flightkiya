@@ -19,6 +19,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Oval } from "react-loader-spinner";
 import Cookies from "js-cookie";
+const countries = require("../../countries.json");
 
 const customSelectStyles = {
   control: (base) => ({
@@ -134,7 +135,9 @@ const Booking = () => {
   const handleNationalityChange = (index, selectedOption) => {
     setPassengerDetails((prev) =>
       prev.map((passenger, i) =>
-        i === index ? { ...passenger, Nationality: selectedOption } : passenger
+        i === index
+          ? { ...passenger, PassengerNationality: selectedOption }
+          : passenger
       )
     );
   };
@@ -229,9 +232,19 @@ const Booking = () => {
   ];
 
   const handleContinue = () => {
-    if (travelersInfo?.length > 0) {
+    const validationErrors = validatePassengerDetails(passengerDetails);
+
+    if (validationErrors.length > 0) {
+      setErrors(validationErrors);
+      toast.error("Please check passenger details");
+      return;
+    }
+
+    if (passengerDetails?.length > 0) {
       if (contactEmail && contactNumber && countryCode) {
         openModal();
+        setTravelersInfo(passengerDetails);
+        setErrors([]);
       } else {
         toast.error("Please fill in your contact details");
       }
@@ -261,7 +274,7 @@ const Booking = () => {
       Passport: {
         PassportNumber: passenger.PassportNumber,
         ExpiryDate: formatDate(passenger.ExpiryDate),
-        Country: passenger.Nationality.value,
+        Country: passenger.PassengerNationality.value,
       },
       PassengerNationality: passenger.PassengerNationality.value,
       NationalID: passenger.PassengerNationality.value,
@@ -594,7 +607,8 @@ const Booking = () => {
                       </div>
                       <div className="grid grid-cols-1  md:grid-cols-2 gap-4 mb-4">
                         <Select
-                          options={nationalityOptions}
+                          options={countries}
+                          isSearchable={true}
                           value={passenger.Nationality}
                           onChange={(selectedOption) =>
                             handleNationalityChange(index, selectedOption)
@@ -663,7 +677,7 @@ const Booking = () => {
                           <input
                             type="date"
                             value={
-                              passenger.ExpiryDate
+                              passenger.DateOfBirth
                                 ? format(
                                     new Date(passenger.DateOfBirth),
                                     "yyyy-MM-dd"
@@ -719,12 +733,12 @@ const Booking = () => {
                       </div>
                     </div>
                   ))}
-                  <button
+                  {/* <button
                     type="submit"
                     className="px-4 py-2 bg-blue-600 text-white rounded"
                   >
-                    Save
-                  </button>
+                    Continue
+                  </button> */}
                 </form>
               </div>
             </div>
@@ -960,7 +974,7 @@ const Booking = () => {
                       {flightdata?.TotalFare?.CurrencyCode}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
+                  {/* <div className="flex justify-between items-center">
                     <span className="flex items-center">
                       Hot Deals{" "}
                       <span className="ml-2 bg-blue-100 text-blue-600 font-semibold px-2 py-0.5 rounded">
@@ -971,7 +985,7 @@ const Booking = () => {
                       - {flightdata?.TotalFare?.CurrencyCode}{" "}
                       {flightdata?.TotalFare?.Amount}
                     </span>
-                  </div>
+                  </div> */}
                   <div className="flex justify-between">
                     <span>Convenience Charge</span>
                     <span className="font-medium">

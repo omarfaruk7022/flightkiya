@@ -143,14 +143,14 @@ export default function FlightCard({ flight, index }) {
                     priority
                     className="w-10 h-10 sm:w-12 sm:h-12 object-cover"
                   />
-                  <span className="text-xs sm:text-sm font-medium">
+                  <span className="text-xs md:text-md font-bold">
                     {fly?.airline || "Unknown Airline"}
                   </span>
                 </div>
 
                 {/* Flight Information */}
                 <div className="flex flex-col justify-between sm:col-span-2 md:col-span-1">
-                  <div className="flex justify-between items-center text-xs sm:text-sm">
+                  <div className="flex justify-between items-center text-xs sm:text-sm font-bold">
                     <span>
                       {fly?.DepartureDateTime
                         ? new Date(fly?.DepartureDateTime).toLocaleTimeString(
@@ -178,15 +178,16 @@ export default function FlightCard({ flight, index }) {
                   </div>
                   <div className="flex items-center justify-center flex-col space-y-2">
                     <span className="text-xs sm:text-sm">
-                      {flight?.stoppage == 0
+                      {fly?.totalStops == 0
                         ? "Non-stop"
-                        : flight?.stoppage == 1
+                        : fly?.totalStops == 1
                         ? "1 Stop"
-                        : `${flight.stoppage} Stops`}
+                        : `${fly.totalStops} Stops`}
                     </span>
                     <Image src={arrowRight} alt="Flight Path Arrow" />
+                    <span>{formatDuration(fly?.totalJourneyDuration)}</span>
                   </div>
-                  <div className="flex justify-between items-center text-xs sm:text-sm">
+                  <div className="flex justify-between items-center text-xs md:text-lg font-bold">
                     <span>{fly?.DepartureAirportLocationCode || "N/A"}</span>
                     <span>{fly?.ArrivalAirportLocationCode || "N/A"}</span>
                   </div>

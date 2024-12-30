@@ -157,7 +157,7 @@ export default function page({ searchParams }) {
                           <FaFacebookMessenger className="text-white text-xl" />
                         </div>
                         <span className="text-blue-900 font-semibold w-full break-all">
-                          m.me/Flightkiya.com
+                          m.me/adbiyastour.com
                         </span>
                       </div>
                     </div>

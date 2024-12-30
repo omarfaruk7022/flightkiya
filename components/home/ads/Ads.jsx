@@ -106,13 +106,20 @@ export default function Ads() {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto ">
-      <h2 className="text-[24px] font-bold text-center">Our Partners </h2>
-      <Marquee className="overflow-y-hidden mt-5 gap-[20px] ">
-        {logos?.map((logo) => (
-          <div className="w-full bg-white px-6 shadow-lg py-2 h-[90px] flex justify-center items-center">
+    <div className="max-w-full md:max-w-4xl mx-auto px-4">
+      <h2 className="text-[24px] font-bold text-center">Our Partners</h2>
+      <Marquee className="overflow-y-hidden mt-5 gap-4 w-full">
+        {logos?.map((logo, index) => (
+          <div
+            key={index}
+            className="bg-white px-4 py-2 shadow-lg h-[70px] flex justify-center items-center"
+          >
             <Link href={logo?.href} target={logo?.target}>
-              <Image alt={logo?.alt} className="w-full" src={logo?.src}></Image>
+              <Image
+                alt={logo?.alt}
+                className="max-h-[50px] w-auto object-contain"
+                src={logo?.src}
+              />
             </Link>
           </div>
         ))}
