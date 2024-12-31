@@ -20,6 +20,35 @@ import { useRouter } from "next/navigation";
 import { Oval } from "react-loader-spinner";
 import Cookies from "js-cookie";
 const countries = require("../../countries.json");
+import { Button } from "@/components/ui/button";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
+import {
+  Info,
+  Plane,
+  Clock,
+  Calendar,
+  CreditCard,
+  Users,
+  AlertTriangle,
+} from "lucide-react";
 
 const customSelectStyles = {
   control: (base) => ({
@@ -309,6 +338,69 @@ const Booking = () => {
     }
   }, [bookingData]);
 
+  const rules = [
+    {
+      category: "Cancellation Policy",
+      icon: <AlertTriangle className="h-5 w-5" />,
+      items: [
+        "Free cancellation within 24 hours of booking",
+        "50% refund if cancelled 7 days before departure",
+        "No refund for cancellations within 48 hours of departure",
+      ],
+      type: "warning",
+    },
+    {
+      category: "Baggage Allowance",
+      icon: <Plane className="h-5 w-5" />,
+      items: [
+        "Carry-on: 7kg max weight",
+        "Checked baggage: 23kg included",
+        "Extra baggage available for purchase",
+      ],
+      type: "info",
+    },
+    {
+      category: "Validity",
+      icon: <Calendar className="h-5 w-5" />,
+      items: [
+        "Ticket valid for 12 months from date of issue",
+        "Change of date allowed with fee",
+        "Seasonal restrictions may apply",
+      ],
+      type: "default",
+    },
+    {
+      category: "Check-in Requirements",
+      icon: <Clock className="h-5 w-5" />,
+      items: [
+        "Online check-in opens 48 hours before departure",
+        "Airport check-in closes 60 minutes before departure",
+        "Valid passport required for international flights",
+      ],
+      type: "info",
+    },
+    {
+      category: "Payment Terms",
+      icon: <CreditCard className="h-5 w-5" />,
+      items: [
+        "Full payment required at time of booking",
+        "Multiple payment methods accepted",
+        "Currency conversion fees may apply",
+      ],
+      type: "default",
+    },
+    {
+      category: "Special Services",
+      icon: <Users className="h-5 w-5" />,
+      items: [
+        "Wheelchair assistance available on request",
+        "Special meals must be ordered 48 hours in advance",
+        "Unaccompanied minor service with additional fee",
+      ],
+      type: "info",
+    },
+  ];
+
   return (
     <div className="p-6">
       <div className=" space-y-6">
@@ -342,7 +434,81 @@ const Booking = () => {
                             </div>
                           </p>
                           <p className="text-sm text-gray-500">{`${segment?.MarketingAirlineCode} ${segment?.FlightNumber} | ${segment.OperatingAirlineEquipment}`}</p>
-                          <p className=" underline">Fare rules</p>
+                          {index === 0 && (
+                            <Drawer>
+                              <DrawerTrigger asChild>
+                                <p className="underline cursor-pointer">
+                                  {" "}
+                                  Fare Rules
+                                </p>
+                              </DrawerTrigger>
+                              <DrawerContent className="h-[85vh]">
+                                <DrawerHeader className="text-center ">
+                                  <DrawerTitle className="text-2xl font-bold text-center">
+                                    Fare Rules & Conditions
+                                  </DrawerTitle>
+                                  <DrawerDescription className="text-center">
+                                    Please review all terms and conditions
+                                    carefully
+                                  </DrawerDescription>
+                                </DrawerHeader>
+                                <ScrollArea className="px-4">
+                                  <div className="space-y-6 pb-6 max-w-5xl mx-auto">
+                                    {rules.map((rule, index) => (
+                                      <div
+                                        key={index}
+                                        className="rounded-lg border bg-card p-4 shadow-sm"
+                                      >
+                                        <div className="mb-2 flex items-center gap-2">
+                                          <div className="rounded-full bg-primary/10 p-2 text-primary">
+                                            {rule.icon}
+                                          </div>
+                                          <h3 className="text-lg font-semibold">
+                                            {rule.category}
+                                          </h3>
+                                          <Badge
+                                            variant={rule.type}
+                                            className="ml-auto"
+                                          >
+                                            {rule.type}
+                                          </Badge>
+                                        </div>
+                                        <Separator className="my-2" />
+                                        <Accordion type="single" collapsible>
+                                          <AccordionItem
+                                            value={`item-${index}`}
+                                          >
+                                            <AccordionTrigger>
+                                              View Details
+                                            </AccordionTrigger>
+                                            <AccordionContent>
+                                              <ul className="ml-4 list-disc space-y-2 text-sm text-muted-foreground">
+                                                {rule.items.map(
+                                                  (item, itemIndex) => (
+                                                    <li key={itemIndex}>
+                                                      {item}
+                                                    </li>
+                                                  )
+                                                )}
+                                              </ul>
+                                            </AccordionContent>
+                                          </AccordionItem>
+                                        </Accordion>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </ScrollArea>
+                                <DrawerFooter>
+                                  <Button className="w-full">
+                                    Accept & Continue
+                                  </Button>
+                                  <DrawerClose asChild className="max-w-5xl mx-auto">
+                                    <Button variant="outline">Cancel</Button>
+                                  </DrawerClose>
+                                </DrawerFooter>
+                              </DrawerContent>
+                            </Drawer>
+                          )}
                         </span>
                         <span className="text-gray-700">
                           {" "}
