@@ -62,6 +62,7 @@ const Booking = () => {
     travelersInfo,
     setToken,
     setBookingId,
+    flightId,
   } = flightStore();
   const getCabinClass = (code) => {
     const cabinClassMap = {
@@ -341,6 +342,7 @@ const Booking = () => {
                             </div>
                           </p>
                           <p className="text-sm text-gray-500">{`${segment?.MarketingAirlineCode} ${segment?.FlightNumber} | ${segment.OperatingAirlineEquipment}`}</p>
+                          <p className=" underline">Fare rules</p>
                         </span>
                         <span className="text-gray-700">
                           {" "}
@@ -986,7 +988,7 @@ const Booking = () => {
                       {flightdata?.TotalFare?.Amount}
                     </span>
                   </div> */}
-                  <div className="flex justify-between">
+                  {/* <div className="flex justify-between">
                     <span>Convenience Charge</span>
                     <span className="font-medium">
                       +{" "}
@@ -996,7 +998,7 @@ const Booking = () => {
                       ).toFixed(2)}{" "}
                       {flightdata?.TotalFare?.CurrencyCode}
                     </span>
-                  </div>
+                  </div> */}
                 </div>
               </div>
 

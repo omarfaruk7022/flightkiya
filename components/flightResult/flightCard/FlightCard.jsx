@@ -21,8 +21,8 @@ import { Calendar, Clock, Luggage, Plane } from "lucide-react";
 export default function FlightCard({ flight, index }) {
   const [openDetailsIndex, setOpenDetailsIndex] = useState(null);
   const [openRefundableIndex, setOpenRefundableIndex] = useState(null);
-  const [flightId, setFlightId] = useState(null);
-  const { setSelectedFlight, timer } = flightStore();
+  const [flightIdTemp, setFlightIdTemp] = useState(null);
+  const { setSelectedFlight, setFlightId } = flightStore();
 
   // if (!flights?.length) {
   //   return <p className="text-center mt-10">No flight data found.</p>;
@@ -43,7 +43,7 @@ export default function FlightCard({ flight, index }) {
     isLoading,
     refetch: revalidateFlightQuery,
   } = useQuery({
-    queryKey: ["revalidateFlight", flightId],
+    queryKey: ["revalidateFlight", flightIdTemp],
     queryFn: ({ queryKey }) => {
       const [, flight_id] = queryKey;
       if (typeof flight_id !== "string") {
@@ -56,14 +56,15 @@ export default function FlightCard({ flight, index }) {
   });
 
   const handleRevalidateFlight = (flight_id) => {
+    setFlightIdTemp(flight_id);
     setFlightId(flight_id);
   };
 
   useEffect(() => {
-    if (flightId) {
+    if (flightIdTemp) {
       revalidateFlightQuery();
     }
-  }, [flightId]);
+  }, [flightIdTemp]);
   useEffect(() => {
     if (flightData?.data && flightData?.success == true) {
       router.push(`/booking`);
@@ -212,7 +213,7 @@ export default function FlightCard({ flight, index }) {
                 disabled={isLoading}
                 className={`bg-purple-600 hover:bg-purple-800 text-white py-1  w-[120px] sm:py-2 sm:px-6 rounded-lg flex items-center justify-center space-x-2 mt-0 md:mt-3 mb-5 cursor-pointer`}
               >
-                {flight?.flight_id == flightId && isLoading ? (
+                {flight?.flight_id == flightIdTemp && isLoading ? (
                   <Oval
                     visible={true}
                     height="25"
