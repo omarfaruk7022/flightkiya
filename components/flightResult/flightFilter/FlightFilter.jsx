@@ -16,6 +16,8 @@ export default function FlightFilter({
   setIsPartiallyRefundable,
   isPartiallyRefundable,
   setAirlinesFilter,
+  toggleFilter,
+  filters,
 }) {
   const [flightType, setFlightType] = useState();
   const router = useRouter();
@@ -140,7 +142,7 @@ export default function FlightFilter({
           </div>
         </div>
       )}
-      <div className="py-5 mt-36">
+      <div className="py-5 mt-20">
         <div className=" bg-white">
           <div
             className="grid grid-cols-1  md:grid-cols-2 rounded-lg "
@@ -352,35 +354,48 @@ export default function FlightFilter({
           )}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-10 ">
-          <div className="col-span-1 md:col-span-8 grid  grid-cols-1 md:grid-cols-3  my-3">
+          <div className="col-span-1 md:col-span-8 grid grid-cols-1 md:grid-cols-3 my-3">
             <div
-              className="bg-[var(--primary-btn)] p-5 rounded-s-[15px] cursor-pointer"
-              onClick={() => setFlightType("cheapest")}
+              className={`p-5 rounded-s-[15px] cursor-pointer ${
+                filters.isCheapest
+                  ? "bg-[var(--primary-btn)] text-white"
+                  : "bg-white text-black"
+              }`}
+              onClick={() => toggleFilter("isCheapest")}
             >
-              <h2 className="text-[24px] text-white font-bold">Cheapest</h2>
-              <span className="text-[11px] text-white">
+              <h2 className="text-[24px] font-bold">Cheapest</h2>
+              <span className="text-[11px]">
                 Showing the cheapest flights in ascending order
               </span>
             </div>
             <div
-              className="bg-white p-5  cursor-pointer"
-              onClick={() => setFlightType("earliest")}
+              className={`p-5 border-l border-gray-300 cursor-pointer ${
+                filters.isEarliest
+                  ? "bg-[var(--primary-btn)] text-white"
+                  : "bg-white text-black"
+              }`}
+              onClick={() => toggleFilter("isEarliest")}
             >
-              <h2 className="text-[24px] text-black font-bold">Earliest</h2>
-              <span className="text-[11px] text-black">
+              <h2 className="text-[24px] font-bold">Earliest</h2>
+              <span className="text-[11px]">
                 Click to see the Earliest flights in ascending order
               </span>
-            </div>{" "}
+            </div>
             <div
-              className="bg-[#63F67B57] p-5 rounded-e-[15px] cursor-pointer"
-              onClick={() => setFlightType("fastest")}
+              className={`p-5 rounded-e-[15px] border-l border-gray-300 cursor-pointer ${
+                filters.isFastest
+                  ? "bg-[var(--primary-btn)] text-white"
+                  : "bg-white text-black"
+              }`}
+              onClick={() => toggleFilter("isFastest")}
             >
-              <h2 className="text-[24px] text-black font-bold">Fastest</h2>
-              <span className="text-[11px] text-black">
+              <h2 className="text-[24px] font-bold">Fastest</h2>
+              <span className="text-[11px]">
                 Click to see the fastest flights in ascending order
               </span>
             </div>
           </div>
+
           <div className="col-span-1 md:col-span-2 w-full">
             <div className=" p-5 mt-3 bg-white m-2 rounded-[15px]">
               <div className="bg-[#C4D6D9] flex-col w-full rounded-[7px] flex items-center">

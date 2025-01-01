@@ -29,7 +29,7 @@ export default function Navbar() {
       <div
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out bg-white`}
       >
-        <TopBar />
+        {/* <TopBar /> */}
         <nav className="max-w-7xl mx-auto p-4 flex justify-between items-center">
           {/* Logo */}
           <Link href={"/"}>

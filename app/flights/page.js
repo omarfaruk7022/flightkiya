@@ -20,6 +20,20 @@ export default function page({ searchParams }) {
   const [departureTime, setDepartureTime] = useState([]);
   const [airlinesFilter, setAirlinesFilter] = useState([]);
   const [isPartiallyRefundable, setIsPartiallyRefundable] = useState(false);
+  const [filters, setFilters] = useState({
+    isCheapest: false,
+    isFastest: false,
+    isEarliest: false,
+  });
+
+  const toggleFilter = (key) => {
+    setFilters({
+      isCheapest: false,
+      isFastest: false,
+      isEarliest: false,
+      [key]: true, // Only the toggled filter is true
+    });
+  };
 
   const {
     originDestinations = "[]",
@@ -65,12 +79,13 @@ export default function page({ searchParams }) {
   //   queryFn: () => fetchData(`b2c/search?filter=true`, "POST", payload),
   //   enabled: false,
   // });
-  console.log(selectedStops);
   const queryString = `airlines=${airlinesFilter
     .join(",")
     .toUpperCase()}&stops=${selectedStops.join(
     ","
-  )}&refundable=${isPartiallyRefundable}`;
+  )}&refundable=${isPartiallyRefundable}&cheapest=${
+    filters.isCheapest
+  }&fastest=${filters.isFastest}&earliest=${filters.isEarliest}`;
 
   const {
     data: allFlights,
@@ -86,7 +101,7 @@ export default function page({ searchParams }) {
 
   useEffect(() => {
     allFlightsRefetch();
-  }, [airlinesFilter, selectedStops, isPartiallyRefundable]);
+  }, [airlinesFilter, selectedStops, isPartiallyRefundable, filters]);
 
   useEffect(() => {
     if (allFlights?.success) {
@@ -98,6 +113,7 @@ export default function page({ searchParams }) {
       toast.error(allFlightsError?.error?.message);
     }
   }, [allFlights, allFlightsError]);
+
 
   useEffect(() => {
     if (originDestinations) {
@@ -116,6 +132,8 @@ export default function page({ searchParams }) {
         <div className="bg-[#F0F0F4] ">
           <div className=" max-w-7xl md:max-w-5xl min-h-screen mx-auto">
             <FlightFilter
+              filters={filters}
+              toggleFilter={toggleFilter}
               departureTIme={departureTime}
               setAirlinesFilter={setAirlinesFilter}
               setSelectedStops={setSelectedStops}
