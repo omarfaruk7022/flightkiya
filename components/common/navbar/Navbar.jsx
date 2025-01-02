@@ -30,13 +30,13 @@ export default function Navbar() {
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out bg-white`}
       >
         {/* <TopBar /> */}
-        <nav className="max-w-7xl mx-auto p-4 flex justify-between items-center">
+        <nav className="max-w-7xl mx-auto px-6 md:px-0 py-4 flex justify-between items-center">
           {/* Logo */}
           <Link href={"/"}>
             <Image
               src={logoBlack}
               alt="Logo"
-              className="w-[170px]  md:w-[300px]"
+              className="w-[120px]  md:w-[300px]"
             />
           </Link>
           <div className="   container  rounded-[22px] w-full px-32 mx-auto bottom-[-25px] hidden md:block">
@@ -167,14 +167,14 @@ export default function Navbar() {
             {token ? (
               <>
                 <Link href="/profile">
-                  <button className="p-3 bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold text-[12px]">
+                  <button className="p-3 bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold text-[8px] md:text-[12px]">
                     Profile
                   </button>
                 </Link>
 
                 <button
                   onClick={handleLogOut}
-                  className=" p-3 bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold text-[12px]"
+                  className=" p-3 bg-[var(--primary-btn)] text-[var(--dark-text)] rounded-md font-semibold text-[8px] md:text-[12px]"
                 >
                   Logout
                 </button>

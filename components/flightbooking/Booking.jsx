@@ -49,6 +49,7 @@ import {
   Users,
   AlertTriangle,
 } from "lucide-react";
+import { getFareRules } from "@/utils/getFareRules";
 
 const customSelectStyles = {
   control: (base) => ({
@@ -336,6 +337,28 @@ const Booking = () => {
     // console.log(payload);
   };
 
+  const {
+    data: rulesData,
+    error: rulesDataError,
+    isLoading: rulesDataLoading,
+    refetch: getRulesData,
+  } = useQuery({
+    queryKey: ["get-fare-rules", flightId],
+    queryFn: ({ queryKey }) => {
+      const [, flightId] = queryKey;
+
+      return getFareRules(flightId);
+    },
+    enabled: false,
+    retry: false,
+  });
+
+  const handleFareRules = () => {
+    getRulesData();
+  };
+
+  console.log(rulesData);
+
   useEffect(() => {
     if (bookingData?.data && bookingData?.success === true) {
       Cookies.set("auth-token", bookingData?.data.token);
@@ -500,7 +523,10 @@ const Booking = () => {
                             <p className="text-sm text-gray-500">{`${segment?.MarketingAirlineCode} ${segment?.FlightNumber} | ${segment.OperatingAirlineEquipment}`}</p>
                             {index === 0 && (
                               <Drawer>
-                                <DrawerTrigger asChild>
+                                <DrawerTrigger
+                                  asChild
+                                  onClick={handleFareRules}
+                                >
                                   <p className="underline cursor-pointer">
                                     {" "}
                                     Fare Rules
@@ -518,48 +544,55 @@ const Booking = () => {
                                   </DrawerHeader>
                                   <ScrollArea className="px-4">
                                     <div className="space-y-6 pb-6 max-w-5xl mx-auto">
-                                      {rules.map((rule, index) => (
-                                        <div
-                                          key={index}
-                                          className="rounded-lg border bg-card p-4 shadow-sm"
-                                        >
-                                          <div className="mb-2 flex items-center gap-2">
-                                            <div className="rounded-full bg-primary/10 p-2 text-primary">
-                                              {rule.icon}
+                                      {rulesData?.data?.FareRules[0]?.RuleDetails.map(
+                                        (rule, index) => (
+                                          <div
+                                            key={index}
+                                            className="rounded-lg border bg-card p-4 shadow-sm"
+                                          >
+                                            <div className="mb-2 flex items-center gap-2">
+                                              <div className="rounded-full bg-primary/10 p-2 text-primary">
+                                                {/* {rule.icon} */}
+                                              </div>
+                                              <h3 className="text-lg font-semibold">
+                                                {rule.Category}
+                                              </h3>
+
+                                              {/* <Badge
+                                                variant={rule.type}
+                                                className="ml-auto"
+                                              >
+                                                {rule.type}
+                                              </Badge> */}
                                             </div>
-                                            <h3 className="text-lg font-semibold">
-                                              {rule.category}
-                                            </h3>
-                                            <Badge
-                                              variant={rule.type}
-                                              className="ml-auto"
+                                            <Separator className="my-2" />
+                                            <Accordion
+                                              type="single"
+                                              collapsible
                                             >
-                                              {rule.type}
-                                            </Badge>
+                                              <AccordionItem
+                                                value={`item-${index}`}
+                                              >
+                                                <AccordionTrigger>
+                                                  View Details
+                                                </AccordionTrigger>
+                                                <AccordionContent>
+                                                  {/* <ul className="ml-4 list-disc space-y-2 text-sm text-muted-foreground">
+                                                    {rule.items.map(
+                                                      (item, itemIndex) => (
+                                                        <li key={itemIndex}>
+                                                          {item}
+                                                        </li>
+                                                      )
+                                                    )}
+                                                  </ul> */}
+                                                   <h2 dangerouslySetInnerHTML={{ __html: rule?.Rules }} />
+                                                </AccordionContent>
+                                              </AccordionItem>
+                                            </Accordion>
                                           </div>
-                                          <Separator className="my-2" />
-                                          <Accordion type="single" collapsible>
-                                            <AccordionItem
-                                              value={`item-${index}`}
-                                            >
-                                              <AccordionTrigger>
-                                                View Details
-                                              </AccordionTrigger>
-                                              <AccordionContent>
-                                                <ul className="ml-4 list-disc space-y-2 text-sm text-muted-foreground">
-                                                  {rule.items.map(
-                                                    (item, itemIndex) => (
-                                                      <li key={itemIndex}>
-                                                        {item}
-                                                      </li>
-                                                    )
-                                                  )}
-                                                </ul>
-                                              </AccordionContent>
-                                            </AccordionItem>
-                                          </Accordion>
-                                        </div>
-                                      ))}
+                                        )
+                                      )}
                                     </div>
                                   </ScrollArea>
                                   <DrawerFooter>
@@ -582,9 +615,9 @@ const Booking = () => {
                             {getCabinClass(segment?.CabinClassCode)}
                           </span>
                         </div>
-                        <div className=" flex items-center justify-center">
+                        {/* <div className=" flex items-center justify-center">
                           <span>{segment?.StopQuantity} Stops</span>
-                        </div>
+                        </div> */}
                         <div className=" mt-3 flex justify-between items-center flex-wrap gap-4 md:gap-0">
                           <div>
                             {" "}

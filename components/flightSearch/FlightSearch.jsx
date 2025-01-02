@@ -130,6 +130,7 @@ const FlightSearch = () => {
     setFlightResults,
     setTravelersInfo,
     setBookingId,
+    setFlightId,
   } = flightStore();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -314,6 +315,7 @@ const FlightSearch = () => {
     setSelectedFlight({});
     setTravelersInfo([]);
     setBookingId(null);
+    setFlightId(null);
     setPassengerInformation(travelersData);
     router.push(`/flights?${queryString}`);
   };
