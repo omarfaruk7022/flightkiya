@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import avatar from "@/public/images/avatar.jpg";
 import jwt from "jsonwebtoken";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plane, MapPin, Calendar, CreditCard } from "lucide-react";
+import { Plane, Calendar, CreditCard } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -21,14 +21,14 @@ import flightStore from "@/store";
 import { toast } from "react-toastify";
 import BookingCard from "@/components/profile/BookingCard";
 import CanceledCard from "@/components/profile/CanceledCard";
-
+import { MapPin, User, AtSign, Phone } from "lucide-react";
 export default function ProfilePage() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   const { token, setToken } = flightStore();
-
+  console.log(user);
   useEffect(() => {
     const checkAuth = () => {
       const authToken = Cookies.get("auth-token");
@@ -70,7 +70,8 @@ export default function ProfilePage() {
     refetch: allCanceledBookingsRefetch,
   } = useQuery({
     queryKey: ["canceled-bookings"],
-    queryFn: () => fetchData(`b2c/user/cancel-booking-req`, "GET", null, token),
+    queryFn: () =>
+      fetchData(`b2c/user/cancel-booking-req?limit=1000`, "GET", null, token),
     enabled: false,
   });
   useEffect(() => {
@@ -116,15 +117,45 @@ export default function ProfilePage() {
                   <p className="text-sm text-gray-500">{user?.email}</p>
                 </div>
               </div>
-              <div className="mt-6 grid gap-2">
+
+              <div className="flex flex-col gap-4 p-4">
+                {/* Username */}
                 <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-gray-500" />
-                  <span>New York, USA</span>
+                  <AtSign className="h-5 w-5 text-gray-500" />
+                  <span className="text-gray-700 font-medium">
+                    Username: {user?.username}
+                  </span>
                 </div>
+
+                {/* Phone Number */}
                 <div className="flex items-center gap-2">
-                  <CreditCard className="h-4 w-4 text-gray-500" />
-                  <span>1234 **** **** 5678</span>
+                  <Phone className="h-5 w-5 text-gray-500" />
+                  <span className="text-gray-700 font-medium">
+                    Phone: {user?.phone_number}
+                  </span>
                 </div>
+
+                {/* Account Verified Status */}
+                {/* <div className="flex items-center gap-2">
+                  <span
+                    className={`font-medium px-3 py-1 rounded-full text-sm ${
+                      user?.account_verified === 1
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {user?.account_verified === 1 ? "Verified" : "Not Verified"}
+                  </span>
+                </div> */}
+              </div>
+
+              {/* Token Expiry */}
+              <div className="mt-6 text-sm text-gray-500">
+                <strong>Last login:</strong>{" "}
+                {new Date(user?.iat * 1000).toLocaleString()}
+                <br />
+                <strong>Token Expires At:</strong>{" "}
+                {new Date(user?.exp * 1000).toLocaleString()}
               </div>
             </div>
           </Card>
@@ -184,7 +215,9 @@ export default function ProfilePage() {
                     <Label htmlFor="email">Email</Label>
                     <Input id="email" type="email" defaultValue={user?.email} />
                   </div>
-                  <Button>Save Changes</Button>
+                  <button className="p-3 rounded-lg bg-[#6D28D9] hover:bg-[#4e268f] text-gray-100">
+                    Save Changes
+                  </button>
                 </form>
               </TabsContent>
             </Tabs>

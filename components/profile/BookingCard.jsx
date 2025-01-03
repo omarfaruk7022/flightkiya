@@ -5,7 +5,8 @@ import { toast } from "react-toastify";
 import { Card } from "@/components/ui/card";
 import { Calendar, Plane } from "lucide-react";
 import { fetchData } from "@/utils/fetcher";
-
+import { format } from "date-fns";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 export default function BookingCard({
   from,
   to,
@@ -20,7 +21,7 @@ export default function BookingCard({
   const [showModal, setShowModal] = useState(false);
   const [modalData, setModalData] = useState({});
   const { token } = flightStore();
-
+  const [isCopied, setIsCopied] = useState(false);
   const [formData, setFormData] = useState({
     booking_id: flight?.id,
     request_type: "REFUND",
@@ -145,9 +146,32 @@ export default function BookingCard({
             <div className="text-lg font-semibold">
               {from} to {to}
             </div>
+            <div className="flex items-center gap-2">
+              <span>{flight?.orderNumber}</span>
+              <CopyToClipboard
+                text={flight?.orderNumber}
+                onCopy={(e) => {
+                  setIsCopied(true);
+                  setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
+                }}
+              >
+                <button
+                  onClick={(e) => e.stopPropagation()}
+                  className={`rounded-full px-2 py-1 text-xs font-semibold ${
+                    isCopied
+                      ? "bg-blue-100 text-blue-800"
+                      : "bg-green-100 text-green-800"
+                  }`}
+                >
+                  {isCopied ? "Copied!" : "Copy"}
+                </button>
+              </CopyToClipboard>
+            </div>
             <div className="flex items-center gap-2 text-sm text-gray-500">
               <Calendar className="h-4 w-4" />
-              <span>{date}</span>
+              <span>
+                {date ? format(new Date(date), "dd MMM yyyy, hh:mm a") : "N/A"}
+              </span>
               <div
                 className={`rounded-full px-2 py-1 text-xs font-semibold ${
                   status === "BOOKED"
@@ -159,15 +183,17 @@ export default function BookingCard({
               </div>
             </div>
           </div>
-          <button
-            className={`rounded-lg px-4 py-1 text-sm font-semibold bg-green-100 text-green-800`}
-            onClick={(e) => {
-              e.stopPropagation(); // Prevent triggering row click
-              handleActionClick(flight);
-            }}
-          >
-            Edit
-          </button>
+          {flight?.ticketStatus !== "CANCEL_PENDING" && (
+            <button
+              className={`rounded-lg px-4 py-1 text-sm font-semibold bg-green-100 text-green-800`}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent triggering row click
+                handleActionClick(flight);
+              }}
+            >
+              Refund / Reissue
+            </button>
+          )}
         </div>
       </Card>
     </>
