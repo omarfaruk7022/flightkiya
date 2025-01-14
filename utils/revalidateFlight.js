@@ -1,8 +1,7 @@
 import { toast } from "react-toastify";
 
 export const revalidateFlight = async (flight_id) => {
-  const NEXT_API_URL =
-    process.env.NEXT_API_URL || "https://flightkiya.cosmelic.com/api/";
+  const NEXT_API_URL = process.env.NEXT_PUBLIC_API_URL;
   const response = await fetch(`${NEXT_API_URL}b2c/revalidated/${flight_id}`);
   if (!response.ok) {
     const errorData = await response.json();

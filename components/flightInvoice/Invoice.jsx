@@ -141,10 +141,10 @@ export default function Invoice({ ticketData, id }) {
         <div>
           <h3 className="text-lg font-semibold mb-2">Payment Information</h3>
           <div className="bg-gray-100 p-4 rounded-lg">
-            <p className="flex items-center">
+            {/* <p className="flex items-center">
               <FaCreditCard className="mr-2 text-blue-600" /> Payment Method:
               Visa ****1234
-            </p>
+            </p> */}
             <p>Payment Date:{getFormattedDate(ticketData?.data?.paymentAt)}</p>
             <p className="font-semibold">Amount Paid: $920.00</p>
           </div>
@@ -158,7 +158,7 @@ export default function Invoice({ ticketData, id }) {
           </p>
           <p>
             For any queries, please contact our customer support at
-            support@flightkiya.com
+            support@adbiyastour.com
           </p>
         </div>
       </div>

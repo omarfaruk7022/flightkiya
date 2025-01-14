@@ -267,6 +267,12 @@ export default function FlightCard({ flight, index }) {
                 <div className="p-6 bg-gray-50">
                   {flight?.segments.map((fly, index) => (
                     <div key={fly.flight_no} className="mb-8 last:mb-0">
+                      <div className="text-center font-bold">
+                        {fly?.LayoverTime
+                          ? "Layover time: "  + fly?.LayoverTime
+                          : ""}
+                      </div>
+
                       <div className="flex flex-col gap-6">
                         {/* Flight Header */}
                         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -374,10 +380,11 @@ export default function FlightCard({ flight, index }) {
                           </div>
                         </div>
                       </div>
-
                       {/* Divider between flights */}
                       {index < flight?.segments.length - 1 && (
-                        <div className="my-8 border-t border-dashed border-gray-300" />
+                        <>
+                          <div className="my-8 border-t border-dashed border-gray-300" />
+                        </>
                       )}
                     </div>
                   ))}
@@ -386,7 +393,7 @@ export default function FlightCard({ flight, index }) {
             </div>
 
             {/* Refund Information */}
-            <div>
+            {/* <div>
               <button
                 className="text-blue-600"
                 onClick={() => toggleRefundable(index)}
@@ -415,7 +422,7 @@ export default function FlightCard({ flight, index }) {
                   </p>
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

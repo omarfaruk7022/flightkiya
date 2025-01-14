@@ -2,7 +2,7 @@ import { toast } from "react-toastify";
 
 export const getFareRules = async (flight_id) => {
   const NEXT_API_URL =
-    process.env.NEXT_API_URL || "https://flightkiya.cosmelic.com/api/";
+    process.env.NEXT_PUBLIC_API_URL;
   const response = await fetch(`${NEXT_API_URL}b2c/fare-rules/${flight_id}`);
   if (!response.ok) {
     const errorData = await response.json();

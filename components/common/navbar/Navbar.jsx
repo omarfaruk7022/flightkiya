@@ -7,21 +7,25 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import TopBar from "@/components/topbar/TopBar";
+import flightStore from "@/store";
 export default function Navbar() {
   const [scrollY, setScrollY] = useState(0);
   const [isScrollingDown, setIsScrollingDown] = useState(false);
   const [categoryTab, setCategoryTab] = useState("flight");
-  const [token, setToken] = useState();
+  const [authToken, setAuthToken] = useState();
+  const { setUserInfo, token, setToken } = flightStore();
   const router = useRouter();
 
   useEffect(() => {
     const authToken = Cookies.get("auth-token");
-    setToken(authToken);
+    setAuthToken(authToken);
   }, []);
 
   const handleLogOut = () => {
     Cookies.remove("auth-token");
     router.push("/auth-login");
+    setToken(null);
+    setUserInfo({});
   };
 
   return (

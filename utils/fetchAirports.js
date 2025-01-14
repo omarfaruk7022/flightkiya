@@ -1,6 +1,6 @@
 export const fetchAirports = async (searchTerm) => {
   const NEXT_API_URL =
-    process.env.NEXT_API_URL || "https://flightkiya.cosmelic.com/api/";
+    process.env.NEXT_PUBLIC_API_URL ;
   const response = await fetch(
     `${NEXT_API_URL}common/airports?size=25&search=${searchTerm}`
   );

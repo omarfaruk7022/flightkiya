@@ -334,7 +334,7 @@ const Booking = () => {
   });
   const handleBooking = () => {
     bookingDataRefetch();
-    // console.log(payload);
+    console.log(bookingData);
   };
 
   const {

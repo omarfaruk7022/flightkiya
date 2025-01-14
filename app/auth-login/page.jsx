@@ -15,7 +15,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  const { setToken } = flightStore();
+  const { setToken, setUserInfo } = flightStore();
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -42,6 +42,7 @@ const Login = () => {
 
       Cookies.set("auth-token", data.token);
       setToken(data.token);
+      setUserInfo(data.data);
 
       router.push("/profile");
     } catch (err) {
@@ -137,12 +138,13 @@ const Login = () => {
             </div>
 
             <div className="flex items-center justify-between mb-4">
-              <Link
-                href="#"
+              <button
+                type="button"
+                onClick={() => router.push("/auth-reset-password")}
                 className="text-indigo-600 hover:underline text-sm"
               >
                 Forgot Password?
-              </Link>
+              </button>
             </div>
 
             <button

@@ -4,7 +4,7 @@ import React from "react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import stripe from "@/public/images/stripe.png";
-import Flightkiya from "@/public/icons/logoFlight.jpg";
+import adbiyas from "@/public/images/logo.png";
 import flightStore from "@/store";
 import { fetchData } from "@/utils/fetcher";
 import { useQuery } from "@tanstack/react-query";
@@ -163,8 +163,8 @@ function PayBill() {
               </h2>
               <div className="flex items-center justify-center flex-col md:flex-row flex-wrap space-x-2">
                 <Image
-                  src={Flightkiya}
-                  alt="FlightKiya Logo"
+                  src={adbiyas}
+                  alt="adbiyastour Logo"
                   width={200}
                   height={70}
                 />
@@ -181,7 +181,7 @@ function PayBill() {
                 <a href="#" className="text-blue-500 underline">
                   terms of service
                 </a>{" "}
-                of Flightkiya
+                of Adbiyas tour
               </p>
               <button
                 onClick={handlePayment}

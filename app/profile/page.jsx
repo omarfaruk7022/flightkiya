@@ -81,6 +81,32 @@ export default function ProfilePage() {
     }
   }, [token, user]);
 
+  const resetPassPayload = {
+    email: user?.email,
+  };
+
+  const {
+    data: resetPassData,
+    error: resetPassDataError,
+    isLoading: resetPassDataLoading,
+    refetch: resetPassDataRefetch,
+  } = useQuery({
+    queryKey: ["reset-pass"],
+    queryFn: () => fetchData(`auth/reset-pass`, "PATCH", resetPassPayload),
+    enabled: false,
+  });
+
+  const handleResetPassword = () => {
+    resetPassDataRefetch();
+  };
+  console.log(resetPassData);
+
+  useEffect(() => {
+    if (resetPassData?.success == true) {
+      toast.success(resetPassData?.message);
+    }
+  }, [resetPassData]);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -96,6 +122,7 @@ export default function ProfilePage() {
   if (!user) {
     return null;
   }
+
   return (
     <>
       <Navbar />
@@ -206,7 +233,7 @@ export default function ProfilePage() {
                 </div>
               </TabsContent>
               <TabsContent value="settings" className="p-4">
-                <form className="space-y-4">
+                {/* <form className="space-y-4">
                   <div className="grid gap-2">
                     <Label htmlFor="name">Name</Label>
                     <Input id="name" defaultValue={user?.full_name} />
@@ -218,7 +245,18 @@ export default function ProfilePage() {
                   <button className="p-3 rounded-lg bg-[#6D28D9] hover:bg-[#4e268f] text-gray-100">
                     Save Changes
                   </button>
-                </form>
+                </form> */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleResetPassword()}
+                    className="p-3 rounded-lg bg-[#6D28D9] hover:bg-[#4e268f] text-gray-100"
+                  >
+                    {resetPassDataLoading ? "Loading..." : "Reset password"}
+                  </button>
+                  <button className="p-3 rounded-lg bg-[#6D28D9] hover:bg-[#4e268f] text-gray-100">
+                    Edit profile
+                  </button>
+                </div>
               </TabsContent>
             </Tabs>
           </Card>

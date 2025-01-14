@@ -20,7 +20,7 @@ export default function SignUp() {
   const [phone, setPhone] = useState();
   const [name, setName] = useState();
   const [isChecked, setIsChecked] = useState(false);
-  const { setToken } = flightStore();
+  const { setToken, setUserInfo } = flightStore();
   const router = useRouter();
   const payload = {
     full_name: name,
@@ -81,6 +81,7 @@ export default function SignUp() {
       router.push("profile");
 
       setToken(registerData?.token);
+      setUserInfo(registerData?.data);
     } else {
       toast.error(registerData?.error?.message);
     }
