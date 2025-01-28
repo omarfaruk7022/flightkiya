@@ -9,28 +9,32 @@ export const fetchData = async (
   const NEXT_API_URL = process.env.NEXT_PUBLIC_API_URL;
   const url = `${NEXT_API_URL}${endpoint}`;
 
-  const options = {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token && { Authorization: `Bearer ${token}` }),
-    },
+  const headers = {
+    ...(token && { Authorization: `Bearer ${token}` }),
   };
 
-  if (payload) {
-    options.body = JSON.stringify(payload);
-  }
+  // Determine if the payload is FormData or JSON
+  const isFormData = payload instanceof FormData;
+
+  const options = {
+    method,
+    headers: isFormData
+      ? headers
+      : { "Content-Type": "application/json", ...headers },
+    ...(payload && {
+      body: isFormData ? payload : JSON.stringify(payload),
+    }),
+  };
 
   const response = await fetch(url, options);
+
   if (!response.ok) {
     const errorData = await response.json();
     const errorMessage = errorData.error?.message;
-
     const errorM = errorData?.error;
-
     const errorG = errorData?.message;
-    // Show the error in a toast
 
+    // Show the error in a toast
     if (errorMessage) {
       toast.error(errorMessage);
     } else if (errorM) {

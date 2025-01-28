@@ -200,7 +200,10 @@ export default function FlightCard({ flight, index }) {
             <div className="flex flex-col justify-between items-end">
               <div className="text-right space-y-1 sm:space-y-2">
                 <p className="text-black text-xl sm:text-2xl font-bold">
-                  ${fare.TotalFare || "N/A"}
+                  $
+                  {(
+                    parseFloat(fare.TotalFare) + parseFloat(fare.totalTax)
+                  ).toFixed(2) || "N/A"}
                 </p>
                 {/* {fare.BaseFare && (
                   <p className="text-xs sm:text-sm text-black ">
@@ -269,7 +272,7 @@ export default function FlightCard({ flight, index }) {
                     <div key={fly.flight_no} className="mb-8 last:mb-0">
                       <div className="text-center font-bold">
                         {fly?.LayoverTime
-                          ? "Layover time: "  + fly?.LayoverTime
+                          ? "Layover time: " + fly?.LayoverTime
                           : ""}
                       </div>
 

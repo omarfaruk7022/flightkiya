@@ -357,7 +357,6 @@ const Booking = () => {
     getRulesData();
   };
 
-  console.log(rulesData);
 
   useEffect(() => {
     if (bookingData?.data && bookingData?.success === true) {
@@ -368,69 +367,7 @@ const Booking = () => {
     }
   }, [bookingData]);
 
-  const rules = [
-    {
-      category: "Cancellation Policy",
-      icon: <AlertTriangle className="h-5 w-5" />,
-      items: [
-        "Free cancellation within 24 hours of booking",
-        "50% refund if cancelled 7 days before departure",
-        "No refund for cancellations within 48 hours of departure",
-      ],
-      type: "warning",
-    },
-    {
-      category: "Baggage Allowance",
-      icon: <Plane className="h-5 w-5" />,
-      items: [
-        "Carry-on: 7kg max weight",
-        "Checked baggage: 23kg included",
-        "Extra baggage available for purchase",
-      ],
-      type: "info",
-    },
-    {
-      category: "Validity",
-      icon: <Calendar className="h-5 w-5" />,
-      items: [
-        "Ticket valid for 12 months from date of issue",
-        "Change of date allowed with fee",
-        "Seasonal restrictions may apply",
-      ],
-      type: "default",
-    },
-    {
-      category: "Check-in Requirements",
-      icon: <Clock className="h-5 w-5" />,
-      items: [
-        "Online check-in opens 48 hours before departure",
-        "Airport check-in closes 60 minutes before departure",
-        "Valid passport required for international flights",
-      ],
-      type: "info",
-    },
-    {
-      category: "Payment Terms",
-      icon: <CreditCard className="h-5 w-5" />,
-      items: [
-        "Full payment required at time of booking",
-        "Multiple payment methods accepted",
-        "Currency conversion fees may apply",
-      ],
-      type: "default",
-    },
-    {
-      category: "Special Services",
-      icon: <Users className="h-5 w-5" />,
-      items: [
-        "Wheelchair assistance available on request",
-        "Special meals must be ordered 48 hours in advance",
-        "Unaccompanied minor service with additional fee",
-      ],
-      type: "info",
-    },
-  ];
-
+  
   return (
     <>
       {showModal && (

@@ -99,7 +99,7 @@ export default function ResetPassword({ searchParams }) {
             ) : (
               <button
                 className="w-full shadow-lg p-2 bg-black rounded-lg text-white hover:bg-gray-800 mt-6"
-                onClick={() => router.push("/login")}
+                onClick={() => router.push("/auth-login")}
               >
                 Go to Login
               </button>
